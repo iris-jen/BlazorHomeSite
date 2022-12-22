@@ -7,4 +7,12 @@
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     </PropertyGroup>
 
+    <ItemGroup>
+      <PackageReference Include="MudBlazor" Version="6.1.6" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Shared" />
+    </ItemGroup>
+
 </Project>

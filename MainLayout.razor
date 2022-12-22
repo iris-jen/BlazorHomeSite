@@ -1,3 +1,33 @@
 ﻿@inherits LayoutComponentBase
 
-<main> @Body </main>
+@using BlazorHomeSite.Pages
+
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+
+<MudLayout>
+    <MudAppBar>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" 
+                       Color="Color.Inherit" 
+                       Edge="Edge.Start" 
+                       OnClick="@((e) => DrawerToggle())" />
+        Thomas Jennison
+    </MudAppBar>
+    <MudDrawer @bind-Open="@_drawerOpen">
+        <Navigation/>
+    </MudDrawer>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+</MudLayout>
+
+@code {
+    bool _drawerOpen = true;
+
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}

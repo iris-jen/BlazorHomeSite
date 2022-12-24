@@ -30,6 +30,7 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
 builder.Services.AddMudServices();
 
+
 #endregion Services
 
 #region App

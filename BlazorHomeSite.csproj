@@ -17,10 +17,14 @@
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
       <PackageReference Include="MudBlazor" Version="6.1.6" />
+      <PackageReference Include="MudBlazor.Extensions" Version="1.7.26" />
+      <PackageReference Include="MudBlazor.Markdown" Version="0.0.12" />
+      <PackageReference Include="MudBlazor.ThemeManager" Version="1.0.7" />
     </ItemGroup>
 
     <ItemGroup>
       <Folder Include="Areas\Identity\Pages" />
+      <Folder Include="Services" />
     </ItemGroup>
 
 </Project>

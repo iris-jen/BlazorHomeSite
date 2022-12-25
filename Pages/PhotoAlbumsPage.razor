@@ -1,0 +1,38 @@
+﻿@page "/photoAlbums"
+@using BlazorHomeSite.Data
+@using Microsoft.EntityFrameworkCore
+
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<MudStack>
+    <PhotoAlbumAdminControl/>
+    <MudCarousel Class="mud-width-full" Style="height:500px;" ShowArrows="true" ShowBullets="true" EnableSwipeGesture="true"
+                 AutoCycle="true" TData="object">
+
+        @foreach (var album in GetAllAlbums())
+        {
+            <MudCarouselItem Transition="@Transition.Slide">
+                <div class="d-flex" style="height:100%">
+                    <MudCardHeader>@album.Description</MudCardHeader>
+                    <MudImage Src="https://picsum.photos/200/300"></MudImage>
+                    <MudNavLink Href=@GetAlbumRoute(album.Id) Match="NavLinkMatch.Prefix">Projects</MudNavLink>
+                </div>
+            </MudCarouselItem>
+        }
+
+    </MudCarousel>
+</MudStack>
+
+@code
+{
+    private string GetAlbumRoute(int id)
+    {
+        return $"/photoAlbum/{id}";
+    }
+
+    private List<PhotoAlbum> GetAllAlbums()
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.PhotoAlbums.ToList();
+    }
+}

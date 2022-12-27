@@ -3,18 +3,16 @@
 @using Microsoft.EntityFrameworkCore
 
 @inject IDbContextFactory<ApplicationDbContext> DbFactory
+@inject ISnackbar Snackbar
 
-<MudGrid Justify="Justify.Center">
-    <MudItem xs="12">
-        <MudPaper Class="d-flex align-center justify-center mud-width-full">
-            photo album
-        </MudPaper>
-        <h1>@AlbumId </h1>
-    </MudItem>
-</MudGrid>
+
+<MudStack Style="width: 100%">
+    
+</MudStack>
 
 @code
 {
     [Parameter]
     public string AlbumId { get; set; }
+    
 }

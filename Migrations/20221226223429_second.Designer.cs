@@ -3,6 +3,7 @@ using System;
 using BlazorHomeSite.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorHomeSite.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221226223429_second")]
+    partial class second
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "7.0.1");
@@ -23,7 +26,7 @@ namespace BlazorHomeSite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("AlbumId")
+                    b.Property<int>("AlbumId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CaptureTime")
@@ -32,16 +35,11 @@ namespace BlazorHomeSite.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsAlbumCover")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("Location")
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("LocationCoOrdinates")
-                        .HasColumnType("TEXT");
-
                     b.Property<string>("PhotoPath")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -66,7 +64,7 @@ namespace BlazorHomeSite.Migrations
                     b.ToTable("PhotoAlbums");
                 });
 
-            modelBuilder.Entity("BlazorHomeSite.Data.PhotoTags", b =>
+            modelBuilder.Entity("BlazorHomeSite.Data.PhotoAlbumTags", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -78,44 +76,46 @@ namespace BlazorHomeSite.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("PhotoTags");
+                    b.ToTable("PhotoAlbumTags");
                 });
 
-            modelBuilder.Entity("PhotoPhotoTags", b =>
+            modelBuilder.Entity("PhotoAlbumPhotoAlbumTags", b =>
                 {
-                    b.Property<int>("PhotosId")
+                    b.Property<int>("AlbumTagsId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("TagsId")
+                    b.Property<int>("AlbumsId")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("PhotosId", "TagsId");
+                    b.HasKey("AlbumTagsId", "AlbumsId");
 
-                    b.HasIndex("TagsId");
+                    b.HasIndex("AlbumsId");
 
-                    b.ToTable("PhotoPhotoTags");
+                    b.ToTable("PhotoAlbumPhotoAlbumTags");
                 });
 
             modelBuilder.Entity("BlazorHomeSite.Data.Photo", b =>
                 {
                     b.HasOne("BlazorHomeSite.Data.PhotoAlbum", "Album")
                         .WithMany("Photos")
-                        .HasForeignKey("AlbumId");
+                        .HasForeignKey("AlbumId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Album");
                 });
 
-            modelBuilder.Entity("PhotoPhotoTags", b =>
+            modelBuilder.Entity("PhotoAlbumPhotoAlbumTags", b =>
                 {
-                    b.HasOne("BlazorHomeSite.Data.Photo", null)
+                    b.HasOne("BlazorHomeSite.Data.PhotoAlbumTags", null)
                         .WithMany()
-                        .HasForeignKey("PhotosId")
+                        .HasForeignKey("AlbumTagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("BlazorHomeSite.Data.PhotoTags", null)
+                    b.HasOne("BlazorHomeSite.Data.PhotoAlbum", null)
                         .WithMany()
-                        .HasForeignKey("TagsId")
+                        .HasForeignKey("AlbumsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

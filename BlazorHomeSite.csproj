@@ -23,8 +23,18 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="Areas\Identity\Pages" />
         <Folder Include="Services" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\LogOut.cshtml" />
+      <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Shared\_LoginPartial.cshtml" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Components\PhotoAlbumAdminControl.razor.cs">
+        <DependentUpon>PhotoAlbumAdminControl.razor</DependentUpon>
+      </Compile>
     </ItemGroup>
 
 </Project>

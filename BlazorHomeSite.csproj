@@ -20,21 +20,24 @@
         <PackageReference Include="MudBlazor.Extensions" Version="1.7.26" />
         <PackageReference Include="MudBlazor.Markdown" Version="0.0.12" />
         <PackageReference Include="MudBlazor.ThemeManager" Version="1.0.7" />
+        <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
     </ItemGroup>
 
     <ItemGroup>
         <Folder Include="Services" />
+        <Folder Include="wwwroot\music\bad-crow-vibes" />
+        <Folder Include="wwwroot\site-photos" />
     </ItemGroup>
 
     <ItemGroup>
-      <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\LogOut.cshtml" />
-      <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Shared\_LoginPartial.cshtml" />
+        <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\LogOut.cshtml" />
+        <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Shared\_LoginPartial.cshtml" />
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Update="Components\PhotoAlbumAdminControl.razor.cs">
-        <DependentUpon>PhotoAlbumAdminControl.razor</DependentUpon>
-      </Compile>
+        <Compile Update="Components\PhotoAlbumAdminControl.razor.cs">
+            <DependentUpon>PhotoAlbumAdminControl.razor</DependentUpon>
+        </Compile>
     </ItemGroup>
 
 </Project>

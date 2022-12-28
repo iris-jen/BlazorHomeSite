@@ -1,19 +1,22 @@
 ﻿@page "/"
 
 <MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
-    <MudGrid>
-        <MudItem xs="12" sm="12" md="12">
-            <MudPaper Elevation="2" Class="pa-12" Style="height: 100%;">
+      <MudOverlay Visible="true" DarkBackground="true" Absolute="true">
+       <MudPaper Elevation="2" Class="pa-12" Style="height: 100%;">
+              
+                       <MudAvatar Image="/site-photos/avatar.jpg"/>
+                                  <MudText Typo="Typo.h4">Hi I'm Thomas, welcome to my site!</MudText>
+                                  <MudText Typo="Typo.body1">
+                                      Im a software developer and musician living in mount forest
+                                      I made this site to learn blazor and as a project / music blog
+                                      Take a look around :)
+                                  </MudText>
+          
+      
 
 
-                <MudAvatar Image="https://picsum.photos/200/300"/>
-                <MudText Typo="Typo.h4">Hi I'm Thomas, welcome to my site!</MudText>
-                <MudText Typo="Typo.body1">
-                    Im a software developer and musician living in mount forest
-                    I made this site to learn blazor and as a project / music blog
-                    Take a look around :)
-                </MudText>
+           
             </MudPaper>
-        </MudItem>
-    </MudGrid>
+        </MudOverlay>
+ 
 </MudContainer>

@@ -1,8 +1,7 @@
 ﻿@page "/photoAlbums"
 
 <MudStack>
-    <PhotoAlbumAdminControl/>
-
+    
     <MudCarousel Class="mud-width-full" Style="height:500px;" ShowArrows="true" ShowBullets="true" EnableSwipeGesture="true"
                  AutoCycle="true" TData="object">
 
@@ -10,10 +9,12 @@
         {
             <MudCarouselItem Transition="@Transition.Slide">
                 <MudStack>
-                    <MudGrid  Style="margin-left: 10%; margin-right: 10%">
+                    <MudGrid Style="margin-left: 10%; margin-right: 10%">
                         <MudItem xs="7">
-                            <MudText Style="width: auto" 
-                                     Typo="Typo.h6">@album.Description</MudText>
+                            <MudText Style="width: auto"
+                                     Typo="Typo.h6">
+                                @album.Description
+                            </MudText>
                         </MudItem>
                         <MudItem xs="3">
                             <MudNavLink Href=@GetAlbumRoute(album.Id)
@@ -24,12 +25,12 @@
                             </MudNavLink>
                         </MudItem>
                     </MudGrid>
-            
+
 
                     <MudImage ObjectPosition="ObjectPosition.Center"
                               Style="margin-bottom: 10%; margin-left: 10%; margin-right: 10%"
                               ObjectFit="ObjectFit.ScaleDown"
-                              Src=@AlbumCovers[album.Id].Replace(@"C:\Users\kaj\Documents\GitHub\BlazorHomeSite\wwwroot", "")>
+                              Src=@AlbumCovers[album.Id]>
                     </MudImage>
 
                 </MudStack>

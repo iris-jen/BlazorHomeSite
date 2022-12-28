@@ -44,6 +44,15 @@ namespace BlazorHomeSite.Migrations
                     b.Property<string>("PhotoPath")
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("PhotoRotation")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("ThumbnailPath")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("ThumbnailRotation")
+                        .HasColumnType("INTEGER");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AlbumId");
@@ -58,7 +67,6 @@ namespace BlazorHomeSite.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

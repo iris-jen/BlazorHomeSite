@@ -1,6 +1,50 @@
-<MudNavMenu>
-    <MudNavLink Href="/" Match="NavLinkMatch.All">About</MudNavLink>
-    <MudNavLink Href="/photoAlbums" Match="NavLinkMatch.Prefix">Photos</MudNavLink>
-    <MudNavLink Href="/music" Match="NavLinkMatch.Prefix">Music</MudNavLink>
-    <MudNavLink Href="/projects" Match="NavLinkMatch.Prefix">Projects</MudNavLink>
-</MudNavMenu>
+@using BlazorHomeSite.Data
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<ApplicationDbContext> DbFactory
+
+<MudPaper Width="250px" Class="py-3" Elevation="0">
+    <MudNavMenu>
+        <MudText Typo="Typo.h6" Class="px-4">Thomas's site</MudText>
+        
+        <MudNavLink Href="/" Icon=@Icons.Filled.Home Match="NavLinkMatch.All">About</MudNavLink>
+        
+        <MudNavGroup Title="Photos" Icon="@Icons.Filled.Camera" Expanded="true">
+            <MudNavLink Icon="@Icons.Filled.PhotoAlbum" Href="/photoAlbums" Match="NavLinkMatch.Prefix">Overview</MudNavLink>
+            @foreach (var album in GetAllAlbums())
+            {
+                <MudNavLink Href=@GetAlbumRoute(album.Id) 
+                            Match="NavLinkMatch.Prefix">@album.Description</MudNavLink>
+            }
+        </MudNavGroup>
+        
+        <MudNavLink Href="/music" Match="NavLinkMatch.Prefix">Music</MudNavLink>
+        <MudNavLink Href="/projects" Match="NavLinkMatch.Prefix">Projects</MudNavLink>
+        <MudNavLink Href="/siteConfigPage" 
+                    Icon="@Icons.Filled.Settings"
+                    Match="NavLinkMatch.Prefix">
+            Site Config
+        </MudNavLink>
+    </MudNavMenu>
+</MudPaper>
+
+@code
+{
+    
+    
+    private string GetAlbumRoute(int id)
+    {
+        return $"/photoAlbum/{id}";
+    }
+    
+    private List<PhotoAlbum> GetAllAlbums()
+    {
+        if (DbFactory != null)
+        {
+            using var context = DbFactory.CreateDbContext();
+            var albums = context.PhotoAlbums.ToList();
+            return albums;
+        }
+
+        return new List<PhotoAlbum>();
+    }
+}

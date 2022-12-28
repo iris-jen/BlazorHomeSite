@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace BlazorHomeSite.Data;
 
@@ -28,7 +27,7 @@ public class ApplicationDbContext : DbContext
 
         mb.Entity<Photo>()
             .HasKey(x => x.Id);
-        
+
         mb.Entity<Photo>()
             .HasOne(x => x.Album)
             .WithMany(x => x.Photos);

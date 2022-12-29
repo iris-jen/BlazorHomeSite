@@ -1,5 +1,4 @@
 using BlazorHomeSite.Data;
-using BlazorHomeSite.Migrations;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,8 +18,6 @@ public partial class PhotoAlbumsPage
 
     private List<PhotoAlbum> GetAllAlbums()
     {
-
-
         return new List<PhotoAlbum>();
     }
 }

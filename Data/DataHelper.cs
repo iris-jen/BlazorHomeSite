@@ -13,20 +13,24 @@ public static class DataHelper
     {
         using var context = factory.CreateDbContext();
         return context.PhotoAlbums
-                       .Include(x=>x.Photos)
-                       .Single(x=>x.Id == id);
+            .Include(x=>x.Photos)
+            .Single(x=>x.Id == id);
     }
 
-    public static void ShrinkImage(FileInfo file, string destPath, int newWidth, int newHeight)
+    public static void ShrinkImage(string sourcePath, string destPath, int newWidth, int newHeight)
     {
         using var stream = new MemoryStream();
-        using var image = new Bitmap(Image.FromFile(file.FullName), new Size(newWidth, newHeight));
-        image.Save(stream, ImageFormat.Jpeg);   
-        var bytes = stream.ToArray();
-        
-        File.WriteAllBytes(destPath, bytes);
+        using (var sourceImage = Image.FromFile(sourcePath))
+        {
+            using (var image = new Bitmap(sourceImage, new Size(newWidth, newHeight)))
+            {
+                image.Save(stream, ImageFormat.Jpeg);
+                File.WriteAllBytes(destPath, stream.ToArray());
+                image.Dispose();
+            }
+            sourceImage.Dispose();
+        }
+        stream.Close();
     }
-    
-    
     
 }

@@ -17,7 +17,7 @@ public class ApplicationDbContext : DbContext
     {
         mb.Entity<PhotoAlbum>()
             .HasKey(x => x.Id);
-
+        
         mb.Entity<PhotoTags>()
             .HasKey(x => x.Id);
 
@@ -27,6 +27,9 @@ public class ApplicationDbContext : DbContext
 
         mb.Entity<Photo>()
             .HasKey(x => x.Id);
+
+        mb.Entity<Photo>()
+            .HasIndex(x => new {x.AlbumId, x.CaptureTime} );
 
         mb.Entity<Photo>()
             .HasOne(x => x.Album)

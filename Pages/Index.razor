@@ -1,22 +1,47 @@
 ﻿@page "/"
 
-<MudContainer Class="mt-16 px-8" MaxWidth="MaxWidth.False">
-      <MudOverlay Visible="true" DarkBackground="true" Absolute="true">
-       <MudPaper Elevation="2" Class="pa-12" Style="height: 100%;">
-              
-                       <MudAvatar Image="/site-photos/avatar.jpg"/>
-                                  <MudText Typo="Typo.h4">Hi I'm Thomas, welcome to my site!</MudText>
-                                  <MudText Typo="Typo.body1">
-                                      Im a software developer and musician living in mount forest
-                                      I made this site to learn blazor and as a project / music blog
-                                      Take a look around :)
-                                  </MudText>
-          
-      
+<MudContainer>
 
+    <div Style="width: 100%; height: 100%; top: 0; left: 0; vertical-align: center; margin-top: 5%">
+        <MudImage Src="site-photos/home-background.jpg"
+                  ObjectFit="ObjectFit.Cover"
+                  Fluid="true"/>
+    </div>
 
-           
-            </MudPaper>
-        </MudOverlay>
- 
+    <div Style=" z-index: 9; opacity: 0.85; margin-top: -120%; margin-left: 5%; margin-right: 5%;">
+        <MudPaper Elevation="2" Class="pa-4" Outlined="true" Style="background: #ff42a4">
+            <MudAvatar Image="/site-photos/avatar.jpg"/>
+            <MudText Typo="Typo.h4" Color="Color.Dark"  Style="opacity: 100%;">Hi I'm Thomas, welcome to my site!</MudText>
+            <MudText Typo="Typo.body1" Color="Color.Dark">
+                Im a software developer, musician, and mostly human person and living in [⛰️🌲, on, “🇨🇦”]. 
+            </MudText>
+            <MudText Typo="Typo.body1" Color="Color.Dark">
+                I love the outdoors and playing / writing music. 
+            </MudText>
+            <MudText Typo="Typo.subtitle2"  Color="Color.Dark">
+                I built this site as a photo, music / general purpose blog.
+                It's not fully complete yet, but have a look around 🙂!
+            </MudText>
+   
+        </MudPaper>
+    </div>
+
+    <MudCard Style="z-index: 12; opacity: 0.95; margin-left: 5%; margin-right: 5% ">
+        <MudStack Row="true">
+                    <MudCardContent>
+                        <MudButton Href="https://github.com"
+                                   Target="_blank"
+                                   Variant="Variant.Filled"
+                                   EndIcon="@Icons.Custom.Brands.GitHub"
+                                   Color="Color.Primary">
+                            Project Github Link
+                        </MudButton>
+                    </MudCardContent>
+
+        </MudStack>
+
+    </MudCard>
 </MudContainer>
+
+
+

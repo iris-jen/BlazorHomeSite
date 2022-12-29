@@ -13,5 +13,6 @@ public class Photo
     public int ThumbnailRotation { get; set; }
     public int PhotoRotation { get; set; }
     public PhotoAlbum? Album { get; set; }
+    public int AlbumId { get; set; }
     public List<PhotoTags>? Tags { get; set; }
 }

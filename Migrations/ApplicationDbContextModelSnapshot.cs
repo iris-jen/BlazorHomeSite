@@ -23,7 +23,7 @@ namespace BlazorHomeSite.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("AlbumId")
+                    b.Property<int>("AlbumId")
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("CaptureTime")
@@ -55,7 +55,7 @@ namespace BlazorHomeSite.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AlbumId");
+                    b.HasIndex("AlbumId", "CaptureTime");
 
                     b.ToTable("Photos");
                 });
@@ -108,7 +108,9 @@ namespace BlazorHomeSite.Migrations
                 {
                     b.HasOne("BlazorHomeSite.Data.PhotoAlbum", "Album")
                         .WithMany("Photos")
-                        .HasForeignKey("AlbumId");
+                        .HasForeignKey("AlbumId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Album");
                 });

@@ -25,8 +25,11 @@ public partial class PhotoAlbumAdminControl
         {
             Logger.LogInformation("Adding photos to db... ");
 
-            await using var context = await DbFactory?.CreateDbContextAsync()!;
-            var megaAlbumId = await GetOrCreateMegaAlbum(context);
+            int megaAlbumId = -1;
+            await using (var context = await DbFactory?.CreateDbContextAsync()!)
+            {            
+                megaAlbumId = await GetOrCreateMegaAlbum(context);
+            }
 
             var root = HostEnvironment.WebRootPath;
             var photos = Path.Combine(root, "photos");
@@ -37,27 +40,24 @@ public partial class PhotoAlbumAdminControl
                 Logger.LogInformation($"Processing {dir.Name}");
                 if (dir.Name.StartsWith("all_"))
                 {
-                    var megaAlbum = await context.PhotoAlbums.Include(x=>x.Photos)
-                                                              .AsSplitQuery()
-                                                              .FirstOrDefaultAsync(x => x.Id == megaAlbumId);
-
-
-                    megaAlbum.Photos.AddRange(GetPhotosForAlbum(dir));
-                    context.PhotoAlbums.Update(megaAlbum);
-                    await context.SaveChangesAsync();
+                    await SavePhotos(dir, megaAlbumId);
                 }
                 else
                 {
-                    context.PhotoAlbums.Add(new PhotoAlbum
+                    var tempAlbum = new PhotoAlbum
                     {
                         Description = dir.Name,
-                        Photos = GetPhotosForAlbum(dir)
-                    });
-                    
-                    await context.SaveChangesAsync();
-                }
+                    };
 
-                Logger.LogInformation($"Finished Processing {dir.Name}");
+                    await using (var context = await DbFactory?.CreateDbContextAsync()!)
+                    {
+                        context.PhotoAlbums.Add(tempAlbum);
+                        await context.SaveChangesAsync();
+                    }
+                    
+                    await SavePhotos(dir, tempAlbum.Id);
+                }
+                Logger.LogInformation($@"Finished Processing {dir.Name}");
             };
             
             Logger.LogInformation("All Photos Processed");
@@ -66,7 +66,6 @@ public partial class PhotoAlbumAdminControl
         {
             Logger.LogError(ex, "Could not process photos");
         }
-
     }
     
     private static async Task<int> GetOrCreateMegaAlbum(ApplicationDbContext context)
@@ -85,35 +84,25 @@ public partial class PhotoAlbumAdminControl
         return allPhotos.Id;
     }
     
-
-    private List<Photo> GetPhotosForAlbum(DirectoryInfo directory)
+    private async Task SavePhotos(DirectoryInfo directory, int albumId)
     {
-        var photoBag = new ConcurrentBag<Photo>();
-
-        Parallel.ForEach(directory.EnumerateFiles(), new ParallelOptions(){MaxDegreeOfParallelism = 2}, file =>
+        await using var context = await DbFactory?.CreateDbContextAsync()!;
+        foreach (var file in directory.EnumerateFiles())
         {
+            DataHelper.ShrinkImage(file.FullName,
+                Path.Combine(HostEnvironment.WebRootPath, "photos", "thumbs", file.Name), 
+                150,
+                150);
+
+            await context.Photos.AddAsync(new Photo
             {
-                var path = Path.Combine("photos", directory.Name, file.Name);
-                var thumbPath = Path.Combine("wwwroot", "photos", "thumbs");
-
-                var thumbGuid = Guid.NewGuid() + ".jpg";
-                var hostPath = HostEnvironment.WebRootPath;
-                var thumbPathFull = Path.Combine(hostPath, "photos", "thumbs", thumbGuid);
-
-                DataHelper.ShrinkImage(file, thumbPathFull, 150, 150);
-
-                var photo = new Photo
-                {
-                    PhotoPath = path,
-                    ThumbnailPath = Path.Combine(thumbPath, thumbGuid),
-                    CaptureTime = file.CreationTime,
-                };
-                photoBag.Add(photo);
-
-            }
-        });
-        
-        return photoBag.ToList();
+                PhotoPath = Path.Combine("photos", directory.Name, file.Name),
+                ThumbnailPath = Path.Combine("photos", "thumbs", file.Name),
+                CaptureTime = file.CreationTime,
+                AlbumId = albumId
+            });
+            await context.SaveChangesAsync();
+        }
     }
 
     private void ClearAllAlbums()

@@ -1,6 +1,66 @@
-@page "/PhotoPage"
-<h3>PhotoPage</h3>
+@page "/photo/{albumId}/{photoId}"
 
-@code {
+<MudContainer>
+    <MudStack>
+        <MudSkeleton Style="margin-top: 10px; height: 20px"></MudSkeleton>
+      
+
+        <MudPaper>
+            <MudStack>
+                <MudImage ObjectFit="ObjectFit.Contain" Src=@CurrentPhoto.PhotoPath Style="max-height: 500px">
+
+                </MudImage>
+            </MudStack>
+        </MudPaper>
+        
+
+        <MudPaper>
+
+            <MudGrid>
+                <MudItem sm="2">
+                        <MudIconButton @onclick="LastPhoto" Icon="@Icons.Filled.NavigateBefore"></MudIconButton>
+                </MudItem>
+                <MudItem sm="8">
+                    @foreach (var photo in LastPhotos)
+                    {
+                        <MudImage ObjectFit="ObjectFit.Cover"
+                                  Fluid="false"
+                                  Height="25"
+                                  Width="25"
+                                  Elevation="25" Class="rounded-sm"
+                                  Src=@photo.Value.ThumbnailPath.Replace("wwwroot", "")>
+                        </MudImage>
+                    }
     
-}
+                    <MudImage Src="@CurrentPhoto.ThumbnailPath.Replace("wwwroot", "")"/>
+    
+                    @foreach (var photo in NextPhotos)
+                    {
+                        <MudImage ObjectFit="ObjectFit.Cover"
+                                  Fluid="false"
+                                  Height="25"
+                                  Width="25"
+                                  Elevation="25" Class="rounded-sm"
+                                  Src=@photo.Value.ThumbnailPath.Replace("wwwroot", "")>
+                        </MudImage>
+                    }
+                </MudItem>
+                
+                <MudItem sm="2">
+                          <MudIconButton @onclick="NextPhoto" Icon="@Icons.Filled.NavigateNext"></MudIconButton>
+                </MudItem>
+            </MudGrid>
+            
+            <MudStack Row="true">
+
+            
+
+              
+
+
+            </MudStack>
+        </MudPaper>
+
+    </MudStack>
+    
+</MudContainer>

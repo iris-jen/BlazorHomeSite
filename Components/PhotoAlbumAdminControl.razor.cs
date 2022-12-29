@@ -24,8 +24,7 @@ public partial class PhotoAlbumAdminControl
         try
         {
             Logger.LogInformation("Adding photos to db... ");
-
-            int megaAlbumId = -1;
+            var megaAlbumId = -1;
             await using (var context = await DbFactory?.CreateDbContextAsync()!)
             {            
                 megaAlbumId = await GetOrCreateMegaAlbum(context);
@@ -35,7 +34,7 @@ public partial class PhotoAlbumAdminControl
             var photos = Path.Combine(root, "photos");
             var subDirectories = new DirectoryInfo(photos);
             
-            foreach(var dir in subDirectories.EnumerateDirectories())
+            foreach(var dir in subDirectories.EnumerateDirectories().Where(x=>!x.Name.Equals("thumbs")))
             {
                 Logger.LogInformation($"Processing {dir.Name}");
                 if (dir.Name.StartsWith("all_"))
@@ -59,7 +58,6 @@ public partial class PhotoAlbumAdminControl
                 }
                 Logger.LogInformation($@"Finished Processing {dir.Name}");
             };
-            
             Logger.LogInformation("All Photos Processed");
         }
         catch (Exception ex)
@@ -111,7 +109,6 @@ public partial class PhotoAlbumAdminControl
         if (DbFactory != null)
         {
             using var context = DbFactory.CreateDbContext();
-            
             var data =
                 context.PhotoAlbums.Include(x => x.Photos).ToArray();
             

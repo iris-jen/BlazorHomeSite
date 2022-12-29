@@ -38,6 +38,8 @@ public partial class PhotoAlbumPage
     private List<Photo>? AllPhotos { get; set; }
     private List<Photo>? PagePhotos { get; set; }
     public string? AlbumDescription { get; set; }
+
+    public string GetPhotoNavigaitonParams(int photoId) => $"photo/{int.Parse(AlbumId)}/{photoId}";
     
     private List<Photo>? GetAllPhotos()
     {

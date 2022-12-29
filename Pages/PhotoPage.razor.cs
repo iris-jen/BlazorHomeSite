@@ -20,7 +20,7 @@ public partial class PhotoPage
         set
         {
             _photoId = value;
-            GetAllPhotos(int.Parse(_photoId), int.Parse(AlbumId));
+           Photos = GetAllPhotos(int.Parse(_photoId), int.Parse(AlbumId));
         }
     }
     private string _photoId { get; set; }
@@ -33,6 +33,8 @@ public partial class PhotoPage
     
     private SortedList<int, Photo> Photos = new SortedList<int, Photo>();
     
+    private SortedList<int, Photo> NextPhotos = new SortedList<int, Photo>();
+    private SortedList<int, Photo> LastPhotos = new SortedList<int, Photo>();
 
     private string? AlbumDescription { get; set; }
     
@@ -48,14 +50,16 @@ public partial class PhotoPage
     #endregion
 
     
+    
     private SortedList<int, Photo>? GetAllPhotos(int photoId, int albumId)
     {
         List<Photo>? photos = null; 
         if (DbFactory != null)
             photos = DataHelper.GetPhotoAlbum(DbFactory, albumId).Photos;
 
-        SortedList<int, Photo>? outputPhotos = null;
+        var outputPhotos = new SortedList<int, Photo>();
         var oderedPhotos = photos.OrderBy(x => x.CaptureTime).ToArray();
+
         
         for (var i= 0; i < oderedPhotos.Count() ; i++)
         {
@@ -64,10 +68,25 @@ public partial class PhotoPage
             if (oderedPhotos[i].Id == photoId)
             {
                 CurrentPhoto = oderedPhotos[i];
-                CurrentPhotoIndex = i;
+                CurrentPhotoIndex  = i;
             }
         }
+
+
+        SetNextAndPreviousPhotos(CurrentPhotoIndex, outputPhotos);
+        
         return outputPhotos;
+    }
+
+    private void SetNextAndPreviousPhotos(int currentIndex, SortedList<int, Photo> photos, int nextPhotoLimit = 5)
+    {
+        NextPhotos.Clear();
+        LastPhotos.Clear();
+        for (var i = currentIndex + 1; i < currentIndex + nextPhotoLimit+1 && i <= photos.Count; i++)
+            NextPhotos.Add(i, photos[i]);
+
+        for (var i = currentIndex -1; i > currentIndex - nextPhotoLimit-1 && i >= 0; i--)
+            LastPhotos.Add(i, photos[i]);
     }
     
     private bool EnableEdit()
@@ -84,12 +103,16 @@ public partial class PhotoPage
     {
         CurrentPhotoIndex++;
         CurrentPhoto = Photos[CurrentPhotoIndex];
+        SetNextAndPreviousPhotos(CurrentPhotoIndex, Photos);
+        StateHasChanged();
     }
 
     private void LastPhoto()
     {
         CurrentPhotoIndex--;
         CurrentPhoto = Photos[CurrentPhotoIndex];
+        SetNextAndPreviousPhotos(CurrentPhotoIndex, Photos);
+        StateHasChanged();
     }
 
     private void UpdatePhoto()

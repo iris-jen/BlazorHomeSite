@@ -10,46 +10,44 @@
         <MudStack>
 
             <MudPaper Elevation="5" Style="margin: 5px">
-                <MudContainer Class="mt-2 px-8" Style="align-content: center; justify-content: center;"  MaxWidth="MaxWidth.Medium">
+                <MudContainer Class="mt-2 px-8" Style="align-content: center; justify-content: center;" MaxWidth="MaxWidth.Medium">
                     <MudText Typo="Typo.h6">@AlbumDescription</MudText>
                 </MudContainer>
             </MudPaper>
 
-        <MudPaper Elevation="10" Style="margin: 5px">
-           <MudContainer MaxWidth="MaxWidth.Large">
-           <MudGrid Style="margin: 10px">
-             
-               @foreach (var photo in PagePhotos)
-               {
-                
-                   <MudItem sm="2">
-                       <MudNavLink Style="margin-left: -10px; margin-right: -10px; margin-top: -10px; margin-bottom:-15px" Href=@GetPhotoNavigaitonParams(photo.Id)>
-                       <MudImage ObjectFit="ObjectFit.Cover"
-                                 Fluid="false"
-                                 Height="50"
-                                 Width="50"
-                                 Elevation="25" Class="rounded-sm"
-                                 Src=@photo.ThumbnailPath.Replace("wwwroot", "")>
-                       </MudImage>
-                    </MudNavLink>
-                   </MudItem>
-                   
-               }
-                      
-           </MudGrid>
-                  </MudContainer>
+            <MudPaper Elevation="10" Style="margin: 5px">
+                <MudContainer MaxWidth="MaxWidth.Large">
+                    <MudGrid Style="margin: 10px">
+
+                        @foreach (var photo in PagePhotos)
+                        {
+                            <MudItem sm="2">
+                                <MudNavLink Style="margin-left: -10px; margin-right: -10px; margin-top: -10px; margin-bottom:-15px" Href=@GetPhotoNavigaitonParams(photo.Id)>
+                                    <MudImage ObjectFit="ObjectFit.Cover"
+                                              Fluid="false"
+                                              Height="50"
+                                              Width="50"
+                                              Elevation="25" Class="rounded-sm"
+                                              Src=@photo.ThumbnailPath.Replace("wwwroot", "")>
+                                    </MudImage>
+                                </MudNavLink>
+                            </MudItem>
+                        }
+
+                    </MudGrid>
+                </MudContainer>
             </MudPaper>
 
             <MudDivider DividerType="DividerType.FullWidth" Class="my-2"/>
-            
+
             <MudPaper Elevation="15" Style="margin-top: -10px">
                 <MudPagination Variant="Variant.Filled"
                                Color="Color.Tertiary"
                                ShowFirstButton="true" ShowLastButton="true"
                                Style="margin: 10px; width: 100%; align-content: center; justify-content: center"
-                               Count=@Pages @bind-Selected="@Page"/>
+                               Count="@Pages" @bind-Selected="@Page"/>
             </MudPaper>
-         
-       </MudStack>
+
+        </MudStack>
     </MudPaper>
 </MudContainer>

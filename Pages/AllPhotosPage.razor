@@ -1,5 +1,54 @@
 ﻿@page "/allPhotos"
 
+@code {
+
+    private string GetPhotoNavigaitonParams(int photoId)
+    {
+        return "-1";
+    }
+
+}
+
 <MudStack>
- 
+    <MudTabs Outlined="true" Position="Position.Left" Rounded="true" Border="true"
+             ApplyEffectsToContainer="true" Class="mt-8" PanelClass="pa-6">
+
+        @foreach (var year in GetYears())
+        {
+            <MudTabPanel Text="@year.ToString()">
+                <MudPaper Elevation="10" Style="margin: 5px">
+                    <MudContainer MaxWidth="MaxWidth.Large">
+                        <MudGrid Style="margin: 10px">
+
+                            @foreach (var photo in GetPhotosByYear(year))
+                            {
+                                <MudItem sm="2">
+                                    <MudNavLink Style="margin-left: -10px; margin-right: -10px; margin-top: -10px; margin-bottom:-15px" Href=@GetPhotoNavigaitonParams(photo.Id)>
+                                        <MudImage ObjectFit="ObjectFit.Cover"
+                                                  Fluid="false"
+                                                  Height="50"
+                                                  Width="50"
+                                                  Elevation="25" Class="rounded-sm"
+                                                  Src=@photo.ThumbnailPath.Replace("wwwroot", "")>
+                                        </MudImage>
+                                    </MudNavLink>
+                                </MudItem>
+                            }
+
+                        </MudGrid>
+                           <MudPaper Elevation="15" Style="margin-top: -10px">
+                                        <MudPagination Variant="Variant.Filled"
+                                                       Color="Color.Tertiary"
+                                                       ShowFirstButton="true" ShowLastButton="true"
+                                                       Style="margin: 10px; width: 100%; align-content: center; justify-content: center"
+                                                       Count="@GetPagesForYear(year)" @bind-Selected="@Page"/>
+                            </MudPaper>
+                    </MudContainer>
+                </MudPaper>
+            </MudTabPanel>
+            
+         
+        }
+
+    </MudTabs>
 </MudStack>

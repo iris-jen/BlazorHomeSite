@@ -2,65 +2,66 @@
 
 <MudContainer>
     <MudStack>
-        <MudSkeleton Style="margin-top: 10px; height: 20px"></MudSkeleton>
-      
-
+        
         <MudPaper>
-            <MudStack>
-                <MudImage ObjectFit="ObjectFit.Contain" Src=@CurrentPhoto.PhotoPath Style="max-height: 500px">
+            <MudGrid>
+                   <MudItem xs="1">
+                                    <MudIconButton Color="@Color.Success" 
+                                                    @onclick="LastPhoto" Icon="@Icons.Filled.NavigateBefore"></MudIconButton>
+                    </MudItem>
+                
+                <MudItem xs="10">
+                    <MudStack Row="true">
+                        @foreach (var photo in LastPhotos)
+                        {
+                            <MudImage ObjectFit="ObjectFit.Cover"
+                                      Fluid="false"
+                                      Height="25"
+                                      Width="25"
+                                      Elevation="25" Class="rounded-sm"
+                                      Src=@photo.Value.ThumbnailPath.Replace("wwwroot", "")>
+                            </MudImage>
+                        }
 
-                </MudImage>
-            </MudStack>
+                        <MudPaper Elevation="30">
+                            <MudImage Height="30" Width="30" Src="@CurrentPhoto.ThumbnailPath.Replace("wwwroot", "")"/>
+                        </MudPaper>
+
+                        @foreach (var photo in NextPhotos)
+                        {
+                            <MudImage ObjectFit="ObjectFit.Cover"
+                                      Fluid="false"
+                                      Height="25"
+                                      Width="25"
+                                      Elevation="25" Class="rounded-sm"
+                                      Src=@photo.Value.ThumbnailPath.Replace("wwwroot", "")>
+                            </MudImage>
+                        }
+
+                    </MudStack>
+
+                </MudItem>
+                   <MudItem xs="1">
+                                    <MudIconButton @onclick="NextPhoto" Icon="@Icons.Filled.NavigateNext"></MudIconButton>
+                                </MudItem>
+            </MudGrid>
+                    
+                
         </MudPaper>
         
-
-        <MudPaper>
-
-            <MudGrid>
-                <MudItem sm="2">
-                        <MudIconButton @onclick="LastPhoto" Icon="@Icons.Filled.NavigateBefore"></MudIconButton>
-                </MudItem>
-                <MudItem sm="8">
-                    @foreach (var photo in LastPhotos)
-                    {
-                        <MudImage ObjectFit="ObjectFit.Cover"
-                                  Fluid="false"
-                                  Height="25"
-                                  Width="25"
-                                  Elevation="25" Class="rounded-sm"
-                                  Src=@photo.Value.ThumbnailPath.Replace("wwwroot", "")>
-                        </MudImage>
-                    }
-    
-                    <MudImage Src="@CurrentPhoto.ThumbnailPath.Replace("wwwroot", "")"/>
-    
-                    @foreach (var photo in NextPhotos)
-                    {
-                        <MudImage ObjectFit="ObjectFit.Cover"
-                                  Fluid="false"
-                                  Height="25"
-                                  Width="25"
-                                  Elevation="25" Class="rounded-sm"
-                                  Src=@photo.Value.ThumbnailPath.Replace("wwwroot", "")>
-                        </MudImage>
-                    }
-                </MudItem>
-                
-                <MudItem sm="2">
-                          <MudIconButton @onclick="NextPhoto" Icon="@Icons.Filled.NavigateNext"></MudIconButton>
-                </MudItem>
-            </MudGrid>
+        <MudPaper Elevation="10" Style="margin: 10px;">
             
-            <MudStack Row="true">
-
+                        <MudPaper Elevation="20" Outlined="true" Square="true" Style="margin:10px; align-content: center ">
+                            <MudImage Fluid="true" 
+                                      ObjectPosition="ObjectPosition.Center"
+                                      ObjectFit="ObjectFit.ScaleDown"
+                                      Src="@CurrentPhoto.PhotoPath" Style="max-height: 500px; align-content: center; align-items: center; horiz-align: center">
+                        
+                            </MudImage>    
+                        </MudPaper>
             
-
-              
-
-
-            </MudStack>
         </MudPaper>
-
+        
     </MudStack>
-    
+
 </MudContainer>

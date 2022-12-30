@@ -5,21 +5,22 @@
 <MudPaper Width="250px" Class="py-3" Elevation="0">
     <MudNavMenu>
         <MudText Typo="Typo.h6" Class="px-4">Thomas's site</MudText>
-        
-        <MudNavLink Href="/" Icon=@Icons.Filled.Home Match="NavLinkMatch.All">About</MudNavLink>
-        
+
+        <MudNavLink Href="/" Icon="@Icons.Filled.Home" Match="NavLinkMatch.All">About</MudNavLink>
+
         <MudNavGroup Title="Photos" Icon="@Icons.Filled.Camera" Expanded="true">
-            <MudNavLink Icon="@Icons.Filled.PhotoAlbum" Href="/photoAlbums" Match="NavLinkMatch.Prefix">Overview</MudNavLink>
             @foreach (var album in GetAllAlbums())
             {
-                <MudNavLink Href=@GetAlbumRoute(album.Id) 
-                            Match="NavLinkMatch.Prefix">@album.Description</MudNavLink>
+                <MudNavLink Href=@GetAlbumRoute(album.Id)
+                            Match="NavLinkMatch.Prefix">
+                    @album.Description
+                </MudNavLink>
             }
+            <MudNavLink Icon="@Icons.Filled.PhotoAlbum" Href="/allPhotos" Match="NavLinkMatch.Prefix">All Photos</MudNavLink>
         </MudNavGroup>
-        
+
         <MudNavLink Href="/music" Match="NavLinkMatch.Prefix">Music</MudNavLink>
-        <MudNavLink Href="/projects" Match="NavLinkMatch.Prefix">Projects</MudNavLink>
-        <MudNavLink Href="/siteConfigPage" 
+        <MudNavLink Href="/siteConfigPage"
                     Icon="@Icons.Filled.Settings"
                     Match="NavLinkMatch.Prefix">
             Site Config
@@ -33,13 +34,13 @@
     {
         return $"/photoAlbum/{id}";
     }
-    
+
     private List<PhotoAlbum> GetAllAlbums()
     {
         if (DbFactory == null) return new List<PhotoAlbum>();
-        
+
         using var context = DbFactory.CreateDbContext();
-        var albums = context.PhotoAlbums.Where(x=>x.Description !="All The Rest").ToList();
+        var albums = context.PhotoAlbums.Where(x => x.Description != "All The Rest").ToList();
         return albums;
     }
 }

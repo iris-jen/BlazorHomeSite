@@ -5,6 +5,12 @@ namespace BlazorHomeSite.Pages;
 
 public partial class PhotoAlbumPage
 {
+    private const int PhotosPerPage = 50;
+
+    private string _albumId;
+
+    private int _page = 1;
+
     [Parameter]
     public string? AlbumId
     {
@@ -13,16 +19,12 @@ public partial class PhotoAlbumPage
         {
             _albumId = value;
             AllPhotos = GetAllPhotos();
-            Pages = (int)System.Double.Round(AllPhotos.Count / PhotosPerPage, 0);
+            Pages = (int)double.Round(AllPhotos.Count / PhotosPerPage, 0);
             PagePhotos = GetPhotosByPage(0, PhotosPerPage);
-            this.StateHasChanged();
+            StateHasChanged();
         }
     }
 
-    private string _albumId;
-    const int PhotosPerPage = 50;
-
-    private int _page = 1;
     private int Page
     {
         get => _page;
@@ -30,32 +32,36 @@ public partial class PhotoAlbumPage
         {
             _page = value;
             PagePhotos = GetPhotosByPage(value, PhotosPerPage);
-            this.StateHasChanged();
+            StateHasChanged();
         }
     }
+
     private int Pages { get; set; }
 
     private List<Photo>? AllPhotos { get; set; }
     private List<Photo>? PagePhotos { get; set; }
     public string? AlbumDescription { get; set; }
 
-    public string GetPhotoNavigaitonParams(int photoId) => $"photo/{int.Parse(AlbumId)}/{photoId}";
-    
+    public string GetPhotoNavigaitonParams(int photoId)
+    {
+        return $"photo/{int.Parse(AlbumId)}/{photoId}";
+    }
+
     private List<Photo>? GetAllPhotos()
     {
-        using var context =  DbFactory.CreateDbContext();
+        using var context = DbFactory.CreateDbContext();
 
         AlbumDescription = context.PhotoAlbums.FirstOrDefault(x => x.Id == int.Parse(AlbumId)).Description;
-        
+
         return context.Photos.Where(
-            x => x.Album.Id == int.Parse(AlbumId))
-            .OrderBy(x=>x.CaptureTime).ToList();
-    }
-    public List<Photo> GetPhotosByPage(int pageNumber, int itemsToTake)
-    {
-        return AllPhotos.OrderBy(x=>x.CaptureTime)
-                        .Skip(pageNumber> 1 ? pageNumber * itemsToTake : 0)
-                        .Take(itemsToTake).ToList();
+                x => x.Album.Id == int.Parse(AlbumId))
+            .OrderBy(x => x.CaptureTime).ToList();
     }
 
+    public List<Photo> GetPhotosByPage(int pageNumber, int itemsToTake)
+    {
+        return AllPhotos.OrderBy(x => x.CaptureTime)
+            .Skip(pageNumber > 1 ? pageNumber * itemsToTake : 0)
+            .Take(itemsToTake).ToList();
+    }
 }

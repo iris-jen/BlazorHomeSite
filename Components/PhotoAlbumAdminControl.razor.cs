@@ -10,7 +10,7 @@ public partial class PhotoAlbumAdminControl
     private const string MegaAlbumDescription = "All The Rest";
     [Inject] private IDbContextFactory<ApplicationDbContext> DbFactory { get; set; } = null!;
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
-    [Inject] private ILogger<PhotosAdminControl> Logger { get; set; } = null!;
+    [Inject] private ILogger<PhotoAlbumAdminControl> Logger { get; set; } = null!;
 
     private bool Working { get; set; }
 
@@ -107,24 +107,21 @@ public partial class PhotoAlbumAdminControl
     private void ClearAllAlbums()
     {
         Working = true;
-        if (DbFactory != null)
+        using var context = DbFactory.CreateDbContext();
+        var data =
+            context.PhotoAlbums.Include(x => x.Photos).ToArray();
+
+        for (var i = 0; i < data.Length; i++)
         {
-            using var context = DbFactory.CreateDbContext();
-            var data =
-                context.PhotoAlbums.Include(x => x.Photos).ToArray();
+            var photos = data[i].Photos;
+            if (photos != null)
+                context.Photos.RemoveRange(photos);
 
-            for (var i = 0; i < data.Length; i++)
-            {
-                var photos = data[i].Photos;
-                if (photos != null)
-                    context.Photos.RemoveRange(photos);
-
-                context.PhotoAlbums.Remove(data[i]);
-            }
-
-            context.SaveChanges();
-            Working = false;
-            StateHasChanged();
+            context.PhotoAlbums.Remove(data[i]);
         }
+
+        context.SaveChanges();
+        Working = false;
+        StateHasChanged();
     }
 }

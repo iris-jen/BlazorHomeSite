@@ -7,17 +7,28 @@ namespace BlazorHomeSite.Pages;
 public partial class PhotoPage
 {
     [Inject] private IDbContextFactory<ApplicationDbContext>? DbFactory { get; set; }
+    [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
 
-
-    private SortedList<int, Photo>? GetAllPhotos(int photoId, int albumId)
+    private SortedList<int, Photo>? GetAllPhotos(int photoId, int albumId, bool getByYear = false)
     {
         List<Photo>? photos = null;
         if (DbFactory != null)
-            photos = DataHelper.GetPhotoAlbum(DbFactory, albumId).Photos;
+        {
+            if (getByYear)
+            {
+                using var context = DbFactory.CreateDbContext();
+                photos = context.Photos.Where(x => x.CaptureTime.Year == albumId)
+                    .OrderBy(x => x.CaptureTime).ToList();
+            }
+            else
+            {
+                photos = DataHelper.GetPhotoAlbum(DbFactory, albumId).Photos;
+            }
+        }
+
 
         var outputPhotos = new SortedList<int, Photo>();
         var oderedPhotos = photos.OrderBy(x => x.CaptureTime).ToArray();
-
 
         for (var i = 0; i < oderedPhotos.Count(); i++)
         {
@@ -26,6 +37,10 @@ public partial class PhotoPage
             if (oderedPhotos[i].Id == photoId)
             {
                 CurrentPhoto = oderedPhotos[i];
+                IsAlbumCover = CurrentPhoto.IsAlbumCover;
+                PhotoDescription = CurrentPhoto.Description;
+                photoCaptureDate = CurrentPhoto.CaptureTime;
+                PhotoLocation = CurrentPhoto.Location;
                 CurrentPhotoIndex = i;
             }
         }
@@ -36,11 +51,11 @@ public partial class PhotoPage
         return outputPhotos;
     }
 
-    private void SetNextAndPreviousPhotos(int currentIndex, SortedList<int, Photo> photos, int nextPhotoLimit = 5)
+    private void SetNextAndPreviousPhotos(int currentIndex, SortedList<int, Photo> photos, int nextPhotoLimit = 3)
     {
         NextPhotos.Clear();
         LastPhotos.Clear();
-        for (var i = currentIndex + 1; i < currentIndex + nextPhotoLimit + 1 && i <= photos.Count; i++)
+        for (var i = currentIndex + 1; i < currentIndex + nextPhotoLimit + 1 && i <= photos.Count-1; i++)
             NextPhotos.Add(i, photos[i]);
 
         for (var i = currentIndex - 1; i > currentIndex - nextPhotoLimit - 1 && i >= 0; i--)
@@ -59,16 +74,29 @@ public partial class PhotoPage
 
     private void NextPhoto()
     {
+        if (CurrentPhotoIndex == Photos.Count - 1) return;
         CurrentPhotoIndex++;
+        
         CurrentPhoto = Photos[CurrentPhotoIndex];
+        IsAlbumCover = CurrentPhoto.IsAlbumCover;
+        PhotoDescription = CurrentPhoto.Description;
+        photoCaptureDate = CurrentPhoto.CaptureTime;
+        PhotoLocation = CurrentPhoto.Location;
         SetNextAndPreviousPhotos(CurrentPhotoIndex, Photos);
         StateHasChanged();
+
     }
 
     private void LastPhoto()
     {
+        if (CurrentPhotoIndex == 0) return;
         CurrentPhotoIndex--;
         CurrentPhoto = Photos[CurrentPhotoIndex];
+        IsAlbumCover = CurrentPhoto.IsAlbumCover;
+        PhotoDescription = CurrentPhoto.Description;
+        photoCaptureDate = CurrentPhoto.CaptureTime;
+        PhotoLocation = CurrentPhoto.Location;
+
         SetNextAndPreviousPhotos(CurrentPhotoIndex, Photos);
         StateHasChanged();
     }
@@ -79,8 +107,30 @@ public partial class PhotoPage
         CurrentPhoto.Location = PhotoLocation;
         CurrentPhoto.LocationCoOrdinates = PhotoCoOrdinates;
         CurrentPhoto.IsAlbumCover = IsAlbumCover;
+        CurrentPhoto.CaptureTime = photoCaptureDate.Value;
         EditPhotoInformation = false;
         StateHasChanged();
+
+        using var context = DbFactory.CreateDbContext();
+        context.Update(CurrentPhoto);
+        context.SaveChanges();
+    }
+
+    private void DeletePhoto()
+    {
+        using var context = DbFactory.CreateDbContext();
+        var id = CurrentPhoto.Id;
+        var thumbnailPath = CurrentPhoto.ThumbnailPath;
+        var photoPath = CurrentPhoto.PhotoPath;
+
+        var fullThumbPath = Path.Combine(HostEnvironment.WebRootPath, thumbnailPath);
+        var fullPhotoPath = Path.Combine(HostEnvironment.WebRootPath, photoPath);
+        NextPhoto();
+
+        context.Photos.Remove(new Photo { Id = id });
+        File.Delete(fullThumbPath);
+        File.Delete(fullPhotoPath);
+        context.SaveChanges();
     }
 
     private void SetEdit(bool edit)
@@ -108,7 +158,15 @@ public partial class PhotoPage
         set
         {
             _photoId = value;
-            Photos = GetAllPhotos(int.Parse(_photoId), int.Parse(AlbumId));
+            if (AlbumId.StartsWith("year_"))
+            {
+                var year = AlbumId.Split('_')[1];
+                Photos = GetAllPhotos(int.Parse(_photoId), int.Parse(year), true);
+            }
+            else
+            {
+                Photos = GetAllPhotos(int.Parse(_photoId), int.Parse(AlbumId));
+            }
         }
     }
 
@@ -136,6 +194,8 @@ public partial class PhotoPage
     public string PhotoLocation { get; set; }
     public string PhotoCoOrdinates { get; set; }
     public string PhotoDescription { get; set; }
+
+    private DateTime? photoCaptureDate;
     public bool IsAlbumCover { get; set; }
 
     #endregion

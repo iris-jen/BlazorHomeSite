@@ -1,4 +1,5 @@
 using BlazorHomeSite.Data;
+using Howler.Blazor.Components;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 
@@ -14,6 +15,8 @@ builder.Services.AddDbContextFactory<ApplicationDbContext>
     opt.UseSqlite(connectionString)
 );
 
+builder.Services.AddScoped<IHowl, Howl>();
+builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();

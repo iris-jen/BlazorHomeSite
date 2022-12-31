@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BlazorHomeSite.Data.Music;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlazorHomeSite.Data;
 
@@ -12,6 +13,9 @@ public class ApplicationDbContext : DbContext
     public DbSet<Photo> Photos => Set<Photo>();
     public DbSet<PhotoAlbum> PhotoAlbums => Set<PhotoAlbum>();
     public DbSet<PhotoTags> PhotoTags => Set<PhotoTags>();
+    public DbSet<Album> Albums => Set<Album>();
+    public DbSet<Song> Songs => Set<Song>();
+
 
     protected override void OnModelCreating(ModelBuilder mb)
     {
@@ -34,5 +38,9 @@ public class ApplicationDbContext : DbContext
         mb.Entity<Photo>()
             .HasOne(x => x.Album)
             .WithMany(x => x.Photos);
+
+        mb.Entity<Album>().HasKey(x => x.Id);
+
+        mb.Entity<Song>().HasOne(x => x.Album).WithMany(x => x.Songs);
     }
 }

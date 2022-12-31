@@ -2,13 +2,14 @@
 
 <MudContainer>
 
-    <div Style="width: 100%; height: 100%; top: 0; left: 0; vertical-align: center; margin-top: 5%">
+    <div Style="width: 100%; top: 0; left: 0; vertical-align: center; margin-top: 0%">
         <MudImage Src="site-photos/home-background.jpg"
                   ObjectFit="ObjectFit.Cover"
+                  Height="100"
                   Fluid="true"/>
     </div>
 
-    <div Style=" z-index: 9; opacity: 0.85; margin-top: -120%; margin-left: 5%; margin-right: 5%;">
+    <div Style=" z-index: 9; opacity: 0.95; margin-top: -120%; margin-left: 5%; margin-right: 5%;">
         <MudPaper Elevation="2" Class="pa-4" Outlined="true" Style="background: #ff42a4">
             <MudAvatar Image="/site-photos/avatar.jpg"/>
             <MudText Typo="Typo.h4" Color="Color.Dark" Style="opacity: 100%;">Hi I'm Thomas, welcome to my site!</MudText>
@@ -25,19 +26,16 @@
         </MudPaper>
     </div>
 
-    <MudCard Style="z-index: 12; opacity: 0.95; margin-left: 5%; margin-right: 5% ">
-        <MudStack Row="true">
-            <MudCardContent>
-                <MudButton Href="https://github.com"
+    
+    <MudCard Style="z-index: 12; margin-top:20px; width: 200px; opacity: 0.95; margin-left: 5%; margin-right: 5% ">
+        <MudCardContent>
+                <MudButton Href="https://github.com/ThomasJennison/BlazorHomeSite"
                            Target="_blank"
                            Variant="Variant.Filled"
                            EndIcon="@Icons.Custom.Brands.GitHub"
                            Color="Color.Primary">
-                    Project Github Link
+                    Website Code
                 </MudButton>
             </MudCardContent>
-
-        </MudStack>
-
     </MudCard>
 </MudContainer>

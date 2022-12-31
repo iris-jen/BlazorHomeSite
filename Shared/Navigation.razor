@@ -4,8 +4,6 @@
 
 <MudPaper Width="250px" Class="py-3" Elevation="0">
     <MudNavMenu>
-        <MudText Typo="Typo.h6" Class="px-4">Thomas's site</MudText>
-
         <MudNavLink Href="/" Icon="@Icons.Filled.Home" Match="NavLinkMatch.All">About</MudNavLink>
 
         <MudNavGroup Title="Photos" Icon="@Icons.Filled.Camera" Expanded="true">
@@ -13,10 +11,19 @@
             {
                 <MudNavLink Href=@GetAlbumRoute(album.Id)
                             Match="NavLinkMatch.Prefix">
-                    @album.Description
+                    <MudStack Row="true">
+                        <MudImage Width="20" Height="20" Src="@GetThumbnailForAlbum(album.Id)"></MudImage>
+                        <MudPaper Elevation="5">
+                            @album.Description
+                        </MudPaper>
+
+                    </MudStack>
                 </MudNavLink>
             }
-            <MudNavLink Icon="@Icons.Filled.PhotoAlbum" Href="/allPhotos" Match="NavLinkMatch.Prefix">All Photos</MudNavLink>
+            <MudPaper Style="margin-left: 10px; margin-right: 10px">
+                <MudNavLink Icon="@Icons.Filled.PhotoAlbum" Href="/allPhotos" Match="NavLinkMatch.Prefix">All Photos</MudNavLink>
+            </MudPaper>
+
         </MudNavGroup>
 
         <MudNavLink Href="/music" Match="NavLinkMatch.Prefix">Music</MudNavLink>
@@ -33,6 +40,13 @@
     private string GetAlbumRoute(int id)
     {
         return $"/photoAlbum/{id}";
+    }
+
+    private string? GetThumbnailForAlbum(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        var cover = context.Photos.FirstOrDefault(x => x.AlbumId == id && x.IsAlbumCover);
+        return cover?.ThumbnailPath.Replace("wwwroot", "");
     }
 
     private List<PhotoAlbum> GetAllAlbums()

@@ -5,12 +5,13 @@
 <MudSnackbarProvider/>
 
 <MudLayout>
-    <MudAppBar>
+    
+    <MudAppBar Dense="true">
         <MudIconButton Icon="@Icons.Material.Filled.Menu"
                        Color="Color.Inherit"
                        Edge="Edge.Start"
                        OnClick="@(e => DrawerToggle())"/>
-        Thomas Jennison
+        Thomas's Site
     </MudAppBar>
     <MudDrawer @bind-Open="@_drawerOpen">
         <Navigation/>

@@ -9,8 +9,6 @@ public partial class PhotoPage
     private readonly SortedList<int, Photo?> _lastPhotos = new();
     private readonly SortedList<int, Photo?> _nextPhotos = new();
 
-    private DateTime? _photoCaptureDate;
-
     private SortedList<int, Photo?> _photos = new();
     [Inject] private IDbContextFactory<ApplicationDbContext>? DbFactory { get; set; }
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
@@ -24,18 +22,6 @@ public partial class PhotoPage
 
     protected Photo? CurrentPhoto;
 
-    protected string? AlbumDescription;
-
-    protected bool EditPhotoInformation;
-
-    protected string? PhotoLocation;
-
-    protected string? PhotoCoOrdinates;
-
-    protected string? PhotoDescription;
-
-    protected bool IsAlbumCover;
-
     private static System.Timers.Timer? autoPlayTimer;
 
     protected override async Task OnInitializedAsync()
@@ -43,12 +29,12 @@ public partial class PhotoPage
         await using var context = await DbFactory?.CreateDbContextAsync()!;
 
         var photoId = int.Parse(PhotoId ?? "-1");
-        if (AlbumId.StartsWith("year_"))
+        if (AlbumId != null && AlbumId.StartsWith("year_"))
         {
             var year = int.Parse(AlbumId.Split('_')[1]);
             _photos = await GetAllPhotos(photoId, year, true);
         }
-        else
+        else if (AlbumId != null)
         {
             _photos = await GetAllPhotos(photoId, int.Parse(AlbumId));
         }
@@ -56,9 +42,8 @@ public partial class PhotoPage
 
     private void StartAutoPlay()
     {
-        // Create a timer with a two second interval.
         autoPlayTimer = new System.Timers.Timer(1000);
-        // Hook up the Elapsed event for the timer.
+
         autoPlayTimer.Elapsed += AutoPlayTimer_Elapsed;
         autoPlayTimer.AutoReset = true;
         autoPlayTimer.Enabled = true;
@@ -96,25 +81,20 @@ public partial class PhotoPage
         }
 
         var outputPhotos = new SortedList<int, Photo?>();
-        var photoArray = photos.OrderBy(x => x.CaptureTime).ToArray();
-
-        for (var i = 0; i < photoArray.Length; i++)
+        if (photos != null)
         {
-            outputPhotos.Add(i, photoArray[i]);
-            if (photoArray[i].Id != photoId) continue;
-            CurrentPhoto = photoArray[i];
-            if (CurrentPhoto != null)
+            var photoArray = photos.OrderBy(x => x.CaptureTime).ToArray();
+
+            for (var i = 0; i < photoArray.Length; i++)
             {
-                IsAlbumCover = CurrentPhoto.IsAlbumCover;
-                PhotoDescription = CurrentPhoto.Description;
-                _photoCaptureDate = CurrentPhoto.CaptureTime;
-                PhotoLocation = CurrentPhoto.Location;
+                outputPhotos.Add(i, photoArray[i]);
+                if (photoArray[i].Id != photoId) continue;
+                CurrentPhoto = photoArray[i];
+                CurrentPhotoIndex = i;
             }
 
-            CurrentPhotoIndex = i;
+            SetNextAndPreviousPhotos(CurrentPhotoIndex, outputPhotos);
         }
-
-        SetNextAndPreviousPhotos(CurrentPhotoIndex, outputPhotos);
 
         return outputPhotos;
     }
@@ -137,21 +117,13 @@ public partial class PhotoPage
             _lastPhotos.Add(i, photos[i]);
     }
 
-    private static bool EnableEdit()
-    {
-        return true;
-    }
-
     private void NextPhoto()
     {
         if (CurrentPhotoIndex == _photos.Count - 1) return;
         CurrentPhotoIndex++;
 
         CurrentPhoto = _photos[CurrentPhotoIndex];
-        IsAlbumCover = CurrentPhoto!.IsAlbumCover;
-        PhotoDescription = CurrentPhoto.Description;
-        _photoCaptureDate = CurrentPhoto.CaptureTime;
-        PhotoLocation = CurrentPhoto.Location;
+
         SetNextAndPreviousPhotos(CurrentPhotoIndex, _photos);
         StateHasChanged();
     }
@@ -161,28 +133,9 @@ public partial class PhotoPage
         if (CurrentPhotoIndex == 0) return;
         CurrentPhotoIndex--;
         CurrentPhoto = _photos[CurrentPhotoIndex];
-        IsAlbumCover = CurrentPhoto!.IsAlbumCover;
-        PhotoDescription = CurrentPhoto.Description;
-        _photoCaptureDate = CurrentPhoto.CaptureTime;
-        PhotoLocation = CurrentPhoto.Location;
 
         SetNextAndPreviousPhotos(CurrentPhotoIndex, _photos);
         StateHasChanged();
-    }
-
-    private async Task UpdatePhoto()
-    {
-        CurrentPhoto!.Description = PhotoDescription;
-        CurrentPhoto.Location = PhotoLocation;
-        CurrentPhoto.LocationCoOrdinates = PhotoCoOrdinates;
-        CurrentPhoto.IsAlbumCover = IsAlbumCover;
-        CurrentPhoto.CaptureTime = _photoCaptureDate!.Value;
-        EditPhotoInformation = false;
-        StateHasChanged();
-
-        await using var context = await DbFactory?.CreateDbContextAsync()!;
-        context.Update(CurrentPhoto);
-        await context?.SaveChangesAsync()!;
     }
 
     private async Task DeletePhoto()

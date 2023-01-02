@@ -22,6 +22,8 @@ public partial class MusicAlbumPage
 
     protected override async Task OnInitializedAsync()
     {
+        await base.OnInitializedAsync();
+
         await using var context = await DbFactory?.CreateDbContextAsync()!;
 
         var parsedId = -1;
@@ -74,7 +76,7 @@ public partial class MusicAlbumPage
 
     protected async Task Play()
     {
-        if (Howl != null)
+        if (Howl != null && selectedSong != null)
         {
             soundId = await Howl.Play(selectedSong.Path);
         }

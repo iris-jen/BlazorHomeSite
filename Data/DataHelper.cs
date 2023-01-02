@@ -1,8 +1,8 @@
+using Microsoft.EntityFrameworkCore;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text;
 using System.Text.RegularExpressions;
-using Microsoft.EntityFrameworkCore;
 
 namespace BlazorHomeSite.Data;
 
@@ -35,6 +35,8 @@ public static class DataHelper
         var outputDate = DateTime.Now;
 
         using var stream = new MemoryStream();
+
+#pragma warning disable CA1416 // Validate platform compatibility
         using (var sourceImage = Image.FromFile(sourcePath))
         {
             using (var image = new Bitmap(sourceImage, new Size(newWidth, newHeight)))
@@ -42,42 +44,58 @@ public static class DataHelper
                 if (sourceImage.PropertyIdList.Contains(DateTaken))
                 {
                     var propItem = sourceImage.GetPropertyItem(DateTaken);
-                    var dateTaken = r.Replace(Encoding.UTF8.GetString(propItem.Value), "-", 2);
-                    DateTime.TryParse(dateTaken, out outputDate);
+                    if (propItem != null && propItem.Value != null)
+                    {
+                        var dateTaken = r.Replace(Encoding.UTF8.GetString(propItem.Value), "-", 2);
+                        _ = DateTime.TryParse(dateTaken, out outputDate);
+                    }
                 }
 
                 if (sourceImage.PropertyIdList.Contains(OrientationKey))
                 {
-                    var orientation = (int)sourceImage.GetPropertyItem(OrientationKey).Value[0];
-                    switch (orientation)
+                    var orientationPropItem = sourceImage.GetPropertyItem(OrientationKey);
+                    if (orientationPropItem != null && orientationPropItem.Value != null &&
+                        orientationPropItem.Value.Length >= 1)
                     {
-                        case NotSpecified:
-                        case NormalOrientation:
-                            break;
-                        case MirrorHorizontal:
-                            image.RotateFlip(RotateFlipType.RotateNoneFlipX);
-                            break;
-                        case UpsideDown:
-                            image.RotateFlip(RotateFlipType.Rotate180FlipNone);
-                            break;
-                        case MirrorVertical:
-                            image.RotateFlip(RotateFlipType.Rotate180FlipX);
-                            break;
-                        case MirrorHorizontalAndRotateRight:
-                            image.RotateFlip(RotateFlipType.Rotate90FlipX);
-                            break;
-                        case RotateLeft:
-                            image.RotateFlip(RotateFlipType.Rotate90FlipNone);
-                            break;
-                        case MirorHorizontalAndRotateLeft:
-                            image.RotateFlip(RotateFlipType.Rotate270FlipX);
-                            break;
-                        case RotateRight:
-                            image.RotateFlip(RotateFlipType.Rotate270FlipNone);
-                            break;
-                        default:
-                            throw new NotImplementedException(
-                                "An orientation of " + orientation + " isn't implemented.");
+                        var orientation = (int)orientationPropItem.Value[0];
+                        switch (orientation)
+                        {
+                            case NotSpecified:
+                            case NormalOrientation:
+                                break;
+
+                            case MirrorHorizontal:
+                                image.RotateFlip(RotateFlipType.RotateNoneFlipX);
+                                break;
+
+                            case UpsideDown:
+                                image.RotateFlip(RotateFlipType.Rotate180FlipNone);
+                                break;
+
+                            case MirrorVertical:
+                                image.RotateFlip(RotateFlipType.Rotate180FlipX);
+                                break;
+
+                            case MirrorHorizontalAndRotateRight:
+                                image.RotateFlip(RotateFlipType.Rotate90FlipX);
+                                break;
+
+                            case RotateLeft:
+                                image.RotateFlip(RotateFlipType.Rotate90FlipNone);
+                                break;
+
+                            case MirorHorizontalAndRotateLeft:
+                                image.RotateFlip(RotateFlipType.Rotate270FlipX);
+                                break;
+
+                            case RotateRight:
+                                image.RotateFlip(RotateFlipType.Rotate270FlipNone);
+                                break;
+
+                            default:
+                                throw new NotImplementedException(
+                                    "An orientation of " + orientation + " isn't implemented.");
+                        }
                     }
                 }
 
@@ -88,6 +106,7 @@ public static class DataHelper
 
             sourceImage.Dispose();
         }
+#pragma warning restore CA1416 // Validate platform compatibility
 
         stream.Close();
         return outputDate;

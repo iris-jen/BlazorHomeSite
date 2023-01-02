@@ -4,10 +4,10 @@ public class Song
 {
     public int Id { get; set; }
 
-    public string SongName { get; set; }
-    public string Lyrics { get; set; }
-    public string Path { get; set; }
-    public string Format { get; set; }
-    public Album Album { get; set; }
+    public string SongName { get; set; } = string.Empty;
+    public string Lyrics { get; set; } = string.Empty;
+    public string Path { get; set; } = string.Empty;
+    public string Format { get; set; } = string.Empty;
+    public Album Album { get; set; } = new Album();
     public int AlbumId { get; set; }
 }

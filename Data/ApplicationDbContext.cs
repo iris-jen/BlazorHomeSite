@@ -16,7 +16,6 @@ public class ApplicationDbContext : DbContext
     public DbSet<Album> Albums => Set<Album>();
     public DbSet<Song> Songs => Set<Song>();
 
-
     protected override void OnModelCreating(ModelBuilder mb)
     {
         mb.Entity<PhotoAlbum>()

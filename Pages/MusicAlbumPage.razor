@@ -3,26 +3,28 @@
 <MudStack>
 
 
-    <MudImage Src="@album.AlbumCover" Height="200">
-    </MudImage>
+    @if(album != null)
+    {
+        <MudImage Src="@album.AlbumCover" Height="200"/>
 
-    <MudText>@album.AlbumName</MudText>
-    <MudText>@album.Description</MudText>
+        <MudText>@album.AlbumName</MudText>
+        <MudText>@album.Description</MudText>
 
+        <MudButton class="btn btn-primary oi oi-media-play" @onclick="Play"></MudButton>
+        <MudButton class="btn btn-primary oi oi-media-stop" @onclick="Stop"></MudButton>
+        <MudButton class="btn btn-primary oi oi-media-pause" @onclick="Pause"></MudButton>
+        <MudText> @Howl.GetCurrentTime(soundId) </MudText>
+        <MudText> TotalTime : @totalSongTime</MudText>
+        <MudText> State : @playbackState</MudText>
 
-    <button class="btn btn-primary oi oi-media-play" @onclick="Play"></button>
-    <button class="btn btn-primary oi oi-media-stop" @onclick="Stop"></button>
-    <button class="btn btn-primary oi oi-media-pause" @onclick="Pause"></button>
-    <pre>TotalTime : @totalSongTime</pre>
-    <pre>State : @playbackState</pre>
+        <MudTable Items="@album.Songs" FixedHeader="true">
+            <RowTemplate>
+                <MudTd>@context.SongName</MudTd>
+                <MudTd><MudButton OnClick="async ()=> await SetSelectedSong(context)" EndIcon="@Icons.Filled.PlayCircle">Play</MudButton></MudTd>
+            </RowTemplate>
 
+        </MudTable>
+    }
 
-    <MudTable Items="@album.Songs" FixedHeader="true">
-        <RowTemplate>
-            <MudTd>@context.SongName</MudTd>
-            <MudTd><MudButton OnClick="async ()=> await SetSelectedSong(context)" EndIcon="@Icons.Filled.PlayCircle">Play</MudButton></MudTd>
-        </RowTemplate>
-
-    </MudTable>
 
 </MudStack>

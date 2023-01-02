@@ -1,67 +1,50 @@
 using BlazorHomeSite.Data;
 using Microsoft.AspNetCore.Components;
+using Microsoft.EntityFrameworkCore;
+using System.Reflection.Metadata.Ecma335;
 
 namespace BlazorHomeSite.Pages;
 
 public partial class PhotoAlbumPage
 {
-    private const int PhotosPerPage = 50;
-
-    private string _albumId;
-
-    private int _page = 1;
-
     [Parameter]
-    public string? AlbumId
-    {
-        get => _albumId;
-        set
-        {
-            _albumId = value;
-            AllPhotos = GetAllPhotos();
-            Pages = (int)double.Round(AllPhotos.Count / PhotosPerPage, 0);
-            PagePhotos = GetPhotosByPage(0, PhotosPerPage);
-            StateHasChanged();
-        }
-    }
+    public string? AlbumId { get; set; }
 
-    private int Page
-    {
-        get => _page;
-        set
-        {
-            _page = value;
-            PagePhotos = GetPhotosByPage(value, PhotosPerPage);
-            StateHasChanged();
-        }
-    }
-
-    private int Pages { get; set; }
-
-    private List<Photo>? AllPhotos { get; set; }
-    private List<Photo>? PagePhotos { get; set; }
-    public string? AlbumDescription { get; set; }
+    protected int currentPage = 1;
+    protected int numberOfPages;
+    protected List<Photo> allPhotos = new();
+    protected List<Photo> pagePhotos = new();
+    protected string albumDescription = string.Empty;
+    private const int PhotosPerPage = 50;
 
     public string GetPhotoNavigaitonParams(int photoId)
     {
-        return $"photo/{int.Parse(AlbumId)}/{photoId}";
+        return $"photo/{int.Parse(AlbumId ?? "-1")}/{photoId}";
     }
 
-    private List<Photo>? GetAllPhotos()
+    protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
+        await base.OnInitializedAsync();
 
-        AlbumDescription = context.PhotoAlbums.FirstOrDefault(x => x.Id == int.Parse(AlbumId)).Description;
-
-        return context.Photos.Where(
-                x => x.Album.Id == int.Parse(AlbumId))
-            .OrderBy(x => x.CaptureTime).ToList();
+        allPhotos = await GetAllPhotosAsync();
+        numberOfPages = (int)double.Round(allPhotos.Count / PhotosPerPage, 0);
+        StateHasChanged();
     }
 
-    public List<Photo> GetPhotosByPage(int pageNumber, int itemsToTake)
+    private async Task<List<Photo>> GetAllPhotosAsync()
     {
-        return AllPhotos.OrderBy(x => x.CaptureTime)
-            .Skip(pageNumber > 1 ? pageNumber * itemsToTake : 0)
-            .Take(itemsToTake).ToList();
+        await using var context = await DbFactory.CreateDbContextAsync();
+
+        if (context != null && context.PhotoAlbums != null && int.TryParse(AlbumId, out var parsedAlbumId))
+        {
+            var album = context.PhotoAlbums.FirstOrDefault(x => x.Id == parsedAlbumId);
+
+            if (album != null) albumDescription = album.Description ?? "";
+
+            return await context.Photos.Where(x => x.Album != null && x.Album.Id == parsedAlbumId)
+                                       .OrderBy(x => x.CaptureTime).ToListAsync();
+        }
+
+        return new List<Photo>();
     }
 }

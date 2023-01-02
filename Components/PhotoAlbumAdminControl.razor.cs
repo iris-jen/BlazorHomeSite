@@ -1,7 +1,7 @@
-using System.Collections.Concurrent;
 using BlazorHomeSite.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Concurrent;
 
 namespace BlazorHomeSite.Components;
 
@@ -20,8 +20,8 @@ public partial class PhotoAlbumAdminControl
         {
             foreach (var photo in await context.Photos.ToListAsync())
             {
-                photo.ThumbnailPath = photo.ThumbnailPath.Replace("wwwroot", "");
-                photo.PhotoPath = photo.PhotoPath.Replace("wwwroot", "");
+                if (photo.ThumbnailPath != null) photo.ThumbnailPath = photo.ThumbnailPath.Replace("wwwroot", "");
+                if (photo.PhotoPath != null) photo.PhotoPath = photo.PhotoPath.Replace("wwwroot", "");
                 context.Photos.Update(photo);
                 await context.SaveChangesAsync();
             }
@@ -81,7 +81,7 @@ public partial class PhotoAlbumAdminControl
     private static async Task<int> GetOrCreateMegaAlbum(ApplicationDbContext context)
     {
         var megaAlbum = await context.PhotoAlbums
-            .FirstOrDefaultAsync(x => x.Description.Equals(MegaAlbumDescription));
+            .FirstOrDefaultAsync(x => x.Description != null && x.Description.Equals(MegaAlbumDescription));
 
         if (megaAlbum != null) return -1;
 

@@ -63,6 +63,10 @@
                 <MudItem xs="2">
                     <MudIconButton Color="Color.Success" @onclick="NextPhoto" Icon="@Icons.Filled.NavigateNext"></MudIconButton>
                 </MudItem>
+                <MudItem xs="12">
+                    <MudButton OnClick="StartAutoPlay">Start Slide Show</MudButton>
+                    <MudButton OnClick="StopAutoPlay">Stop Slide Show</MudButton>
+                </MudItem>
             </MudGrid>
 
         </MudPaper>

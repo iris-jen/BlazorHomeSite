@@ -1,6 +1,4 @@
 using BlazorHomeSite.Data;
-using BlazorHomeSite.Data.Music;
-using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
@@ -34,11 +32,9 @@ public partial class AllPhotosPage
             yearSelectedPages.Add(year, 1);
         }
     }
-    
 
     protected void TriggerStateChange()
     {
         StateHasChanged();
     }
-
 }

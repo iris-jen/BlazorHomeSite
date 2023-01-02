@@ -8,16 +8,20 @@ public partial class Navigation
 {
     [Inject] private IDbContextFactory<ApplicationDbContext>? DbFactory { get; set; }
 
-    private string GetAlbumRoute(int id)
+    private static string GetAlbumRoute(int id)
     {
         return $"/photoAlbum/{id}";
     }
 
     private string? GetThumbnailForAlbum(int id)
     {
-        using var context = DbFactory.CreateDbContext();
-        var cover = context.Photos.FirstOrDefault(x => x.AlbumId == id && x.IsAlbumCover);
-        return cover?.ThumbnailPath;
+        if (DbFactory != null)
+        {
+            using var context = DbFactory.CreateDbContext();
+            var cover = context.Photos.FirstOrDefault(x => x.AlbumId == id && x.IsAlbumCover);
+            return cover?.ThumbnailPath;
+        }
+        return string.Empty;
     }
 
     private List<PhotoAlbum> GetAllAlbums()

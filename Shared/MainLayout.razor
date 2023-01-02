@@ -5,28 +5,17 @@
 <MudSnackbarProvider/>
 
 <MudLayout>
-    
     <MudAppBar Dense="true">
         <MudIconButton Icon="@Icons.Material.Filled.Menu"
                        Color="Color.Inherit"
                        Edge="Edge.Start"
-                       OnClick="@(e => DrawerToggle())"/>
+                       OnClick="DrawerToggle"/>
         Thomas's Site
     </MudAppBar>
-    <MudDrawer @bind-Open="@_drawerOpen">
+    <MudDrawer @bind-Open="@DrawerOpen">
         <Navigation/>
     </MudDrawer>
     <MudMainContent>
         @Body
     </MudMainContent>
 </MudLayout>
-
-@code {
-    bool _drawerOpen = true;
-
-    void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
-    }
-
-}

@@ -14,6 +14,20 @@ public partial class PhotoAlbumAdminControl
 
     private bool Working { get; set; }
 
+    private async Task SanatizePhotoPaths()
+    {
+        await using (var context = await DbFactory?.CreateDbContextAsync()!)
+        {
+            foreach (var photo in await context.Photos.ToListAsync())
+            {
+                photo.ThumbnailPath = photo.ThumbnailPath.Replace("wwwroot", "");
+                photo.PhotoPath = photo.PhotoPath.Replace("wwwroot", "");
+                context.Photos.Update(photo);
+                await context.SaveChangesAsync();
+            }
+        }
+    }
+
     private async Task AddWebRootPhotosToDb()
     {
         try
@@ -34,7 +48,7 @@ public partial class PhotoAlbumAdminControl
                 Logger.LogInformation($"Processing {dir.Name}");
                 if (dir.Name.StartsWith("all_"))
                 {
-                    await SavePhotos(dir, megaAlbumId);
+                    await SavePhotos(dir.EnumerateFiles(), dir.Name, megaAlbumId);
                 }
                 else
                 {
@@ -49,7 +63,7 @@ public partial class PhotoAlbumAdminControl
                         await context.SaveChangesAsync();
                     }
 
-                    await SavePhotos(dir, tempAlbum.Id);
+                    await SavePhotos(dir.EnumerateFiles(), dir.Name, tempAlbum.Id);
                 }
 
                 Logger.LogInformation($@"Finished Processing {dir.Name}");
@@ -80,10 +94,10 @@ public partial class PhotoAlbumAdminControl
         return allPhotos.Id;
     }
 
-    private async Task SavePhotos(DirectoryInfo directory, int albumId)
+    private async Task SavePhotos(IEnumerable<FileInfo> files, string dirName, int albumId)
     {
         var bag = new ConcurrentBag<Photo>();
-        Parallel.ForEach(directory.EnumerateFiles(), file =>
+        Parallel.ForEach(files, file =>
         {
             var dateTaken = DataHelper.ShrinkImage(file.FullName,
                 Path.Combine(HostEnvironment.WebRootPath, "photos", "thumbs", file.Name),
@@ -92,7 +106,7 @@ public partial class PhotoAlbumAdminControl
 
             bag.Add(new Photo
             {
-                PhotoPath = Path.Combine("photos", directory.Name, file.Name),
+                PhotoPath = Path.Combine("photos", dirName, file.Name),
                 ThumbnailPath = Path.Combine("photos", "thumbs", file.Name),
                 CaptureTime = dateTaken,
                 AlbumId = albumId

@@ -13,30 +13,36 @@
     <MudTabs Outlined="true" Position="Position.Left" Rounded="true" Border="true"
              ApplyEffectsToContainer="true" Class="mt-8" PanelClass="pa-6">
 
-        @foreach (var year in GetYears())
+        @foreach (var year in years)
         {
             <MudTabPanel Text="@year.ToString()">
                 <MudPaper Elevation="10" Style="margin: 5px">
                     <MudContainer MaxWidth="MaxWidth.Large">
-                        <MudGrid Style="margin: 10px">
+                        <MudStack Justify="Justify.Center">
+                            <div class="d-flex flex-column align-center">
+                                <MudPagination Rectangular="true" Variant="Variant.Filled" @bind-Selected="@yearSelectedPages[year]" Count="@yearPages[year]" />
+                            </div>
+                            <MudGrid Style="margin: 10px">
 
-                            @foreach (var photo in GetPhotosByYear(year))
-                            {
-                                <MudItem sm="2">
-                                    <MudNavLink Style="margin-left: -10px; margin-right: -10px; margin-top: -10px; margin-bottom:-15px" Href=@GetPhotoNavigaitonParams(photo.Id, year)>
-                                        <MudImage ObjectFit="ObjectFit.Cover"
-                                                  Fluid="false"
-                                                  Height="50"
-                                                  Width="50"
-                                                  Elevation="25" Class="rounded-sm"
-                                                  Src=@photo.ThumbnailPath.Replace("wwwroot", "")>
-                                        </MudImage>
-                                    </MudNavLink>
-                                </MudItem>
-                            }
+     
+                                @foreach (var photo in yearPhotos[year].Skip(yearSelectedPages[year] == 1 ? 0 : yearSelectedPages[year] * photosPerPage).Take(photosPerPage))
+                                {
+                                    <MudItem sm="2">
+                                        <MudNavLink Style="margin-left: -10px; margin-right: -10px; margin-top: -10px; margin-bottom:-15px" Href=@GetPhotoNavigaitonParams(photo.Id, year)>
+                                            <MudImage ObjectFit="ObjectFit.Cover"
+                                                      Fluid="false"
+                                                      Height="50"
+                                                      Width="50"
+                                                      Elevation="25" Class="rounded-sm"
+                                                      Src=@photo.ThumbnailPath>
+                                            </MudImage>
+                                        </MudNavLink>
+                                    </MudItem>
+                                }
 
-                        </MudGrid>
-
+                            </MudGrid>
+                   
+                        </MudStack>
                     </MudContainer>
                 </MudPaper>
             </MudTabPanel>

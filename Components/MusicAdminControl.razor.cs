@@ -18,32 +18,39 @@ public partial class MusicAdminControl
 
         foreach (var dir in musicRoot.EnumerateDirectories())
         {
-            var album = new Album()
+            var album = new Album
             {
                 AlbumName = dir.Name,
+                Description = "",
                 Songs = new List<Song>()
             };
 
             foreach (var file in dir.EnumerateFiles())
-            {
-                var song = new Song()
+                if (file.Name.EndsWith(".mp3"))
                 {
-                    SongName = file.Name,
-                };
-                album.Songs.Add(song);
-            }
+                    var song = new Song
+                    {
+                        SongName = file.Name,
+                        Path = Path.Combine("music", dir.Name, file.Name),
+                        Lyrics = "",
+                        Format = file.Name.Split('.')[1]
+                    };
+                    album.Songs.Add(song);
+                }
+                else if (file.Name.EndsWith(".jpg"))
+                {
+                    album.AlbumCover = Path.Combine("music", dir.Name, file.Name);
+                }
 
             await context.Albums.AddAsync(album);
             await context.SaveChangesAsync();
         }
-        
-
     }
-    
+
     public async Task ClearAlbums()
     {
         await using var context = await DbFactory?.CreateDbContextAsync()!;
-        foreach (var album in context.Albums.Include(x=>x.Songs))
+        foreach (var album in context.Albums.Include(x => x.Songs))
         {
             context.Songs.RemoveRange(album.Songs);
             context.Albums.Remove(album);

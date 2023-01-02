@@ -6,17 +6,86 @@ namespace BlazorHomeSite.Pages;
 
 public partial class PhotoPage
 {
+    private readonly SortedList<int, Photo?> _lastPhotos = new();
+    private readonly SortedList<int, Photo?> _nextPhotos = new();
+
+    private DateTime? _photoCaptureDate;
+
+    private SortedList<int, Photo?> _photos = new();
     [Inject] private IDbContextFactory<ApplicationDbContext>? DbFactory { get; set; }
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
 
-    private SortedList<int, Photo>? GetAllPhotos(int photoId, int albumId, bool getByYear = false)
+    [Parameter]
+    public string? AlbumId { get; set; }
+
+    [Parameter] public string? PhotoId { get; set; }
+
+    protected int CurrentPhotoIndex;
+
+    protected Photo? CurrentPhoto;
+
+    protected string? AlbumDescription;
+
+    protected bool EditPhotoInformation;
+
+    protected string? PhotoLocation;
+
+    protected string? PhotoCoOrdinates;
+
+    protected string? PhotoDescription;
+
+    protected bool IsAlbumCover;
+
+    private static System.Timers.Timer? autoPlayTimer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await using var context = await DbFactory?.CreateDbContextAsync()!;
+
+        var photoId = int.Parse(PhotoId ?? "-1");
+        if (AlbumId.StartsWith("year_"))
+        {
+            var year = int.Parse(AlbumId.Split('_')[1]);
+            _photos = await GetAllPhotos(photoId, year, true);
+        }
+        else
+        {
+            _photos = await GetAllPhotos(photoId, int.Parse(AlbumId));
+        }
+    }
+
+    private void StartAutoPlay()
+    {
+        // Create a timer with a two second interval.
+        autoPlayTimer = new System.Timers.Timer(1000);
+        // Hook up the Elapsed event for the timer.
+        autoPlayTimer.Elapsed += AutoPlayTimer_Elapsed;
+        autoPlayTimer.AutoReset = true;
+        autoPlayTimer.Enabled = true;
+    }
+
+    private void AutoPlayTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    {
+        NextPhoto();
+    }
+
+    private void StopAutoPlay()
+    {
+        if (autoPlayTimer != null)
+        {
+            autoPlayTimer.Stop();
+            autoPlayTimer.Dispose();
+        }
+    }
+
+    private async Task<SortedList<int, Photo?>> GetAllPhotos(int photoId, int albumId, bool getByYear = false)
     {
         List<Photo>? photos = null;
         if (DbFactory != null)
         {
             if (getByYear)
             {
-                using var context = DbFactory.CreateDbContext();
+                await using var context = await DbFactory.CreateDbContextAsync();
                 photos = context.Photos.Where(x => x.CaptureTime.Year == albumId)
                     .OrderBy(x => x.CaptureTime).ToList();
             }
@@ -26,177 +95,115 @@ public partial class PhotoPage
             }
         }
 
+        var outputPhotos = new SortedList<int, Photo?>();
+        var photoArray = photos.OrderBy(x => x.CaptureTime).ToArray();
 
-        var outputPhotos = new SortedList<int, Photo>();
-        var oderedPhotos = photos.OrderBy(x => x.CaptureTime).ToArray();
-
-        for (var i = 0; i < oderedPhotos.Count(); i++)
+        for (var i = 0; i < photoArray.Length; i++)
         {
-            outputPhotos.Add(i, oderedPhotos[i]);
-
-            if (oderedPhotos[i].Id == photoId)
+            outputPhotos.Add(i, photoArray[i]);
+            if (photoArray[i].Id != photoId) continue;
+            CurrentPhoto = photoArray[i];
+            if (CurrentPhoto != null)
             {
-                CurrentPhoto = oderedPhotos[i];
                 IsAlbumCover = CurrentPhoto.IsAlbumCover;
                 PhotoDescription = CurrentPhoto.Description;
-                photoCaptureDate = CurrentPhoto.CaptureTime;
+                _photoCaptureDate = CurrentPhoto.CaptureTime;
                 PhotoLocation = CurrentPhoto.Location;
-                CurrentPhotoIndex = i;
             }
-        }
 
+            CurrentPhotoIndex = i;
+        }
 
         SetNextAndPreviousPhotos(CurrentPhotoIndex, outputPhotos);
 
         return outputPhotos;
     }
 
-    private void SetNextAndPreviousPhotos(int currentIndex, SortedList<int, Photo> photos, int nextPhotoLimit = 3)
+    private void SetNextAndPreviousPhotos(int currentIndex, SortedList<int, Photo?> photos, int nextPhotoLimit = 3)
     {
-        NextPhotos.Clear();
-        LastPhotos.Clear();
-        for (var i = currentIndex + 1; i < currentIndex + nextPhotoLimit + 1 && i <= photos.Count-1; i++)
-            NextPhotos.Add(i, photos[i]);
+        if (photos.Count == 0) throw new ArgumentException("Value cannot be an empty collection.", nameof(photos));
 
-        for (var i = currentIndex - 1; i > currentIndex - nextPhotoLimit - 1 && i >= 0; i--)
-            LastPhotos.Add(i, photos[i]);
+        _nextPhotos.Clear();
+        _lastPhotos.Clear();
+
+        for (var i = currentIndex + 1;
+             i < currentIndex + nextPhotoLimit + 1 && i <= photos.Count - 1;
+             i++)
+            _nextPhotos.Add(i, photos[i]);
+
+        for (var i = currentIndex - 1;
+             i > currentIndex - nextPhotoLimit - 1 && i >= 0;
+             i--)
+            _lastPhotos.Add(i, photos[i]);
     }
 
-    private bool EnableEdit()
+    private static bool EnableEdit()
     {
-#if DEBUG
         return true;
-#else
-                    return false;
-#endif
     }
-
 
     private void NextPhoto()
     {
-        if (CurrentPhotoIndex == Photos.Count - 1) return;
+        if (CurrentPhotoIndex == _photos.Count - 1) return;
         CurrentPhotoIndex++;
-        
-        CurrentPhoto = Photos[CurrentPhotoIndex];
-        IsAlbumCover = CurrentPhoto.IsAlbumCover;
-        PhotoDescription = CurrentPhoto.Description;
-        photoCaptureDate = CurrentPhoto.CaptureTime;
-        PhotoLocation = CurrentPhoto.Location;
-        SetNextAndPreviousPhotos(CurrentPhotoIndex, Photos);
-        StateHasChanged();
 
+        CurrentPhoto = _photos[CurrentPhotoIndex];
+        IsAlbumCover = CurrentPhoto!.IsAlbumCover;
+        PhotoDescription = CurrentPhoto.Description;
+        _photoCaptureDate = CurrentPhoto.CaptureTime;
+        PhotoLocation = CurrentPhoto.Location;
+        SetNextAndPreviousPhotos(CurrentPhotoIndex, _photos);
+        StateHasChanged();
     }
 
     private void LastPhoto()
     {
         if (CurrentPhotoIndex == 0) return;
         CurrentPhotoIndex--;
-        CurrentPhoto = Photos[CurrentPhotoIndex];
-        IsAlbumCover = CurrentPhoto.IsAlbumCover;
+        CurrentPhoto = _photos[CurrentPhotoIndex];
+        IsAlbumCover = CurrentPhoto!.IsAlbumCover;
         PhotoDescription = CurrentPhoto.Description;
-        photoCaptureDate = CurrentPhoto.CaptureTime;
+        _photoCaptureDate = CurrentPhoto.CaptureTime;
         PhotoLocation = CurrentPhoto.Location;
 
-        SetNextAndPreviousPhotos(CurrentPhotoIndex, Photos);
+        SetNextAndPreviousPhotos(CurrentPhotoIndex, _photos);
         StateHasChanged();
     }
 
-    private void UpdatePhoto()
+    private async Task UpdatePhoto()
     {
-        CurrentPhoto.Description = PhotoDescription;
+        CurrentPhoto!.Description = PhotoDescription;
         CurrentPhoto.Location = PhotoLocation;
         CurrentPhoto.LocationCoOrdinates = PhotoCoOrdinates;
         CurrentPhoto.IsAlbumCover = IsAlbumCover;
-        CurrentPhoto.CaptureTime = photoCaptureDate.Value;
+        CurrentPhoto.CaptureTime = _photoCaptureDate!.Value;
         EditPhotoInformation = false;
         StateHasChanged();
 
-        using var context = DbFactory.CreateDbContext();
+        await using var context = await DbFactory?.CreateDbContextAsync()!;
         context.Update(CurrentPhoto);
-        context.SaveChanges();
+        await context?.SaveChangesAsync()!;
     }
 
-    private void DeletePhoto()
+    private async Task DeletePhoto()
     {
-        using var context = DbFactory.CreateDbContext();
-        var id = CurrentPhoto.Id;
-        var thumbnailPath = CurrentPhoto.ThumbnailPath;
-        var photoPath = CurrentPhoto.PhotoPath;
+        await using var context = await DbFactory?.CreateDbContextAsync()!;
 
-        var fullThumbPath = Path.Combine(HostEnvironment.WebRootPath, thumbnailPath);
-        var fullPhotoPath = Path.Combine(HostEnvironment.WebRootPath, photoPath);
-        NextPhoto();
-
-        context.Photos.Remove(new Photo { Id = id });
-        File.Delete(fullThumbPath);
-        File.Delete(fullPhotoPath);
-        context.SaveChanges();
-    }
-
-    private void SetEdit(bool edit)
-    {
-        if (edit)
+        if (CurrentPhoto != null)
         {
-            CurrentPhoto.Description = PhotoDescription;
-            CurrentPhoto.Location = PhotoLocation;
-            CurrentPhoto.LocationCoOrdinates = PhotoCoOrdinates;
-            CurrentPhoto.IsAlbumCover = IsAlbumCover;
+            var id = CurrentPhoto.Id;
+            var thumbnailPath = CurrentPhoto.ThumbnailPath;
+            var photoPath = CurrentPhoto.PhotoPath;
+
+            var fullThumbPath = Path.Combine(HostEnvironment.WebRootPath, thumbnailPath ?? string.Empty);
+            var fullPhotoPath = Path.Combine(HostEnvironment.WebRootPath, photoPath ?? string.Empty);
+            NextPhoto();
+
+            context.Photos.Remove(new Photo { Id = id });
+            File.Delete(fullThumbPath);
+            File.Delete(fullPhotoPath);
         }
 
-        EditPhotoInformation = edit;
-        StateHasChanged();
+        await context.SaveChangesAsync();
     }
-
-    #region Parameters
-
-    [Parameter] public string? AlbumId { get; set; }
-
-    [Parameter]
-    public string? PhotoId
-    {
-        get => _photoId;
-        set
-        {
-            _photoId = value;
-            if (AlbumId.StartsWith("year_"))
-            {
-                var year = AlbumId.Split('_')[1];
-                Photos = GetAllPhotos(int.Parse(_photoId), int.Parse(year), true);
-            }
-            else
-            {
-                Photos = GetAllPhotos(int.Parse(_photoId), int.Parse(AlbumId));
-            }
-        }
-    }
-
-    private string _photoId { get; set; }
-
-    #endregion
-
-    #region Photo Binding
-
-    private int CurrentPhotoIndex { get; set; }
-    private Photo CurrentPhoto { get; set; }
-
-    private SortedList<int, Photo> Photos = new();
-
-    private readonly SortedList<int, Photo> NextPhotos = new();
-    private readonly SortedList<int, Photo> LastPhotos = new();
-
-    private string? AlbumDescription { get; set; }
-
-    #endregion Photo Binding
-
-    #region Information Editor Binding
-
-    public bool EditPhotoInformation { get; set; }
-    public string PhotoLocation { get; set; }
-    public string PhotoCoOrdinates { get; set; }
-    public string PhotoDescription { get; set; }
-
-    private DateTime? photoCaptureDate;
-    public bool IsAlbumCover { get; set; }
-
-    #endregion
 }

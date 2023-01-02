@@ -1,54 +1,62 @@
-@page "/photo/{albumId}/{photoId}"
+﻿@page "/photo/{albumId}/{photoId}"
 
 <MudContainer>
     <MudStack>
-    
-        <MudPaper Elevation="40" Style="margin-top: 2%">
+
+        <MudPaper Style="height: 4%; margin-top: 1%">
             <MudGrid Justify="Justify.Center">
-                <MudItem xl="12">
-                    <MudImage ObjectPosition="ObjectPosition.Center"
-                              ObjectFit="ObjectFit.Contain"
-                              Src="@CurrentPhoto.PhotoPath"
-                              Height="400">
-                </MudImage>
-                </MudItem>
-            </MudGrid>
-  
-        </MudPaper>
-   <MudPaper Style="height: 45px; margin-top: -1%">
-            <MudGrid Justify="Justify.Center" >
                 <MudItem xs="2">
-                    <MudIconButton Color="@Color.Success"
-                                   @onclick="LastPhoto" Icon="@Icons.Filled.NavigateBefore">
-                    </MudIconButton>
+                    <MudIconButton Color="@Color.Success" @onclick="LastPhoto" Icon="@Icons.Filled.NavigateBefore" />
                 </MudItem>
 
                 <MudItem xs="8">
                     <MudStack Row="true" Justify="Justify.Center" Style="margin-top: 10px">
-                        @foreach (var photo in LastPhotos)
+                        @foreach (var photo in _lastPhotos)
                         {
-                            <MudImage ObjectFit="ObjectFit.Contain"
-                                      Fluid="false"
-                                      Height="25"
-                                      Width="25"
-                                      Elevation="25" Class="rounded-sm"
-                                      Src=@photo.Value.ThumbnailPath.Replace("wwwroot", "")>
-                            </MudImage>
+                            if (photo.Value != null && photo.Value.ThumbnailPath != null)
+                            {
+                                <MudImage ObjectFit="ObjectFit.Contain"
+                                  Fluid="false"
+                                  Height="25"
+                                  Width="25"
+                                  Elevation="25" Class="rounded-sm"
+                                  Src=@photo.Value.ThumbnailPath>
+                                </MudImage>
+                            }
+                            else
+                            {
+                                <MudText>😔</MudText>
+                            }
                         }
-                        
-                        <MudImage Height="30"
-                                  Width="30"
-                                  Src="@CurrentPhoto.ThumbnailPath.Replace("wwwroot", "")"/>
-                        
-                        @foreach (var photo in NextPhotos)
+
+                        @if (CurrentPhoto != null && CurrentPhoto.ThumbnailPath != null)
                         {
-                            <MudImage ObjectFit="ObjectFit.Contain"
-                                      Fluid="false"
-                                      Height="25"
-                                      Width="25"
-                                      Elevation="25" Class="rounded-sm"
-                                      Src=@photo.Value.ThumbnailPath.Replace("wwwroot", "")>
-                            </MudImage>
+                            <MudImage Height="30"
+                                  Width="30"
+                                  Src="@CurrentPhoto.ThumbnailPath" />
+                        }
+                        else
+                        {
+                            <MudProgressCircular />
+                        }
+
+
+                        @foreach (var photo in _nextPhotos)
+                        {
+                            if (photo.Value != null && photo.Value.ThumbnailPath != null)
+                            {
+                                <MudImage ObjectFit="ObjectFit.Contain"
+                                  Fluid="false"
+                                  Height="25"
+                                  Width="25"
+                                  Elevation="25" Class="rounded-sm"
+                                  Src=@photo.Value.ThumbnailPath>
+                                </MudImage>
+                            }
+                            else
+                            {
+                                <MudText>😔</MudText>
+                            }
                         }
                     </MudStack>
                 </MudItem>
@@ -57,69 +65,32 @@
                 </MudItem>
             </MudGrid>
 
-
         </MudPaper>
-        <MudPaper>
-            <MudStack Justify="Justify.Center" >
 
-                @if (EnableEdit())
-                {
-                    <MudStack Row="true" Justify="Justify.Center">
-                        <MudIconButton OnClick="UpdatePhoto" Icon="@Icons.Filled.Update">Update Photo</MudIconButton>
-                        <MudIconButton OnClick="DeletePhoto" Icon="@Icons.Filled.Delete">Delete Photo</MudIconButton>
-                    </MudStack>
-                }
+     
+        @*<MudPaper>
+            <MudIconButton OnClick="DeletePhoto" Icon="@Icons.Filled.Delete">Delete Photo</MudIconButton>
+        <MudPaper />*@
 
-                <MudStack Row="true">
-                    <MudText Typo="Typo.caption">Description:</MudText>
-                    <MudText Typo="Typo.caption">@CurrentPhoto.Description </MudText>
-
-                    @if (EnableEdit())
-                    {
-                        <MudDivider Vertical="true"></MudDivider>
-                        <MudInput @bind-Value="PhotoDescription"></MudInput>
-                    }
-
-                </MudStack>
-
-                <MudDivider></MudDivider>
-                <MudStack Row="true">
-                    <MudText Typo="Typo.caption">Location:</MudText>
-                    <MudText Typo="Typo.caption">@CurrentPhoto.Location </MudText>
-
-                    @if (EnableEdit())
-                    {
-                        <MudDivider Vertical="true"></MudDivider>
-                        <MudInput @bind-Value="PhotoLocation"></MudInput>
-                    }
-
-                </MudStack>
-                <MudDivider></MudDivider>
-                <MudStack Row="true">
-                    <MudText Typo="Typo.caption">Date Captured:</MudText>
-                    <MudText Typo="Typo.caption">@CurrentPhoto.CaptureTime</MudText>
-
-                    @if (EnableEdit())
-                    {
-                        <MudDivider Vertical="true"></MudDivider>
-                        <MudDatePicker Label="New Date"
-                                       Editable="true"
-                                       @bind-Date="photoCaptureDate"
-                                       Placeholder="Select Date"/>
-                    }
-
-                </MudStack>
-
-                @if (EnableEdit())
-                {
-                    <MudText Typo="Typo.caption">Is Album Cover</MudText>
-                    <MudSwitch @bind-Checked="@IsAlbumCover"></MudSwitch>
-                }
-
-
+ 
+        @if(CurrentPhoto == null)
+        {
+            <MudProgressCircular/>
+        }
+        else
+        {
+            <MudStack Justify="Justify.Center">
+                <MudImage Style="margin-top: 1% align-content:center; align-items: center"
+                        ObjectPosition="ObjectPosition.Center"
+                        Elevation="20"
+                        
+                        ObjectFit="ObjectFit.ScaleDown"
+                        Src="@CurrentPhoto.PhotoPath"
+                        Height="500">
+                </MudImage>
             </MudStack>
-        </MudPaper>
-        
+        }
+
     </MudStack>
 
 </MudContainer>

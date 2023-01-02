@@ -60,8 +60,9 @@ namespace BlazorHomeSite.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double>("PlayTimeSeconds")
-                        .HasColumnType("REAL");
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("SongName")
                         .IsRequired()

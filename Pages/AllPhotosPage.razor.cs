@@ -1,4 +1,6 @@
 using BlazorHomeSite.Data;
+using BlazorHomeSite.Data.Music;
+using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,36 +8,37 @@ namespace BlazorHomeSite.Pages;
 
 public partial class AllPhotosPage
 {
-    private const int PhotosPerPage = 50;
     [Inject] private IDbContextFactory<ApplicationDbContext>? DbFactory { get; set; }
 
+    private const int photosPerPage = 50;
+    protected Dictionary<int, List<Photo>> yearPhotos = new();
+    protected Dictionary<int, int> yearPages = new();
+    protected Dictionary<int, int> yearSelectedPages = new();
+    protected List<int> years = new();
 
-    public int Page { get; set; }
-
-    public List<Photo> PagePhotos { get; set; }
-
-    public List<int> GetYears()
+    protected override async Task OnInitializedAsync()
     {
-        Page = 1;
-        using var context = DbFactory?.CreateDbContext()!;
-        return context.Photos.Select(x => x.CaptureTime.Year).Distinct().ToList();
+        await using var context = await DbFactory?.CreateDbContextAsync()!;
+        years = await context.Photos.Select(x => x.CaptureTime.Year).Distinct().ToListAsync();
+
+        if (years.Contains(1)) years.Remove(1);
+
+        foreach (var year in years)
+        {
+            yearPhotos.Add(year, await context.Photos.Where(x => x.CaptureTime.Year == year)
+                                                     .OrderBy(x => x.CaptureTime).ToListAsync());
+
+            yearPages.Add(year,
+                (int)double.Round(context.Photos.Count(x => x.CaptureTime.Year == year) / photosPerPage));
+
+            yearSelectedPages.Add(year, 1);
+        }
+    }
+    
+
+    protected void TriggerStateChange()
+    {
+        StateHasChanged();
     }
 
-    private int GetPagesForYear(int year)
-    {
-        using var context = DbFactory?.CreateDbContext()!;
-        var num = context.Photos.Count(x => x.CaptureTime.Year == year);
-
-        return (int)double.Round(num / PhotosPerPage, 0);
-    }
-
-    public List<Photo> GetPhotosByYear(int year)
-    {
-        using var context = DbFactory?.CreateDbContext()!;
-
-        PagePhotos = context.Photos.Where(x => x.CaptureTime.Year == year).OrderBy(x => x.CaptureTime)
-            .ToList();
-
-        return PagePhotos;
-    }
 }

@@ -5,6 +5,8 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>f16b51c7-d1b5-4c43-8d79-d724d7b37432</UserSecretsId>
+        <DockerfileContext>.</DockerfileContext>
     </PropertyGroup>
 
     <ItemGroup>
@@ -17,6 +19,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.17.0" />
         <PackageReference Include="MudBlazor" Version="6.1.6" />
         <PackageReference Include="MudBlazor.Extensions" Version="1.7.26" />
         <PackageReference Include="MudBlazor.Markdown" Version="0.0.12" />

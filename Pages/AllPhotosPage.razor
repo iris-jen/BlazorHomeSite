@@ -20,11 +20,9 @@
                     <MudContainer MaxWidth="MaxWidth.Large">
                         <MudStack Justify="Justify.Center">
                             <div class="d-flex flex-column align-center">
-                                <MudPagination Rectangular="true" Variant="Variant.Filled" @bind-Selected="@yearSelectedPages[year]" Count="@yearPages[year]" />
+                                <MudPagination Rectangular="true" Variant="Variant.Filled" @bind-Selected="@yearSelectedPages[year]" Count="@yearPages[year]"/>
                             </div>
-                            <MudGrid Style="margin: 10px">
-
-     
+                            <MudGrid Style="margin: 10px" Spacing="1">
                                 @foreach (var photo in yearPhotos[year].Skip(yearSelectedPages[year] == 1 ? 0 : yearSelectedPages[year] * photosPerPage).Take(photosPerPage))
                                 {
                                     <MudItem sm="2">
@@ -41,7 +39,7 @@
                                 }
 
                             </MudGrid>
-                   
+
                         </MudStack>
                     </MudContainer>
                 </MudPaper>

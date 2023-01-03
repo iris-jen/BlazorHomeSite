@@ -7,5 +7,5 @@ public class Album
     public string Description { get; set; } = string.Empty;
     public string AlbumCover { get; set; } = string.Empty;
     public DateTime DateRecorded { get; set; }
-    public List<Song> Songs { get; set; } = new List<Song>();
+    public List<Song> Songs { get; set; } = new();
 }

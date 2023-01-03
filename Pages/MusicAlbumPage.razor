@@ -1,30 +1,49 @@
 @page "/music/album/{albumId}"
 
-<MudStack>
+<MudStack Justify="Justify.Center" Style="margin: 5%">
+
+    <MudPaper Style="margin-top: 1%">
+        <MudText Align="Align.Center">@album.AlbumName</MudText>
+    </MudPaper>
+
+    <MudImage Style="margin-top: -1%" ObjectFit="ObjectFit.Contain" Elevation="10" Src="@album.AlbumCover" Height="200"/>
+
+    <MudPaper>
+        <MudStack>
+            <MudStack Row="true"Justify="Justify.Center">
+                <MudIconButton Icon="@Icons.Filled.PlayCircle" @onclick="Play"></MudIconButton>
+                <MudIconButton Icon="@Icons.Filled.StopCircle" @onclick="Stop"></MudIconButton>
+                <MudIconButton Icon="@Icons.Filled.PauseCircle" @onclick="Pause"></MudIconButton>
+                <MudPaper Elevation="5">
+                    <MudText Typo="Typo.subtitle2" Style="margin-top: 8%; margin-left: 5px; margin-right: 5px" Align="Align.Center">@selectedSong.SongName</MudText>
+                </MudPaper>
+            </MudStack>
 
 
-    @if(album != null)
-    {
-        <MudImage Src="@album.AlbumCover" Height="200"/>
+            <MudStack Row="true" Style="margin: 2%">
+                <MudText Typo="Typo.subtitle2">@($"{currentPlayTime.Minutes.ToString("00")}:{currentPlayTime.Seconds.ToString("00")}")</MudText>
+                <MudProgressLinear Color="Color.Primary" Striped="true" Value="@currentPlayTime.TotalSeconds" Max="@totalSongTime.TotalSeconds" Class="my-7"/>
+                <MudText Typo="Typo.subtitle2">@($"{totalSongTime.Minutes.ToString("00")}:{totalSongTime.Seconds.ToString("00")}")</MudText>
+            </MudStack>
+        </MudStack>
+    </MudPaper>
 
-        <MudText>@album.AlbumName</MudText>
-        <MudText>@album.Description</MudText>
+    <MudStack Justify="Justify.Center" Spacing="1">
+        @foreach (var song in album.Songs)
+        {
+            <MudPaper>
+                <MudGrid>
+                    <MudItem xs="9">
+                        <MudText>@song.SongName</MudText>
+                    </MudItem>
+                    <MudItem xs="2">
+                        <MudButton Style="align-self:flex-end; margin-left:-2%" OnClick="async () => await SetSelectedSong(song)" EndIcon="@Icons.Filled.PlayCircle">Play</MudButton>
+                    </MudItem>
 
-        <MudButton class="btn btn-primary oi oi-media-play" @onclick="Play"></MudButton>
-        <MudButton class="btn btn-primary oi oi-media-stop" @onclick="Stop"></MudButton>
-        <MudButton class="btn btn-primary oi oi-media-pause" @onclick="Pause"></MudButton>
-        <MudText> @Howl.GetCurrentTime(soundId) </MudText>
-        <MudText> TotalTime : @totalSongTime</MudText>
-        <MudText> State : @playbackState</MudText>
 
-        <MudTable Items="@album.Songs" FixedHeader="true">
-            <RowTemplate>
-                <MudTd>@context.SongName</MudTd>
-                <MudTd><MudButton OnClick="async ()=> await SetSelectedSong(context)" EndIcon="@Icons.Filled.PlayCircle">Play</MudButton></MudTd>
-            </RowTemplate>
-
-        </MudTable>
-    }
-
+                </MudGrid>
+            </MudPaper>
+        }
+    </MudStack>
 
 </MudStack>

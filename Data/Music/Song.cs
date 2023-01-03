@@ -8,6 +8,6 @@ public class Song
     public string Lyrics { get; set; } = string.Empty;
     public string Path { get; set; } = string.Empty;
     public string Format { get; set; } = string.Empty;
-    public Album Album { get; set; } = new Album();
+    public Album Album { get; set; } = new();
     public int AlbumId { get; set; }
 }

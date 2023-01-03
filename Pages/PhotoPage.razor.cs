@@ -1,28 +1,28 @@
+using System.Timers;
 using BlazorHomeSite.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
+using Timer = System.Timers.Timer;
 
 namespace BlazorHomeSite.Pages;
 
 public partial class PhotoPage
 {
+    private static Timer? autoPlayTimer;
     private readonly SortedList<int, Photo?> _lastPhotos = new();
     private readonly SortedList<int, Photo?> _nextPhotos = new();
-
     private SortedList<int, Photo?> _photos = new();
+    private Photo? currentPhoto;
+
+    private int currentPhotoIndex;
+    private bool slideShowOn;
     [Inject] private IDbContextFactory<ApplicationDbContext>? DbFactory { get; set; }
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
 
-    [Parameter]
-    public string? AlbumId { get; set; }
+    [Parameter] public string? AlbumId { get; set; }
 
     [Parameter] public string? PhotoId { get; set; }
-
-    protected int CurrentPhotoIndex;
-
-    protected Photo? CurrentPhoto;
-
-    private static System.Timers.Timer? autoPlayTimer;
+    public double SlideShowTimeSeconds { get; set; } = 1.5;
 
     protected override async Task OnInitializedAsync()
     {
@@ -42,14 +42,15 @@ public partial class PhotoPage
 
     private void StartAutoPlay()
     {
-        autoPlayTimer = new System.Timers.Timer(1000);
+        slideShowOn = true;
+        autoPlayTimer = new Timer(TimeSpan.FromSeconds(SlideShowTimeSeconds == 0 ? 0.1 : SlideShowTimeSeconds));
 
         autoPlayTimer.Elapsed += AutoPlayTimer_Elapsed;
         autoPlayTimer.AutoReset = true;
         autoPlayTimer.Enabled = true;
     }
 
-    private void AutoPlayTimer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+    private void AutoPlayTimer_Elapsed(object? sender, ElapsedEventArgs e)
     {
         NextPhoto();
     }
@@ -61,6 +62,8 @@ public partial class PhotoPage
             autoPlayTimer.Stop();
             autoPlayTimer.Dispose();
         }
+
+        slideShowOn = false;
     }
 
     private async Task<SortedList<int, Photo?>> GetAllPhotos(int photoId, int albumId, bool getByYear = false)
@@ -89,11 +92,11 @@ public partial class PhotoPage
             {
                 outputPhotos.Add(i, photoArray[i]);
                 if (photoArray[i].Id != photoId) continue;
-                CurrentPhoto = photoArray[i];
-                CurrentPhotoIndex = i;
+                currentPhoto = photoArray[i];
+                currentPhotoIndex = i;
             }
 
-            SetNextAndPreviousPhotos(CurrentPhotoIndex, outputPhotos);
+            SetNextAndPreviousPhotos(currentPhotoIndex, outputPhotos);
         }
 
         return outputPhotos;
@@ -119,34 +122,34 @@ public partial class PhotoPage
 
     private void NextPhoto()
     {
-        if (CurrentPhotoIndex == _photos.Count - 1) return;
-        CurrentPhotoIndex++;
+        if (currentPhotoIndex == _photos.Count - 1) return;
+        currentPhotoIndex++;
 
-        CurrentPhoto = _photos[CurrentPhotoIndex];
+        currentPhoto = _photos[currentPhotoIndex];
 
-        SetNextAndPreviousPhotos(CurrentPhotoIndex, _photos);
-        StateHasChanged();
+        SetNextAndPreviousPhotos(currentPhotoIndex, _photos);
+        InvokeAsync(() => StateHasChanged()).ConfigureAwait(false);
     }
 
     private void LastPhoto()
     {
-        if (CurrentPhotoIndex == 0) return;
-        CurrentPhotoIndex--;
-        CurrentPhoto = _photos[CurrentPhotoIndex];
+        if (currentPhotoIndex == 0) return;
+        currentPhotoIndex--;
+        currentPhoto = _photos[currentPhotoIndex];
 
-        SetNextAndPreviousPhotos(CurrentPhotoIndex, _photos);
-        StateHasChanged();
+        SetNextAndPreviousPhotos(currentPhotoIndex, _photos);
+        InvokeAsync(() => StateHasChanged()).ConfigureAwait(false);
     }
 
     private async Task DeletePhoto()
     {
         await using var context = await DbFactory?.CreateDbContextAsync()!;
 
-        if (CurrentPhoto != null)
+        if (currentPhoto != null)
         {
-            var id = CurrentPhoto.Id;
-            var thumbnailPath = CurrentPhoto.ThumbnailPath;
-            var photoPath = CurrentPhoto.PhotoPath;
+            var id = currentPhoto.Id;
+            var thumbnailPath = currentPhoto.ThumbnailPath;
+            var photoPath = currentPhoto.PhotoPath;
 
             var fullThumbPath = Path.Combine(HostEnvironment.WebRootPath, thumbnailPath ?? string.Empty);
             var fullPhotoPath = Path.Combine(HostEnvironment.WebRootPath, photoPath ?? string.Empty);

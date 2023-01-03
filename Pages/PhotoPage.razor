@@ -3,10 +3,43 @@
 <MudContainer>
     <MudStack>
 
+        @if (currentPhoto == null)
+        {
+            <MudProgressCircular/>
+        }
+        else
+        {
+            <MudStack Justify="Justify.Center">
+                @if (slideShowOn)
+                {
+                    <MudButton EndIcon="@Icons.Filled.StopCircle" OnClick="StopAutoPlay">Stop Slide Show</MudButton>
+                }
+                else
+                {
+                    <MudStack Row=true>
+                        <MudButton EndIcon="@Icons.Filled.PlayCircle" OnClick="StartAutoPlay">Start Slide Show</MudButton>
+
+                        <MudNumericField @bind-Value="SlideShowTimeSeconds" Label="Time Per Photo (Seconds)" Step="0.25"/>
+
+                    </MudStack>
+                }
+
+
+                <MudImage Style="margin-top: 1% align-content:center; align-items: center"
+                          ObjectPosition="ObjectPosition.Center"
+                          Elevation="20"
+
+                          ObjectFit="ObjectFit.ScaleDown"
+                          Src="@currentPhoto.PhotoPath"
+                          Height="500">
+                </MudImage>
+            </MudStack>
+        }
+
         <MudPaper Style="height: 4%; margin-top: 1%">
             <MudGrid Justify="Justify.Center">
                 <MudItem xs="2">
-                    <MudIconButton Color="@Color.Success" @onclick="LastPhoto" Icon="@Icons.Filled.NavigateBefore" />
+                    <MudIconButton Color="@Color.Success" @onclick="LastPhoto" Icon="@Icons.Filled.NavigateBefore"/>
                 </MudItem>
 
                 <MudItem xs="8">
@@ -16,11 +49,11 @@
                             if (photo.Value != null && photo.Value.ThumbnailPath != null)
                             {
                                 <MudImage ObjectFit="ObjectFit.Contain"
-                                  Fluid="false"
-                                  Height="25"
-                                  Width="25"
-                                  Elevation="25" Class="rounded-sm"
-                                  Src=@photo.Value.ThumbnailPath>
+                                          Fluid="false"
+                                          Height="25"
+                                          Width="25"
+                                          Elevation="25" Class="rounded-sm"
+                                          Src=@photo.Value.ThumbnailPath>
                                 </MudImage>
                             }
                             else
@@ -29,15 +62,15 @@
                             }
                         }
 
-                        @if (CurrentPhoto != null && CurrentPhoto.ThumbnailPath != null)
+                        @if (currentPhoto != null && currentPhoto.ThumbnailPath != null)
                         {
                             <MudImage Height="30"
-                                  Width="30"
-                                  Src="@CurrentPhoto.ThumbnailPath" />
+                                      Width="30"
+                                      Src="@currentPhoto.ThumbnailPath"/>
                         }
                         else
                         {
-                            <MudProgressCircular />
+                            <MudProgressCircular/>
                         }
 
 
@@ -46,11 +79,11 @@
                             if (photo.Value != null && photo.Value.ThumbnailPath != null)
                             {
                                 <MudImage ObjectFit="ObjectFit.Contain"
-                                  Fluid="false"
-                                  Height="25"
-                                  Width="25"
-                                  Elevation="25" Class="rounded-sm"
-                                  Src=@photo.Value.ThumbnailPath>
+                                          Fluid="false"
+                                          Height="25"
+                                          Width="25"
+                                          Elevation="25" Class="rounded-sm"
+                                          Src=@photo.Value.ThumbnailPath>
                                 </MudImage>
                             }
                             else
@@ -63,37 +96,10 @@
                 <MudItem xs="2">
                     <MudIconButton Color="Color.Success" @onclick="NextPhoto" Icon="@Icons.Filled.NavigateNext"></MudIconButton>
                 </MudItem>
-                <MudItem xs="12">
-                    <MudButton OnClick="StartAutoPlay">Start Slide Show</MudButton>
-                    <MudButton OnClick="StopAutoPlay">Stop Slide Show</MudButton>
-                </MudItem>
+
             </MudGrid>
 
         </MudPaper>
-
-     
-        @*<MudPaper>
-            <MudIconButton OnClick="DeletePhoto" Icon="@Icons.Filled.Delete">Delete Photo</MudIconButton>
-        <MudPaper />*@
-
- 
-        @if(CurrentPhoto == null)
-        {
-            <MudProgressCircular/>
-        }
-        else
-        {
-            <MudStack Justify="Justify.Center">
-                <MudImage Style="margin-top: 1% align-content:center; align-items: center"
-                        ObjectPosition="ObjectPosition.Center"
-                        Elevation="20"
-                        
-                        ObjectFit="ObjectFit.ScaleDown"
-                        Src="@CurrentPhoto.PhotoPath"
-                        Height="500">
-                </MudImage>
-            </MudStack>
-        }
 
     </MudStack>
 

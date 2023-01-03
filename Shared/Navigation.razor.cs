@@ -21,6 +21,7 @@ public partial class Navigation
             var cover = context.Photos.FirstOrDefault(x => x.AlbumId == id && x.IsAlbumCover);
             return cover?.ThumbnailPath;
         }
+
         return string.Empty;
     }
 

@@ -3,8 +3,6 @@
 <MudContainer>
     <MudStack Justify="Justify.Center">
 
-
-
         @foreach (var album in Albums)
         {
             <MudPaper Elevation="5" Style="margin: 3%">
@@ -25,12 +23,6 @@
 
                     <MudItem xs="12">
                         <MudText>@album.Description</MudText>
-                    </MudItem>
-                    <MudItem xs="6">
-                        <MudText Align="Align.Right">Date Recorded: </MudText>
-                    </MudItem>
-                    <MudItem xs="6">
-                        <MudText Align="Align.Left">@album.DateRecorded.ToString("yy-MM-dd")</MudText>
                     </MudItem>
 
                 </MudGrid>

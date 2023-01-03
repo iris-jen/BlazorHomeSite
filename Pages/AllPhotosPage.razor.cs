@@ -6,13 +6,12 @@ namespace BlazorHomeSite.Pages;
 
 public partial class AllPhotosPage
 {
-    [Inject] private IDbContextFactory<ApplicationDbContext>? DbFactory { get; set; }
-
     private const int photosPerPage = 50;
-    protected Dictionary<int, List<Photo>> yearPhotos = new();
     protected Dictionary<int, int> yearPages = new();
-    protected Dictionary<int, int> yearSelectedPages = new();
+    protected Dictionary<int, List<Photo>> yearPhotos = new();
     protected List<int> years = new();
+    protected Dictionary<int, int> yearSelectedPages = new();
+    [Inject] private IDbContextFactory<ApplicationDbContext>? DbFactory { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -24,7 +23,7 @@ public partial class AllPhotosPage
         foreach (var year in years)
         {
             yearPhotos.Add(year, await context.Photos.Where(x => x.CaptureTime.Year == year)
-                                                     .OrderBy(x => x.CaptureTime).ToListAsync());
+                .OrderBy(x => x.CaptureTime).ToListAsync());
 
             yearPages.Add(year,
                 (int)double.Round(context.Photos.Count(x => x.CaptureTime.Year == year) / photosPerPage));

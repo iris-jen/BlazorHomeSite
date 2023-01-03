@@ -1,21 +1,20 @@
 using BlazorHomeSite.Data;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
-using System.Reflection.Metadata.Ecma335;
 
 namespace BlazorHomeSite.Pages;
 
 public partial class PhotoAlbumPage
 {
-    [Parameter]
-    public string? AlbumId { get; set; }
+    private const int PhotosPerPage = 50;
+    protected string albumDescription = string.Empty;
+    protected List<Photo>? allPhotos;
 
     protected int currentPage = 1;
     protected int numberOfPages;
-    protected List<Photo> allPhotos = new();
-    protected List<Photo> pagePhotos = new();
-    protected string albumDescription = string.Empty;
-    private const int PhotosPerPage = 50;
+    protected List<Photo>? pagePhotos;
+
+    [Parameter] public string? AlbumId { get; set; }
 
     public string GetPhotoNavigaitonParams(int photoId)
     {
@@ -42,7 +41,7 @@ public partial class PhotoAlbumPage
             if (album != null) albumDescription = album.Description ?? "";
 
             return await context.Photos.Where(x => x.Album != null && x.Album.Id == parsedAlbumId)
-                                       .OrderBy(x => x.CaptureTime).ToListAsync();
+                .OrderBy(x => x.CaptureTime).ToListAsync();
         }
 
         return new List<Photo>();

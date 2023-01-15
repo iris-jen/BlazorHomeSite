@@ -1,5 +1,6 @@
-using System.Timers;
+﻿using System.Timers;
 using BlazorHomeSite.Data;
+using BlazorHomeSite.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using Timer = System.Timers.Timer;
@@ -33,11 +34,16 @@ public partial class PhotoPage
         {
             var year = int.Parse(AlbumId.Split('_')[1]);
             _photos = await GetAllPhotos(photoId, year, true);
+            MainLayout.ScreenTitle = $"Photos - {year}";
         }
         else if (AlbumId != null)
         {
-            _photos = await GetAllPhotos(photoId, int.Parse(AlbumId));
+            var albumId = int.Parse(AlbumId);
+            _photos = await GetAllPhotos(photoId, albumId);
+            var album = await context.PhotoAlbums.FirstOrDefaultAsync(x => x.Id == albumId);
+            MainLayout.ScreenTitle = album != null ? album.Description ?? "" : "🐛🐛🐛🐛🐛🐛🐛🐛";
         }
+        
     }
 
     private void StartAutoPlay()

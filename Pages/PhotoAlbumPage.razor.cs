@@ -1,4 +1,5 @@
 using BlazorHomeSite.Data;
+using BlazorHomeSite.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,13 +22,13 @@ public partial class PhotoAlbumPage
         return $"photo/{int.Parse(AlbumId ?? "-1")}/{photoId}";
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
-        await base.OnInitializedAsync();
-
         allPhotos = await GetAllPhotosAsync();
         numberOfPages = (int)double.Round(allPhotos.Count / PhotosPerPage, 0);
         StateHasChanged();
+
+        await base.OnParametersSetAsync();
     }
 
     private async Task<List<Photo>> GetAllPhotosAsync()
@@ -39,6 +40,8 @@ public partial class PhotoAlbumPage
             var album = context.PhotoAlbums.FirstOrDefault(x => x.Id == parsedAlbumId);
 
             if (album != null) albumDescription = album.Description ?? "";
+
+            MainLayout.ScreenTitle = album.Description;
 
             return await context.Photos.Where(x => x.Album != null && x.Album.Id == parsedAlbumId)
                 .OrderBy(x => x.CaptureTime).ToListAsync();

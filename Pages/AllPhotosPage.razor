@@ -1,6 +1,11 @@
 ﻿@page "/allPhotos"
+@using BlazorHomeSite.Shared;
 
 @code {
+    protected override void OnInitialized()
+    {
+        MainLayout.ScreenTitle = "All Photos";
+    }
 
     private string GetPhotoNavigaitonParams(int photoId, int year)
     {

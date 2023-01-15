@@ -5,17 +5,38 @@
 <MudSnackbarProvider/>
 
 <MudLayout>
-    <MudAppBar Dense="true">
+    <MudAppBar Dense="true" >
         <MudIconButton Icon="@Icons.Material.Filled.Menu"
                        Color="Color.Inherit"
                        Edge="Edge.Start"
                        OnClick="DrawerToggle"/>
-        Thomas's Site
+
+        <MudStack Row=true>
+            <MudChip>
+                <MudText Typo="Typo.subtitle1">
+                    Thomas's Site
+                </MudText>
+            </MudChip>
+
+            <MudChip>
+                <MudText Typo="Typo.subtitle2">
+                    @ScreenTitle
+                </MudText>
+            </MudChip>
+        </MudStack>
+      
+        
     </MudAppBar>
     <MudDrawer @bind-Open="@DrawerOpen">
         <Navigation/>
     </MudDrawer>
     <MudMainContent>
-        @Body
+            <MudContainer>
+                @Body
+            </MudContainer>
     </MudMainContent>
 </MudLayout>
+
+@code{
+    public static string ScreenTitle { get; set; } = "somewhere??";
+}

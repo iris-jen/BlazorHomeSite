@@ -1,5 +1,6 @@
 using BlazorHomeSite.Data;
 using BlazorHomeSite.Data.Music;
+using BlazorHomeSite.Shared;
 using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
@@ -47,12 +48,13 @@ public partial class MusicAlbumPage
             };
 
             Howl.OnStop += e => { StateHasChanged(); };
-
             Howl.OnPause += e => { StateHasChanged(); };
         }
 
         Nav.LocationChanged += LocationChanged;
+        MainLayout.ScreenTitle = album.AlbumName;
         base.OnInitialized();
+        
     }
 
     private void LocationChanged(object? sender, LocationChangedEventArgs e)

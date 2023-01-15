@@ -54,7 +54,6 @@ public partial class MusicAlbumPage
         Nav.LocationChanged += LocationChanged;
         MainLayout.ScreenTitle = album.AlbumName;
         base.OnInitialized();
-        
     }
 
     private void LocationChanged(object? sender, LocationChangedEventArgs e)

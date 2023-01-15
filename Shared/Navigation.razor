@@ -1,6 +1,6 @@
 <MudPaper Width="250px" Class="py-3" Elevation="0">
     <MudNavMenu>
-        <MudNavLink Href="/" IconColor="@Color.Secondary" Icon="@Icons.Filled.Home" Match="NavLinkMatch.All">About</MudNavLink>
+        <MudNavLink  Href="/" IconColor="@Color.Secondary" Icon="@Icons.Filled.Home" Match="NavLinkMatch.All">About</MudNavLink>
 
         <MudNavGroup Title="Photos" Icon="@Icons.Filled.Camera" Expanded="true" IconColor="Color.Success">
             @foreach (var album in GetAllAlbums())
@@ -25,6 +25,6 @@
         </MudNavGroup>
 
         <MudNavLink Href="/musicAlbumsPage" IconColor="Color.Primary" Match="NavLinkMatch.Prefix" Icon="@Icons.Filled.MusicNote">Music</MudNavLink>
- 
+
     </MudNavMenu>
 </MudPaper>

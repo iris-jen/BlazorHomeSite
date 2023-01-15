@@ -5,13 +5,13 @@
 <MudSnackbarProvider/>
 
 <MudLayout>
-    <MudAppBar Dense="true" >
+    <MudAppBar Dense="true">
         <MudIconButton Icon="@Icons.Material.Filled.Menu"
                        Color="Color.Inherit"
                        Edge="Edge.Start"
                        OnClick="DrawerToggle"/>
 
-        <MudStack Row=true>
+        <MudStack Row="true">
             <MudChip>
                 <MudText Typo="Typo.subtitle1">
                     Thomas's Site
@@ -24,16 +24,16 @@
                 </MudText>
             </MudChip>
         </MudStack>
-      
-        
+
+
     </MudAppBar>
     <MudDrawer @bind-Open="@DrawerOpen">
         <Navigation/>
     </MudDrawer>
     <MudMainContent>
-            <MudContainer>
-                @Body
-            </MudContainer>
+        <MudContainer>
+            @Body
+        </MudContainer>
     </MudMainContent>
 </MudLayout>
 

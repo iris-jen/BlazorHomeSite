@@ -9,14 +9,20 @@ namespace BlazorHomeSite.Pages;
 
 public partial class PhotoPage
 {
-    private static Timer? autoPlayTimer;
+    private static Timer? _autoPlayTimer;
     private readonly SortedList<int, Photo?> _lastPhotos = new();
     private readonly SortedList<int, Photo?> _nextPhotos = new();
     private SortedList<int, Photo?> _photos = new();
-    private Photo? currentPhoto;
+    private List<Photo> _photoWindow = new();
+    private Photo? _currentPhoto;
 
-    private int currentPhotoIndex;
-    private bool slideShowOn;
+    private int _currentPhotoIndex;
+    private int _carosuelIndex;
+    private const int _carosuelMax = 8;
+    public int ImageHeight { get; set; } = 500;
+    public string CarosuelHeightTemplate => $"Height:{ImageHeight+20}px";
+
+    private bool _slideShowOn;
     [Inject] private IDbContextFactory<ApplicationDbContext>? DbFactory { get; set; }
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
 
@@ -43,17 +49,16 @@ public partial class PhotoPage
             var album = await context.PhotoAlbums.FirstOrDefaultAsync(x => x.Id == albumId);
             MainLayout.ScreenTitle = album != null ? album.Description ?? "" : "🐛🐛🐛🐛🐛🐛🐛🐛";
         }
-        
     }
 
     private void StartAutoPlay()
     {
-        slideShowOn = true;
-        autoPlayTimer = new Timer(TimeSpan.FromSeconds(SlideShowTimeSeconds == 0 ? 0.1 : SlideShowTimeSeconds));
+        _slideShowOn = true;
+        _autoPlayTimer = new Timer(TimeSpan.FromSeconds(SlideShowTimeSeconds == 0 ? 0.1 : SlideShowTimeSeconds));
 
-        autoPlayTimer.Elapsed += AutoPlayTimer_Elapsed;
-        autoPlayTimer.AutoReset = true;
-        autoPlayTimer.Enabled = true;
+        _autoPlayTimer.Elapsed += AutoPlayTimer_Elapsed;
+        _autoPlayTimer.AutoReset = true;
+        _autoPlayTimer.Enabled = true;
     }
 
     private void AutoPlayTimer_Elapsed(object? sender, ElapsedEventArgs e)
@@ -63,13 +68,13 @@ public partial class PhotoPage
 
     private void StopAutoPlay()
     {
-        if (autoPlayTimer != null)
+        if (_autoPlayTimer != null)
         {
-            autoPlayTimer.Stop();
-            autoPlayTimer.Dispose();
+            _autoPlayTimer.Stop();
+            _autoPlayTimer.Dispose();
         }
 
-        slideShowOn = false;
+        _slideShowOn = false;
     }
 
     private async Task<SortedList<int, Photo?>> GetAllPhotos(int photoId, int albumId, bool getByYear = false)
@@ -98,52 +103,77 @@ public partial class PhotoPage
             {
                 outputPhotos.Add(i, photoArray[i]);
                 if (photoArray[i].Id != photoId) continue;
-                currentPhoto = photoArray[i];
-                currentPhotoIndex = i;
+                _currentPhoto = photoArray[i];
+                _currentPhotoIndex = i;
             }
 
-            SetNextAndPreviousPhotos(currentPhotoIndex, outputPhotos);
+            SetNextAndPreviousPhotos(_currentPhotoIndex, outputPhotos);
+            _photoWindow.AddRange(outputPhotos.Values.Skip(_currentPhotoIndex).Take(8));
         }
 
         return outputPhotos;
     }
 
-    private void SetNextAndPreviousPhotos(int currentIndex, SortedList<int, Photo?> photos, int nextPhotoLimit = 3)
+    private void SetNextAndPreviousPhotos(int currentIndex, SortedList<int, Photo?> photos, int nextPhotoLimit = 8)
     {
         if (photos.Count == 0) throw new ArgumentException("Value cannot be an empty collection.", nameof(photos));
 
         _nextPhotos.Clear();
         _lastPhotos.Clear();
 
+        var halfLimit = nextPhotoLimit / 2;
         for (var i = currentIndex + 1;
-             i < currentIndex + nextPhotoLimit + 1 && i <= photos.Count - 1;
+             i < currentIndex + halfLimit + 1 && i <= photos.Count - 1;
              i++)
             _nextPhotos.Add(i, photos[i]);
 
         for (var i = currentIndex - 1;
-             i > currentIndex - nextPhotoLimit - 1 && i >= 0;
+             i > currentIndex - halfLimit - 1 && i >= 0;
              i--)
             _lastPhotos.Add(i, photos[i]);
     }
 
     private void NextPhoto()
     {
-        if (currentPhotoIndex == _photos.Count - 1) return;
-        currentPhotoIndex++;
+        if (_currentPhotoIndex == _photos.Count - 1) return;
+        _currentPhotoIndex++;
 
-        currentPhoto = _photos[currentPhotoIndex];
+        if (_carosuelIndex < _carosuelMax-1)
+        {
+            _carosuelIndex++;
+        }
+        else
+        {
+            _photoWindow.Clear();
+            _photoWindow.AddRange(_photos.Values.Skip(_currentPhotoIndex).Take(_carosuelMax));
+            _carosuelIndex = 0;
+        }
 
-        SetNextAndPreviousPhotos(currentPhotoIndex, _photos);
+        _currentPhoto = _photos[_currentPhotoIndex];
+
+        SetNextAndPreviousPhotos(_currentPhotoIndex, _photos);
         InvokeAsync(() => StateHasChanged()).ConfigureAwait(false);
     }
 
     private void LastPhoto()
     {
-        if (currentPhotoIndex == 0) return;
-        currentPhotoIndex--;
-        currentPhoto = _photos[currentPhotoIndex];
+        if (_currentPhotoIndex == 0) return;
+        _currentPhotoIndex--;
+        _currentPhoto = _photos[_currentPhotoIndex];
 
-        SetNextAndPreviousPhotos(currentPhotoIndex, _photos);
+        if (_carosuelIndex > 0)
+        {
+            _carosuelIndex--;
+        }
+        else
+        {
+            var skip = _currentPhotoIndex - _carosuelMax > 0 ? _currentPhotoIndex - _carosuelMax : 0;
+            _photoWindow.Clear();
+            _photoWindow.AddRange(_photos.Values.Skip(skip).Take(_carosuelMax));
+            _carosuelIndex = _carosuelMax-1;
+        }
+
+        SetNextAndPreviousPhotos(_currentPhotoIndex, _photos);
         InvokeAsync(() => StateHasChanged()).ConfigureAwait(false);
     }
 
@@ -151,11 +181,11 @@ public partial class PhotoPage
     {
         await using var context = await DbFactory?.CreateDbContextAsync()!;
 
-        if (currentPhoto != null)
+        if (_currentPhoto != null)
         {
-            var id = currentPhoto.Id;
-            var thumbnailPath = currentPhoto.ThumbnailPath;
-            var photoPath = currentPhoto.PhotoPath;
+            var id = _currentPhoto.Id;
+            var thumbnailPath = _currentPhoto.ThumbnailPath;
+            var photoPath = _currentPhoto.PhotoPath;
 
             var fullThumbPath = Path.Combine(HostEnvironment.WebRootPath, thumbnailPath ?? string.Empty);
             var fullPhotoPath = Path.Combine(HostEnvironment.WebRootPath, photoPath ?? string.Empty);

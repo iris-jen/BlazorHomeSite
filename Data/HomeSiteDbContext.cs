@@ -26,7 +26,6 @@ public class HomeSiteDbContext : IdentityDbContext
 
         if (!File.Exists(dbName))
         {
-            Database.EnsureCreated();
             Database.Migrate();
         }
     }
@@ -56,7 +55,9 @@ public class HomeSiteDbContext : IdentityDbContext
             .WithMany(x => x.Photos);
 
         mb.Entity<Album>().HasKey(x => x.Id);
-
         mb.Entity<Song>().HasOne(x => x.Album).WithMany(x => x.Songs);
+
+        mb.Entity<SiteOwner>().HasOne(x => x.ProfilePhoto);
+        mb.Entity<SiteOwner>().HasOne(x => x.HomePageBackground);
     }
 }

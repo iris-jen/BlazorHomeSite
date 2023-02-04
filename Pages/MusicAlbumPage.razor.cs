@@ -10,6 +10,18 @@ namespace BlazorHomeSite.Pages;
 
 public partial class MusicAlbumPage
 {
+    [Parameter] public string? AlbumId { get; set; }
+
+    #region DI
+
+    [Inject] private IDbContextFactory<HomeSiteDbContext>? DbFactory { get; set; }
+    [Inject] private IHowl? Howl { get; set; }
+    [Inject] private IHowlGlobal? HowlGlobal { get; set; }
+    [Inject] private ILogger<MusicAlbumPage>? Logger { get; set; }
+    [Inject] private NavigationManager? Nav { get; set; }
+
+    #endregion DI
+
     private static Task? playbackTimeTask;
     private static CancellationTokenSource? playbackTaskCancelSource = new();
 
@@ -18,12 +30,6 @@ public partial class MusicAlbumPage
     private Song? selectedSong;
     private int soundId = -1;
     private TimeSpan totalSongTime;
-    [Parameter] public string? AlbumId { get; set; }
-    [Inject] private IDbContextFactory<HomeSiteDbContext>? DbFactory { get; set; }
-    [Inject] private IHowl? Howl { get; set; }
-    [Inject] private IHowlGlobal? HowlGlobal { get; set; }
-    [Inject] private ILogger<MusicAlbumPage>? Logger { get; set; }
-    [Inject] private NavigationManager? Nav { get; set; }
 
     protected override async Task OnInitializedAsync()
     {

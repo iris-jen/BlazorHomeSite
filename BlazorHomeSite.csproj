@@ -36,8 +36,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Account\LogOut.cshtml" />
-        <_ContentIncludedByDefault Remove="Areas\Identity\Pages\Shared\_LoginPartial.cshtml" />
+      <None Include="Areas\Identity\Pages\Account\LogOut.cshtml" />
+      <None Include="Areas\Identity\Pages\Shared\_LoginPartial.cshtml" />
     </ItemGroup>
 
     <ItemGroup>

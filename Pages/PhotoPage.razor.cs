@@ -23,7 +23,7 @@ public partial class PhotoPage
     public string CarosuelHeightTemplate => $"Height:{ImageHeight+20}px";
 
     private bool _slideShowOn;
-    [Inject] private IDbContextFactory<ApplicationDbContext>? DbFactory { get; set; }
+    [Inject] private IDbContextFactory<HomeSiteDbContext>? DbFactory { get; set; }
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
 
     [Parameter] public string? AlbumId { get; set; }

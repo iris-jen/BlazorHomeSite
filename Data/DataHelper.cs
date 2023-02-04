@@ -22,7 +22,7 @@ public static class DataHelper
     private const int DateTaken = 36867;
     private static readonly Regex r = new(":");
 
-    public static PhotoAlbum GetPhotoAlbum(IDbContextFactory<ApplicationDbContext> factory, int id)
+    public static PhotoAlbum GetPhotoAlbum(IDbContextFactory<HomeSiteDbContext> factory, int id)
     {
         using var context = factory.CreateDbContext();
         return context.PhotoAlbums

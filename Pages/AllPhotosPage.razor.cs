@@ -11,7 +11,7 @@ public partial class AllPhotosPage
     protected Dictionary<int, List<Photo>> yearPhotos = new();
     protected List<int> years = new();
     protected Dictionary<int, int> yearSelectedPages = new();
-    [Inject] private IDbContextFactory<ApplicationDbContext>? DbFactory { get; set; }
+    [Inject] private IDbContextFactory<HomeSiteDbContext>? DbFactory { get; set; }
 
     protected override async Task OnInitializedAsync()
     {

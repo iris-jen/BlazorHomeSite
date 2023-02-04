@@ -19,7 +19,7 @@ public partial class MusicAlbumPage
     private int soundId = -1;
     private TimeSpan totalSongTime;
     [Parameter] public string? AlbumId { get; set; }
-    [Inject] private IDbContextFactory<ApplicationDbContext>? DbFactory { get; set; }
+    [Inject] private IDbContextFactory<HomeSiteDbContext>? DbFactory { get; set; }
     [Inject] private IHowl? Howl { get; set; }
     [Inject] private IHowlGlobal? HowlGlobal { get; set; }
     [Inject] private ILogger<MusicAlbumPage>? Logger { get; set; }

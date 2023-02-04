@@ -7,7 +7,7 @@ namespace BlazorHomeSite.Components;
 
 public partial class MusicAdminControl
 {
-    [Inject] private IDbContextFactory<ApplicationDbContext> DbFactory { get; set; } = null!;
+    [Inject] private IDbContextFactory<HomeSiteDbContext> DbFactory { get; set; } = null!;
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
     [Inject] private ILogger<PhotoAlbumAdminControl> Logger { get; set; } = null!;
 

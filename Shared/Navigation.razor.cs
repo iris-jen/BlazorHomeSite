@@ -6,7 +6,7 @@ namespace BlazorHomeSite.Shared;
 
 public partial class Navigation
 {
-    [Inject] private IDbContextFactory<ApplicationDbContext>? DbFactory { get; set; }
+    [Inject] private IDbContextFactory<HomeSiteDbContext>? DbFactory { get; set; }
 
     private static string GetAlbumRoute(int id)
     {

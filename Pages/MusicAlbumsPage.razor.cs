@@ -8,7 +8,7 @@ namespace BlazorHomeSite.Pages;
 
 public partial class MusicAlbumsPage
 {
-    [Inject] private IDbContextFactory<ApplicationDbContext>? DbFactory { get; set; }
+    [Inject] private IDbContextFactory<HomeSiteDbContext>? DbFactory { get; set; }
 
     public List<Album>? Albums { get; private set; }
 

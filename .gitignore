@@ -408,3 +408,4 @@ app.db-wal
 /wwwroot/music/
 /wwwroot/music/bad-crow-vibes/
 BlazorHomeSite.7z
+/home-site.db

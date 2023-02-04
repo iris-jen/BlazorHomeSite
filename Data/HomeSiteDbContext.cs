@@ -23,11 +23,6 @@ public class HomeSiteDbContext : IdentityDbContext
 
         var dbName = "home-site.db";
         optionsBuilder.UseSqlite($"DataSource={dbName}; Cache=Shared");
-
-        if (!File.Exists(dbName))
-        {
-            Database.Migrate();
-        }
     }
 
     protected override void OnModelCreating(ModelBuilder mb)

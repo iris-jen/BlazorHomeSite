@@ -1,11 +1,12 @@
 ﻿using BlazorHomeSite.Data.Music;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorHomeSite.Data;
 
-public class ApplicationDbContext : DbContext
+public class HomeSiteDbContext : IdentityDbContext
 {
-    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    public HomeSiteDbContext(DbContextOptions<HomeSiteDbContext> options)
         : base(options)
     {
     }
@@ -18,6 +19,8 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder mb)
     {
+        base.OnModelCreating(mb);
+
         mb.Entity<PhotoAlbum>()
             .HasKey(x => x.Id);
 

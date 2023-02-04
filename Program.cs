@@ -9,8 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 #region Services
 
 // Db Stuff
-builder.Services.AddDbContextFactory<HomeSiteDbContext>
-(opt => opt.UseSqlite("DataSource=app.db; Cache=Shared"));
+builder.Services.AddDbContextFactory<HomeSiteDbContext>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Identity Framework

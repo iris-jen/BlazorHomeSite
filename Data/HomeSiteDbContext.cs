@@ -17,6 +17,20 @@ public class HomeSiteDbContext : IdentityDbContext
     public DbSet<Album> Albums => Set<Album>();
     public DbSet<Song> Songs => Set<Song>();
 
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+
+        var dbName = "home-site.db";
+        optionsBuilder.UseSqlite($"DataSource={dbName}; Cache=Shared");
+
+        if (!File.Exists(dbName))
+        {
+            Database.EnsureCreated();
+            Database.Migrate();
+        }
+    }
+
     protected override void OnModelCreating(ModelBuilder mb)
     {
         base.OnModelCreating(mb);

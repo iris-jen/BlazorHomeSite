@@ -1,5 +1,6 @@
 using BlazorHomeSite.Data;
 using Howler.Blazor.Components;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 
@@ -7,20 +8,25 @@ var builder = WebApplication.CreateBuilder(args);
 
 #region Services
 
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
-                       throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-
-builder.Services.AddDbContextFactory<ApplicationDbContext>
-(opt =>
-    opt.UseSqlite(connectionString)
-);
-
-builder.Services.AddScoped<IHowl, Howl>();
-builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
+// Db Stuff
+builder.Services.AddDbContextFactory<HomeSiteDbContext>
+(opt => opt.UseSqlite("DataSource=app.db; Cache=Shared"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+// Identity Framework
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<HomeSiteDbContext>();
+
+// Blazor stuff
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
+
+// UI Framework
 builder.Services.AddMudServices();
+
+// For music
+builder.Services.AddScoped<IHowl, Howl>();
+builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
 
 #endregion Services
 
@@ -28,13 +34,13 @@ builder.Services.AddMudServices();
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+if (!app.Environment.IsDevelopment()) app.UseHsts();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
+app.UseAuthorization();
+app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");
 

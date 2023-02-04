@@ -6,25 +6,31 @@
 
 <MudLayout>
     <MudAppBar Dense="true">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu"
-                       Color="Color.Inherit"
-                       Edge="Edge.Start"
-                       OnClick="DrawerToggle"/>
+        <MudGrid >
+            <MudItem xs="2">
+                <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                               Color="Color.Inherit"
+                               Edge="Edge.Start"
+                               OnClick="DrawerToggle" />
+            </MudItem>
 
-        <MudStack Row="true">
-            <MudChip>
-                <MudText Typo="Typo.subtitle1">
-                    Iris's Site
-                </MudText>
-            </MudChip>
+            <MudItem xl="4">
+                <MudChip>
+                    <MudText Typo="Typo.subtitle1">
+                        Iris's Site
+                    </MudText>
+                </MudChip>
+            </MudItem>
 
-            <MudChip>
-                <MudText Typo="Typo.subtitle2">
-                    @ScreenTitle
-                </MudText>
-            </MudChip>
-        </MudStack>
-
+            <MudItem xl="4">
+                <MudChip>
+                    <MudText Typo="Typo.subtitle2">
+                        @ScreenTitle
+                    </MudText>
+                </MudChip>
+            </MudItem>
+           
+        </MudGrid>
 
     </MudAppBar>
     <MudDrawer @bind-Open="@DrawerOpen">

@@ -11,6 +11,9 @@
 
     <ItemGroup>
         <PackageReference Include="Howler.Blazor" Version="0.9.8" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="7.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.Google" Version="7.0.2" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.MicrosoftAccount" Version="7.0.2" />
         <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.1" />
@@ -35,7 +38,17 @@
         <Folder Include="wwwroot" />
     </ItemGroup>
 
-    <ItemGroup>
+	<PropertyGroup>
+		<ResolveStaticWebAssetsInputsDependsOn>RemoveIdentityAssets</ResolveStaticWebAssetsInputsDependsOn>
+	</PropertyGroup>
+
+	<Target Name="RemoveIdentityAssets">
+		<ItemGroup>
+			<StaticWebAsset Remove="@(StaticWebAsset)" Condition="%(SourceId) == 'Microsoft.AspNetCore.Identity.UI'" />
+		</ItemGroup>
+	</Target>
+
+	<ItemGroup>
       <None Include="Areas\Identity\Pages\Account\LogOut.cshtml" />
       <None Include="Areas\Identity\Pages\Shared\_LoginPartial.cshtml" />
     </ItemGroup>
@@ -45,6 +58,5 @@
             <DependentUpon>PhotoAlbumAdminControl.razor</DependentUpon>
         </Compile>
     </ItemGroup>
-
 
 </Project>

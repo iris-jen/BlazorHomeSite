@@ -3,13 +3,22 @@
 
 
 <CascadingAuthenticationState>
-    <LoginDisplay />   
+
+
+    <MudTabs Elevation="4" Rounded="true" AlwaysShowScrollButtons="true" Color="@Color.Info" Class="mt-4">
+        <MudTabPanel Text="Login" >
+            <LoginControl></LoginControl>
+        </MudTabPanel>
+        <MudTabPanel Text="Register" >
+            <RegisterControl></RegisterControl>
+        </MudTabPanel>
+    </MudTabs>
+
 </CascadingAuthenticationState>
 
-<h1>hotdog</h1>
 
 @code {
-
+    private bool LoggedIn = false;
 
 
 }

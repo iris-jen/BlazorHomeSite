@@ -6,7 +6,9 @@
         </form>
     </Authorized>
     <NotAuthorized>
-        <a href="Identity/Account/Register">Register</a>
-        <a href="Identity/Account/Login">Log in</a>
+        <MudStack Row=true>
+            <MudNavLink Icon="@Icons.Filled.AppRegistration" Href="Identity/Account/Register">Register</MudNavLink>
+            <MudNavLink Icon="@Icons.Filled.Login" Href="Identity/Account/Login">Login</MudNavLink>
+        </MudStack>
     </NotAuthorized>
 </AuthorizeView>

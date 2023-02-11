@@ -1,6 +1,8 @@
 using BlazorHomeSite.Data;
+using BlazorHomeSite.Services;
 using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using MudBlazor.Services;
 
@@ -15,8 +17,6 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 // Identity Framework
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<HomeSiteDbContext>();
-
-
 
 // Blazor stuff
 builder.Services.AddRazorPages();
@@ -60,6 +60,10 @@ builder.Services.AddMudServices();
 // For music
 builder.Services.AddScoped<IHowl, Howl>();
 builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
+
+// Email
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.Configure<AuthMessageSenderOptions>(builder.Configuration);
 
 #endregion Services
 

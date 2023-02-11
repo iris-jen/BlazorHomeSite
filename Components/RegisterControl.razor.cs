@@ -18,6 +18,13 @@ public partial class RegisterControl
 {
     [Inject] private IDbContextFactory<HomeSiteDbContext> _dbFactory { get; set; } = null!;
     [Inject] private UserManager<IdentityUser> _userManager { get; set; } = null!;
+    [Inject] private SignInManager<IdentityUser> _signInManager { get; set; } = null!;
+    [Inject] private Logger<RegisterControl> _logger { get; set; } = null!;
+    [Inject] private IEmailSender _emailSender { get; set; } = null!;
+
+    private string email;
+    private string password;
+    private string username;
 
     private RegisterModel model = new RegisterModel();
     private bool success;
@@ -30,22 +37,29 @@ public partial class RegisterControl
 
     public async Task RegisterNewUser(RegisterModel model)
     {
-        var user = new IdentityUser { UserName = Input.Email, Email = Input.Email };
-        var result = await _userManager.CreateAsync(user, Input.Password);
+        var user = new IdentityUser
+        {
+            UserName = username,
+            Email = email
+        };
+
+        var result = await _userManager.CreateAsync(user, password);
         if (result.Succeeded)
         {
             _logger.LogInformation("User created a new account with password.");
 
             var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-            var callbackUrl = Url.Page(
-            "/Account/ConfirmEmail",
-                pageHandler: null,
-                values: new { area = "Identity", userId = user.Id, code = code },
-                protocol: Request.Scheme);
 
-            await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+            //var callbackUrl = Url.Page(
+            //"/Account/ConfirmEmail",
+            //    pageHandler: null,
+            //    values: new { area = "Identity", userId = user.Id, code = code },
+            //    protocol: Request.Scheme);
+
+            await _emailSender.SendEmailAsync(email,
+                                              "Confirm your email",
+                            $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode("")}'>clicking here</a>.");
 
             if (_userManager.Options.SignIn.RequireConfirmedAccount)
             {
@@ -63,7 +77,4 @@ public partial class RegisterControl
             //ModelState.AddModelError(string.Empty, error.Description);
         }
     }
-
-    // If we got this far, something failed, redisplay form
-}
 }

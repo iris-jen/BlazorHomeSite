@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using System.Runtime.CompilerServices;
 
-namespace BlazorHomeSite.Data
+namespace BlazorHomeSite.Data.Accounts
 {
     public class SiteOwner : IdentityUser
     {

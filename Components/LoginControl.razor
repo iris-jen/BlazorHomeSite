@@ -1,5 +1,6 @@
 @using System.Text.RegularExpressions
 @using System.ComponentModel.DataAnnotations
+@using BlazorHomeSite.Data.Accounts;
 
 <MudCard>
     <MudCardContent>
@@ -13,31 +14,3 @@
         <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Login</MudButton>
     </MudCardActions>
 </MudCard>
-
-
-@code {
-    LoginAccountForm model = new LoginAccountForm();
-    bool success;
-
-    public class LoginAccountForm
-    {
-
-
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
-
-        [Required]
-        [StringLength(30, ErrorMessage = "Password must be at least 8 characters long.", MinimumLength = 8)]
-        public string Password { get; set; }
-
-
-    }
-
-    private void OnValidSubmit(EditContext context)
-    {
-        success = true;
-        StateHasChanged();
-    }
-
-}

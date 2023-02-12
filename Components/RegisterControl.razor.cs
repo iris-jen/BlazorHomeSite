@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Text.Encodings.Web;
 using System.Text;
 using System;
+using BlazorHomeSite.Services;
 
 namespace BlazorHomeSite.Components;
 
@@ -19,12 +20,8 @@ public partial class RegisterControl
     [Inject] private IDbContextFactory<HomeSiteDbContext> _dbFactory { get; set; } = null!;
     [Inject] private UserManager<IdentityUser> _userManager { get; set; } = null!;
     [Inject] private SignInManager<IdentityUser> _signInManager { get; set; } = null!;
-    [Inject] private Logger<RegisterControl> _logger { get; set; } = null!;
+    [Inject] private ILogger<RegisterControl> _logger { get; set; } = null!;
     [Inject] private IEmailSender _emailSender { get; set; } = null!;
-
-    private string email;
-    private string password;
-    private string username;
 
     private RegisterModel model = new RegisterModel();
     private bool success;
@@ -32,18 +29,19 @@ public partial class RegisterControl
     private void OnValidSubmit(EditContext context)
     {
         success = true;
+        RegisterNewUser().Wait();
         StateHasChanged();
     }
 
-    public async Task RegisterNewUser(RegisterModel model)
+    public async Task RegisterNewUser()
     {
         var user = new IdentityUser
         {
-            UserName = username,
-            Email = email
+            UserName = model.Username,
+            Email = model.Email
         };
 
-        var result = await _userManager.CreateAsync(user, password);
+        var result = await _userManager.CreateAsync(user, model.Password);
         if (result.Succeeded)
         {
             _logger.LogInformation("User created a new account with password.");
@@ -57,7 +55,7 @@ public partial class RegisterControl
             //    values: new { area = "Identity", userId = user.Id, code = code },
             //    protocol: Request.Scheme);
 
-            await _emailSender.SendEmailAsync(email,
+            await _emailSender.SendEmailAsync(model.Email,
                                               "Confirm your email",
                             $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode("")}'>clicking here</a>.");
 
@@ -74,6 +72,7 @@ public partial class RegisterControl
         }
         foreach (var error in result.Errors)
         {
+            _logger.LogError(error.Description);
             //ModelState.AddModelError(string.Empty, error.Description);
         }
     }

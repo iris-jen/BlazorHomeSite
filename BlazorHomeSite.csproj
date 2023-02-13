@@ -34,20 +34,9 @@
     </ItemGroup>
 
     <ItemGroup>
-   
         <Folder Include="Migrations\" />
         <Folder Include="wwwroot" />
     </ItemGroup>
-
-	<PropertyGroup>
-		<ResolveStaticWebAssetsInputsDependsOn>RemoveIdentityAssets</ResolveStaticWebAssetsInputsDependsOn>
-	</PropertyGroup>
-
-	<Target Name="RemoveIdentityAssets">
-		<ItemGroup>
-			<StaticWebAsset Remove="@(StaticWebAsset)" Condition="%(SourceId) == 'Microsoft.AspNetCore.Identity.UI'" />
-		</ItemGroup>
-	</Target>
 
 	<ItemGroup>
       <None Include="Areas\Identity\Pages\Account\LogOut.cshtml" />

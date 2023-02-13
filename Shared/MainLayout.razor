@@ -6,31 +6,42 @@
 
 <MudLayout>
     <MudAppBar Dense="true">
-        <MudGrid >
+        <MudGrid>
+            <MudItem xs="8">
+
+                <MudGrid>
+                    <MudItem xs="2">
+                        <MudIconButton Icon="@Icons.Material.Filled.Menu"
+                                       Color="Color.Inherit"
+                                       Edge="Edge.Start"
+                                       OnClick="DrawerToggle" />
+                    </MudItem>
+
+                    <MudItem xl="4">
+                        <MudChip>
+                            <MudText Typo="Typo.subtitle1">
+                                Iris's Site
+                            </MudText>
+                        </MudChip>
+                    </MudItem>
+
+                    <MudItem xl="4">
+                        <MudChip>
+                            <MudText Typo="Typo.subtitle2">
+                                @ScreenTitle
+                            </MudText>
+                        </MudChip>
+                    </MudItem>
+
+                </MudGrid>
+            </MudItem>
             <MudItem xs="2">
-                <MudIconButton Icon="@Icons.Material.Filled.Menu"
-                               Color="Color.Inherit"
-                               Edge="Edge.Start"
-                               OnClick="DrawerToggle" />
+                <CascadingAuthenticationState>
+                    <LoginDisplay></LoginDisplay>
+                </CascadingAuthenticationState>
             </MudItem>
-
-            <MudItem xl="4">
-                <MudChip>
-                    <MudText Typo="Typo.subtitle1">
-                        Iris's Site
-                    </MudText>
-                </MudChip>
-            </MudItem>
-
-            <MudItem xl="4">
-                <MudChip>
-                    <MudText Typo="Typo.subtitle2">
-                        @ScreenTitle
-                    </MudText>
-                </MudChip>
-            </MudItem>
-           
         </MudGrid>
+
 
     </MudAppBar>
     <MudDrawer @bind-Open="@DrawerOpen">

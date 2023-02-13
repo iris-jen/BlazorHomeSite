@@ -5,19 +5,18 @@ using SendGrid;
 
 namespace BlazorHomeSite.Services
 {
-    //dotnet user-secrets set SendGridKey <key>
     public class EmailSender : IEmailSender
     {
         private readonly ILogger _logger;
 
-        public EmailSender(IOptions<AuthMessageSenderOptions> optionsAccessor,
+        public EmailSender(IOptions<AppSecretOptions> optionsAccessor,
                            ILogger<EmailSender> logger)
         {
             Options = optionsAccessor.Value;
             _logger = logger;
         }
 
-        public AuthMessageSenderOptions Options { get; } //Set with Secret Manager.
+        public AppSecretOptions Options { get; } //Set with Secret Manager.
 
         public async Task SendEmailAsync(string toEmail, string subject, string message)
         {
@@ -25,15 +24,15 @@ namespace BlazorHomeSite.Services
             {
                 throw new Exception("Null SendGridKey");
             }
-            await Execute(Options.SendGridKey, subject, message, toEmail);
+            await Execute(Options.SendGridKey, subject, message, toEmail, Options.FromEmailAddress);
         }
 
-        public async Task Execute(string apiKey, string subject, string message, string toEmail)
+        public async Task Execute(string apiKey, string subject, string message, string toEmail, string fromEmail)
         {
             var client = new SendGridClient(apiKey);
             var msg = new SendGridMessage()
             {
-                From = new EmailAddress("Joe@contoso.com", "Password Recovery"),
+                From = new EmailAddress(fromEmail, "Password Recovery"),
                 Subject = subject,
                 PlainTextContent = message,
                 HtmlContent = message

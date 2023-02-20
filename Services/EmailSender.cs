@@ -9,14 +9,14 @@ namespace BlazorHomeSite.Services
     {
         private readonly ILogger _logger;
 
-        public EmailSender(IOptions<AppSecretOptions> optionsAccessor,
+        public EmailSender(IOptions<AppAdminOptions> optionsAccessor,
                            ILogger<EmailSender> logger)
         {
             Options = optionsAccessor.Value;
             _logger = logger;
         }
 
-        public AppSecretOptions Options { get; } //Set with Secret Manager.
+        public AppAdminOptions Options { get; } //Set with Secret Manager.
 
         public async Task SendEmailAsync(string toEmail, string subject, string message)
         {

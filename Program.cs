@@ -4,6 +4,7 @@ using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -63,7 +64,7 @@ builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
 
 // Email
 builder.Services.AddTransient<IEmailSender, EmailSender>();
-builder.Services.Configure<AppSecretOptions>(builder.Configuration);
+builder.Services.Configure<AppAdminOptions>(builder.Configuration);
 
 builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
        o.TokenLifespan = TimeSpan.FromHours(3));

@@ -23,8 +23,6 @@ public partial class UsersControl
     [Inject] private SignInManager<IdentityUser> _signInManager { get; set; } = null!;
     [Inject] private IEmailSender _emailSender { get; set; } = null!;
 
-    private bool success;
-
     private List<IdentityUser> users = new List<IdentityUser>();
 
     protected override async Task OnInitializedAsync()

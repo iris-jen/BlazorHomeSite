@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.Runtime.CompilerServices;
-
-namespace BlazorHomeSite.Data
+﻿namespace BlazorHomeSite.Data
 {
     public class SiteOwner
     {

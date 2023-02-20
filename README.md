@@ -12,4 +12,6 @@ To run:
 -> User Secrets need to be added for the Admin account / Email stuff to work. You will need a send grid API key 
     - use the commands
 		- dotnet user-secrets set SendGridKey <key>
-		- FromEmailAddress 
+		- dotnet user-secrets set FromEmailAddress <value>
+		- dotnet user-secrets set AdminEmailAddress <value>
+		- dotnet user-secrets set ShowInitAdminButton <value>

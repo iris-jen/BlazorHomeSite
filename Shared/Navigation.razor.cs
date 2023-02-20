@@ -1,11 +1,9 @@
 using BlazorHomeSite.Data;
 using BlazorHomeSite.Services;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Nextended.Core.DeepClone;
 
 namespace BlazorHomeSite.Shared;
 

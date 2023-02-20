@@ -1,5 +1,6 @@
 using BlazorHomeSite.Data;
 using BlazorHomeSite.Services;
+using BlazorHomeSite.Services.Interfaces;
 using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
@@ -75,6 +76,8 @@ builder.Services.ConfigureApplicationCookie(o =>
     o.ExpireTimeSpan = TimeSpan.FromDays(5);
     o.SlidingExpiration = true;
 });
+
+builder.Services.AddTransient<IPhotoService, PhotoService>();
 
 builder.Services.AddLogging();
 

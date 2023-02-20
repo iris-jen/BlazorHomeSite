@@ -1,18 +1,8 @@
 using BlazorHomeSite.Data;
-using BlazorHomeSite.Data.Accounts;
-using BlazorHomeSite.Data.Music;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
-using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Encodings.Web;
-using System.Text;
-using System;
-using BlazorHomeSite.Services;
-using BlazorHomeSite.Shared;
 
 namespace BlazorHomeSite.Components;
 

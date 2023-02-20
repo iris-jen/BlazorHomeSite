@@ -1,5 +1,4 @@
-﻿using BlazorHomeSite.Data.Accounts;
-using BlazorHomeSite.Data.Music;
+﻿using BlazorHomeSite.Data.Music;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

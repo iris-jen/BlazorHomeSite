@@ -1,8 +1,8 @@
-﻿using System.Timers;
-using BlazorHomeSite.Data;
+﻿using BlazorHomeSite.Data;
 using BlazorHomeSite.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
+using System.Timers;
 using Timer = System.Timers.Timer;
 
 namespace BlazorHomeSite.Pages;
@@ -20,7 +20,7 @@ public partial class PhotoPage
     private int _carosuelIndex;
     private const int _carosuelMax = 8;
     public int ImageHeight { get; set; } = 500;
-    public string CarosuelHeightTemplate => $"Height:{ImageHeight+20}px";
+    public string CarosuelHeightTemplate => $"Height:{ImageHeight + 20}px";
 
     private bool _slideShowOn;
     [Inject] private IDbContextFactory<HomeSiteDbContext>? DbFactory { get; set; }
@@ -138,7 +138,7 @@ public partial class PhotoPage
         if (_currentPhotoIndex == _photos.Count - 1) return;
         _currentPhotoIndex++;
 
-        if (_carosuelIndex < _carosuelMax-1)
+        if (_carosuelIndex < _carosuelMax - 1)
         {
             _carosuelIndex++;
         }
@@ -170,7 +170,7 @@ public partial class PhotoPage
             var skip = _currentPhotoIndex - _carosuelMax > 0 ? _currentPhotoIndex - _carosuelMax : 0;
             _photoWindow.Clear();
             _photoWindow.AddRange(_photos.Values.Skip(skip).Take(_carosuelMax));
-            _carosuelIndex = _carosuelMax-1;
+            _carosuelIndex = _carosuelMax - 1;
         }
 
         SetNextAndPreviousPhotos(_currentPhotoIndex, _photos);

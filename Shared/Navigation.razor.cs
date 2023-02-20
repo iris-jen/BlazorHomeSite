@@ -2,24 +2,40 @@ using BlazorHomeSite.Data;
 using BlazorHomeSite.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Nextended.Core.DeepClone;
 
 namespace BlazorHomeSite.Shared;
 
 public partial class Navigation
 {
     [Inject] private IDbContextFactory<HomeSiteDbContext>? DbFactory { get; set; }
-
-    [Inject] private IOptions<AppAdminOptions>? options { get; set; }
-
-    [CascadingParameter] private Task<AuthenticationState>? authenticationState { get; set; }
-
-    private bool ShowAdminScreens { get; set; }
+    [Inject] private IOptions<AppAdminOptions>? Options { get; set; }
+    [Inject] private UserManager<IdentityUser> UserManager { get; set; } = null!;
+    [Inject] private RoleManager<IdentityRole> RoleManager { get; set; } = null!;
+    [Inject] private SignInManager<IdentityUser> SignInManager { get; set; } = null!;
 
     private static string GetAlbumRoute(int id)
     {
         return $"/photoAlbum/{id}";
+    }
+
+    private async Task InitAdmin()
+    {
+        var users = await UserManager.GetUsersInRoleAsync("Admin");
+
+        if (users.Count == 0)
+        {
+            var adminEmail = Options.Value.FromEmailAddress;
+            await RoleManager.CreateAsync(new IdentityRole("Admin"));
+            var userWithAdmin = await UserManager.FindByEmailAsync(adminEmail);
+            if (userWithAdmin != null)
+            {
+                await UserManager.AddToRoleAsync(userWithAdmin, "Admin");
+            }
+        }
     }
 
     private string? GetThumbnailForAlbum(int id)
@@ -41,25 +57,5 @@ public partial class Navigation
         using var context = DbFactory.CreateDbContext();
         var albums = context.PhotoAlbums.Where(x => x.Description != "All The Rest").ToList();
         return albums;
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        if (authenticationState is not null)
-        {
-            var email = "wrong@wrong.com";
-            if (options != null)
-            {
-                email = options.Value.FromEmailAddress;
-            }
-
-            var authState = await authenticationState;
-            var user = authState?.User;
-
-            if (user?.Identity is not null && user.Identity.IsAuthenticated && user.IsInRole("Admin"))
-            {
-                ShowAdminScreens = true;
-            }
-        }
     }
 }

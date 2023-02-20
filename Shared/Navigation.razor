@@ -48,16 +48,33 @@
         </MudNavLink>
         <MudDivider />
         
-        <MudNavLink Href="/SiteConfigPage" 
-                    IconColor="Color.Surface"
-                    Match="NavLinkMatch.Prefix" 
-                    Icon="@Icons.Filled.Settings">
-                    Site Config
-        </MudNavLink>
-        <MudDivider/>
         <CascadingAuthenticationState>
-            <LoginDisplay/>
+            <AuthorizeView Roles="Admin">
+
+                <MudNavLink Href="/SiteConfigPage"
+                            IconColor="Color.Surface"
+                            Match="NavLinkMatch.Prefix"
+                            Icon="@Icons.Filled.Settings">
+                    Site Config
+
+
+                </MudNavLink>
+
+            </AuthorizeView>
+
+            <MudDivider />
+            <LoginDisplay />
+           
+            @if(Options!= null && 
+                Options.Value!=null && 
+                Options.Value.ShowInitAdminButton.HasValue && 
+                Options.Value.ShowInitAdminButton.Value)
+            {
+                <MudButton OnClick="InitAdmin">Init Admin</MudButton>
+            }
+
         </CascadingAuthenticationState>
+
 
     </MudNavMenu>
 </MudPaper>

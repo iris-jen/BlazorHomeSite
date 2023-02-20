@@ -17,6 +17,7 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Identity Framework
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<HomeSiteDbContext>();
 
 // Blazor stuff

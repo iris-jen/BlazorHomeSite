@@ -5,5 +5,7 @@
     {
         public string? SendGridKey { get; set; }
         public string? FromEmailAddress { get; set; }
+        public string? AdminEmailAddress { get; set; }
+        public bool? ShowInitAdminButton { get; set; }
     }
 }

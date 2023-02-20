@@ -17,6 +17,7 @@ public class HomeSiteDbContext : IdentityDbContext
     public DbSet<PhotoTags> PhotoTags => Set<PhotoTags>();
     public DbSet<Album> Albums => Set<Album>();
     public DbSet<Song> Songs => Set<Song>();
+    public DbSet<SiteOwner> SiteOwners => Set<SiteOwner>();
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -53,6 +54,7 @@ public class HomeSiteDbContext : IdentityDbContext
         mb.Entity<Album>().HasKey(x => x.Id);
         mb.Entity<Song>().HasOne(x => x.Album).WithMany(x => x.Songs);
 
+        mb.Entity<SiteOwner>().HasKey(x => x.ID);
         mb.Entity<SiteOwner>().HasOne(x => x.ProfilePhoto);
         mb.Entity<SiteOwner>().HasOne(x => x.HomePageBackground);
     }

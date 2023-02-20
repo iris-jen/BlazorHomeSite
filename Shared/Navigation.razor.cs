@@ -24,16 +24,23 @@ public partial class Navigation
 
     private async Task InitAdmin()
     {
-        var users = await UserManager.GetUsersInRoleAsync("Admin");
+        const string adminRoleName = "Admin";
+        var users = await UserManager.GetUsersInRoleAsync(adminRoleName);
 
         if (users.Count == 0)
         {
-            var adminEmail = Options.Value.FromEmailAddress;
-            await RoleManager.CreateAsync(new IdentityRole("Admin"));
-            var userWithAdmin = await UserManager.FindByEmailAsync(adminEmail);
-            if (userWithAdmin != null)
+            if (Options != null)
             {
-                await UserManager.AddToRoleAsync(userWithAdmin, "Admin");
+                await RoleManager.CreateAsync(new IdentityRole(adminRoleName));
+                var adminEmail = Options.Value.AdminEmailAddress;
+                if (adminEmail != null)
+                {
+                    var userWithAdmin = await UserManager.FindByEmailAsync(adminEmail);
+                    if (userWithAdmin != null)
+                    {
+                        await UserManager.AddToRoleAsync(userWithAdmin, "Admin");
+                    }
+                }
             }
         }
     }

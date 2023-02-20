@@ -1,14 +1,29 @@
 ﻿<AuthorizeView>
     <Authorized>
-        <a href="Identity/Account/Manage">Hello, @context.User.Identity?.Name!</a>
-        <form method="post" action="Identity/Account/Logout">
-            <button type="submit" class="nav-link btn btn-link">Log out</button>
+        <MudNavLink Href="Identity/Account/Manage" 
+                    Icon="@Icons.Filled.ManageAccounts">
+            <MudText Typo="@Typo.subtitle2">
+                Hello, @context.User.Identity?.Name!
+            </MudText>
+        </MudNavLink>
+
+        <form method="post" action="Identity/Account/Logout" style="margin-left:17px">
+            <MudIcon Icon="@Icons.Filled.Logout"/>
+            <button style="margin-bottom:12px; margin-left:5px" 
+                    type="submit" 
+                    class="nav-link btn btn-link">
+                    Log out
+            </button>
         </form>
     </Authorized>
     <NotAuthorized>
-        <MudStack Row=true>
-            <MudNavLink Icon="@Icons.Filled.AppRegistration" Href="Identity/Account/Register">Register</MudNavLink>
-            <MudNavLink Icon="@Icons.Filled.Login" Href="Identity/Account/Login">Login</MudNavLink>
-        </MudStack>
+        <MudNavLink Icon="@Icons.Filled.AppRegistration" 
+                    Href="Identity/Account/Register">
+                    Register
+        </MudNavLink>
+        <MudNavLink Icon="@Icons.Filled.Login" 
+                    Href="Identity/Account/Login">
+                    Login
+        </MudNavLink>
     </NotAuthorized>
 </AuthorizeView>

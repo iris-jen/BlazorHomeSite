@@ -1,15 +1,30 @@
 <MudPaper Width="250px" Class="py-3" Elevation="0">
     <MudNavMenu>
-        <MudNavLink  Href="/" IconColor="@Color.Secondary" Icon="@Icons.Filled.Home" Match="NavLinkMatch.All">About</MudNavLink>
-
-        <MudNavGroup Title="Photos" Icon="@Icons.Filled.Camera" Expanded="true" IconColor="Color.Success">
+        <MudNavLink Href="/" 
+                    IconColor="@Color.Secondary" 
+                    Icon="@Icons.Filled.Home" 
+                    Match="NavLinkMatch.All">
+                    About
+        </MudNavLink>
+        <MudDivider/>
+        
+        <MudNavGroup Title="Photos" 
+                     Icon="@Icons.Filled.Camera" 
+                     Expanded="true" 
+                     IconColor="Color.Success">
             @foreach (var album in GetAllAlbums())
             {
                 <MudNavLink Href=@GetAlbumRoute(album.Id)
                             Match="NavLinkMatch.Prefix">
 
                     <MudStack Row="true" Justify="Justify.FlexStart">
-                        <MudImage Elevation="5" Style="margin-top: 1.5%; margin-left: -5%" ObjectFit="ObjectFit.ScaleDown" ObjectPosition="ObjectPosition.Center" Width="20" Height="20" Src="@GetThumbnailForAlbum(album.Id)"></MudImage>
+                        <MudImage Elevation="5"
+                                  Style="margin-top: 1.5%; margin-left: -5%" 
+                                  ObjectFit="ObjectFit.ScaleDown" 
+                                  ObjectPosition="ObjectPosition.Center" 
+                                  Width="20" 
+                                  Height="20" 
+                                  Src="@GetThumbnailForAlbum(album.Id)"/>
                         @album.Description
                     </MudStack>
 
@@ -17,14 +32,32 @@
             }
             <MudNavLink Icon="@Icons.Filled.PhotoAlbum"
                         IconColor="Color.Tertiary"
-                        Href="/allPhotos" Match="NavLinkMatch.Prefix">
+                        Href="/allPhotos" 
+                        Match="NavLinkMatch.Prefix">
                 All Photos
             </MudNavLink>
 
-
         </MudNavGroup>
+        <MudDivider />
+        
+        <MudNavLink Href="/musicAlbumsPage" 
+                    IconColor="Color.Primary"
+                    Match="NavLinkMatch.Prefix" 
+                    Icon="@Icons.Filled.MusicNote">
+                    Music
+        </MudNavLink>
+        <MudDivider />
+        
+        <MudNavLink Href="/SiteConfigPage" 
+                    IconColor="Color.Surface"
+                    Match="NavLinkMatch.Prefix" 
+                    Icon="@Icons.Filled.Settings">
+                    Site Config
+        </MudNavLink>
+        <MudDivider/>
+        <CascadingAuthenticationState>
+            <LoginDisplay/>
+        </CascadingAuthenticationState>
 
-        <MudNavLink Href="/musicAlbumsPage" IconColor="Color.Primary" Match="NavLinkMatch.Prefix" Icon="@Icons.Filled.MusicNote">Music</MudNavLink>
-        <MudNavLink Href="/SiteConfigPage" IconColor="Color.Surface" Match="NavLinkMatch.Prefix" Icon="@Icons.Filled.Settings">Site Config</MudNavLink>
     </MudNavMenu>
 </MudPaper>

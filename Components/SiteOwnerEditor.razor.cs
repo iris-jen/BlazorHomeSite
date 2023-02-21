@@ -1,9 +1,6 @@
 using BlazorHomeSite.Data;
 using BlazorHomeSite.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Concurrent;
 
 namespace BlazorHomeSite.Components;
 

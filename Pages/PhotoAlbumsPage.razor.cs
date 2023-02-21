@@ -1,7 +1,6 @@
 using BlazorHomeSite.Data;
 using BlazorHomeSite.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
-using Microsoft.EntityFrameworkCore;
 
 namespace BlazorHomeSite.Pages;
 
@@ -17,10 +16,8 @@ public partial class PhotoAlbumsPage
 
     protected override async Task OnInitializedAsync()
     {
-
         PhotoAlbums = await PhotoService.GetPhotoAlbums();
     }
-
 
     protected async Task AddNewAlbum()
     {
@@ -28,6 +25,4 @@ public partial class PhotoAlbumsPage
         await PhotoService.CreatePhotoAlbum(newAlbum);
         PhotoAlbums = await PhotoService.GetPhotoAlbums();
     }
-
-    
 }

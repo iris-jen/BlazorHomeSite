@@ -1,4 +1,6 @@
 ﻿using BlazorHomeSite.Data;
+using BlazorHomeSite.Services;
+using BlazorHomeSite.Services.Interfaces;
 using BlazorHomeSite.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +26,7 @@ public partial class PhotoPage
 
     private bool _slideShowOn;
     [Inject] private IDbContextFactory<HomeSiteDbContext>? DbFactory { get; set; }
+    [Inject] private IPhotoService? PhotoService { get; set; }
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
 
     [Parameter] public string? AlbumId { get; set; }

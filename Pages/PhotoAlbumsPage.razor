@@ -1,0 +1,29 @@
+﻿@page "/photoAlbums"
+@using BlazorHomeSite.Shared
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        MainLayout.ScreenTitle = "Photo Albums";
+    }
+
+    private string GetPhotoNavigaitonParams(int photoId, int year)
+    {
+        return $"/photo/year_{year}/{photoId}";
+    }
+
+}
+
+<MudStack>
+         <CascadingAuthenticationState>
+            <AuthorizeView Roles="Admin">
+            <MudCard>
+                <MudButton OnClick="AddNewAlbum">Add New Album</MudButton>
+            </MudCard>
+                
+
+            </AuthorizeView>
+         </CascadingAuthenticationState>
+    
+</MudStack>

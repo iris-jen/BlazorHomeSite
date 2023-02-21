@@ -2,7 +2,7 @@
 {
     public class SiteOwner
     {
-        public int ID { get; set; }
+        public int ID { get; set; } = -1;
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Introduction { get; set; }

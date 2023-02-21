@@ -3,13 +3,10 @@
 
 
 <div Style="width: 100%; top: 0; left: 0; vertical-align: center; margin-top: 0%; z-index: 1">
-
     <MudImage Src="site-photos/home-background.jpg"
               Height="900"
-
               ObjectFit="ObjectFit.ScaleDown"
               Fluid="true"/>
-
 </div>
 
 <div Style=" z-index: 9; opacity: 0.75; margin-top: -120%; margin-left: 5%; margin-right: 5%;">
@@ -17,17 +14,14 @@
 
         <MudPaper Elevation="2" Class="pa-4" Outlined="true" Style="background: #ff42a4">
             <MudAvatar Image="/site-photos/avatar.jpg"/>
-            <MudText Typo="Typo.h4" Color="Color.Dark" Style="opacity: 100%;">Hi I'm Iris, welcome to my site!</MudText>
+            <MudText Typo="Typo.h4" Color="Color.Dark" Style="opacity: 100%;">Hi I'm @SiteOwner.FirstName</MudText>
             <MudText Typo="Typo.body1" Color="Color.Dark">
-                Im a software developer, musician, and mostly human person and living in [⛰️🌲, on, “🇨🇦”].
+                @SiteOwner.Introduction
             </MudText>
             <MudText Typo="Typo.body1" Color="Color.Dark">
-                I love the outdoors and playing / writing music.
+                @SiteOwner.About
             </MudText>
-            <MudText Typo="Typo.subtitle2" Color="Color.Dark">
-                I built this site as a photo, music / general purpose blog.
-                It's not fully complete yet, but have a look around 🙂!
-            </MudText>
+            
         </MudPaper>
 
         <MudCard Style="z-index: 12; margin-top:20px; width: 200px; opacity: 0.95; margin-left: 5%; margin-right: 5% ">

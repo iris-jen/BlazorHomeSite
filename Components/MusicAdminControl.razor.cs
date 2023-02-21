@@ -9,7 +9,7 @@ public partial class MusicAdminControl
 {
     [Inject] private IDbContextFactory<HomeSiteDbContext> DbFactory { get; set; } = null!;
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
-    [Inject] private ILogger<PhotoAlbumAdminControl> Logger { get; set; } = null!;
+    [Inject] private ILogger<MusicAdminControl> Logger { get; set; } = null!;
 
     public async Task InitalizeAlbumsFromRoot()
     {

@@ -4,9 +4,9 @@ namespace BlazorHomeSite.Services.Interfaces
 {
     public interface IPhotoService
     {
-        public List<PhotoAlbum> GetPhotoAlbums();
+        public Task<List<PhotoAlbum>> GetPhotoAlbums();
 
-        public List<Photo> GetPhotosByAlbum(int albumID);
+        public Task<List<Photo>> GetPhotosByAlbum(int albumID);
 
         public Task UploadPhoto(Photo photo);
 

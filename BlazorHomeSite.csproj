@@ -46,8 +46,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Update="Components\PhotoAlbumAdminControl.razor.cs">
-            <DependentUpon>PhotoAlbumAdminControl.razor</DependentUpon>
+        <Compile Update="Components\SiteOwnerEditor.razor.cs">
+            <DependentUpon>SiteOwnerEditor.razor</DependentUpon>
         </Compile>
     </ItemGroup>
 

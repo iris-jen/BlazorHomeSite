@@ -66,8 +66,6 @@ builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
 
 // Email
 builder.Services.AddTransient<IEmailSender, EmailSender>();
-builder.Services.Configure<AppAdminOptions>(builder.Configuration);
-
 builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
        o.TokenLifespan = TimeSpan.FromHours(3));
 
@@ -77,7 +75,12 @@ builder.Services.ConfigureApplicationCookie(o =>
     o.SlidingExpiration = true;
 });
 
+// Secrets
+builder.Services.Configure<AppAdminOptions>(builder.Configuration);
+
+// Crud Services
 builder.Services.AddTransient<IPhotoService, PhotoService>();
+builder.Services.AddTransient<ISiteOwnerService, SiteOwnerService>();
 
 builder.Services.AddLogging();
 

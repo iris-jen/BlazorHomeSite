@@ -412,3 +412,5 @@ BlazorHomeSite.7z
 /home-site.db-shm
 /home-site.db-wal
 /photos/1
+/wwwroot/PhotoUploads/1
+/wwwroot/PhotoUploads

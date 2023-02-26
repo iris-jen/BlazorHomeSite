@@ -1,10 +1,16 @@
 ﻿using BlazorHomeSite.Data;
 using BlazorHomeSite.Data.Music;
 using BlazorHomeSite.Services.Interfaces;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting.Internal;
 using Nextended.Blazor.Extensions;
+using Nextended.Core.Extensions;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Webp;
+using System.Collections.Concurrent;
+using System.IO;
 
 namespace BlazorHomeSite.Services
 {
@@ -17,16 +23,12 @@ namespace BlazorHomeSite.Services
 
         public PhotoService(IDbContextFactory<HomeSiteDbContext> dbFactory,
                             ILogger<PhotoService> logger,
-                            IConfiguration config)
+                            IWebHostEnvironment hostEnvironment)
         {
             _dbFactory = dbFactory;
             _logger = logger;
-
-            var configPhotoDir = config.GetSection("PhotoUploadFolder");
-            var currentPhotoDir = Path.Combine(Directory.GetCurrentDirectory(), "photos");
-            _photoDirectory = configPhotoDir.Value != null ?
-                              configPhotoDir.Value.ToString() :
-                              currentPhotoDir;
+            _photoDirectory = Path.Combine(hostEnvironment.WebRootPath, PhotoDirectoryName);
+            _logger.LogInformation($"Photo Service Constructed: {_photoDirectory}");
         }
 
         #region Photo Albums
@@ -89,23 +91,37 @@ namespace BlazorHomeSite.Services
             var targetDirectory = Path.Combine(_photoDirectory, albumId.ToString());
             Directory.CreateDirectory(targetDirectory);
 
-            foreach (var photo in photos)
+            ParallelOptions parallelOptions = new()
             {
-                var image = await Image.LoadWithFormatAsync(photo.OpenReadStream(9999999999));
-                var targetPath = Path.Combine(targetDirectory, $"{photo.Name.Split(".")[0]}.webp");
+                MaxDegreeOfParallelism = 10
+            };
 
-                image.Image.SaveAsWebp(targetPath);
+            var photosToSave = new ConcurrentBag<Photo>();
 
+            await Parallel.ForEachAsync(photos, parallelOptions, async (photo, token) =>
+            {
+                var targetPath = Path.Combine(targetDirectory, $"{photo.Name}");
+                await using FileStream fs = new(targetPath, FileMode.Create);
+                await photo.OpenReadStream(99999999999, cancellationToken: token).CopyToAsync(fs, token);
+                fs.Close();
+               
+                var image = Image.Load(targetPath);
+                var webpPath = targetPath.Replace(".JPG", ".webp");
+                image.SaveAsWebp(webpPath);
+                var cleanPath = Path.Combine(PhotoDirectoryName, albumId.ToString(), photo.Name.Replace(".JPG", ".webp"));
+                _logger.LogInformation("webp: " + webpPath);
+                _logger.LogInformation("clean: " + cleanPath);
                 var model = new Photo()
                 {
                     AlbumId = albumId,
-                    PhotoPath = targetPath,
-                    ThumbnailPath = targetPath,
+                    PhotoPath = cleanPath,
+                    ThumbnailPath = cleanPath,
                 };
 
-                await context.Photos.AddAsync(model);
-            }
+                photosToSave.Add(model);
+            });
 
+            await context.AddRangeAsync(photosToSave);
             await context.SaveChangesAsync();
         }
 

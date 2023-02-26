@@ -39,6 +39,7 @@
         <Folder Include="Data\Accounts\" />
         <Folder Include="Migrations\" />
         <Folder Include="wwwroot" />
+        <Folder Include="wwwroot\photos\1\" />
     </ItemGroup>
 
 	<ItemGroup>

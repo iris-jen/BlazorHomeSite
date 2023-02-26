@@ -4,7 +4,10 @@ using BlazorHomeSite.Services.Interfaces;
 using Howler.Blazor.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.IO;
 using MudBlazor.Services;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Web.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +65,25 @@ builder.Services.AddMudServices();
 builder.Services.AddScoped<IHowl, Howl>();
 builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
 
+// Images
+
+builder.Services.AddImageSharp(
+    options =>
+    {
+        // You only need to set the options you want to change here
+        // All properties have been listed for demonstration purposes
+        // only.
+        options.Configuration = Configuration.Default;
+        options.MemoryStreamManager = new RecyclableMemoryStreamManager();
+        options.BrowserMaxAge = TimeSpan.FromDays(7);
+        options.CacheMaxAge = TimeSpan.FromDays(365);
+        options.CacheHashLength = 8;
+        options.OnParseCommandsAsync = _ => Task.CompletedTask;
+        options.OnBeforeSaveAsync = _ => Task.CompletedTask;
+        options.OnProcessedAsync = _ => Task.CompletedTask;
+        options.OnPrepareResponseAsync = _ => Task.CompletedTask;
+    });
+
 // Email
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
@@ -77,7 +99,7 @@ builder.Services.ConfigureApplicationCookie(o =>
 builder.Services.Configure<AppAdminOptions>(builder.Configuration);
 
 // Crud Services
-builder.Services.AddTransient<IPhotoService, PhotoService>();
+builder.Services.AddTransient<IPhotoRepository, PhotoService>();
 builder.Services.AddTransient<ISiteOwnerService, SiteOwnerService>();
 
 builder.Services.AddLogging();
@@ -101,10 +123,9 @@ else
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
-
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseImageSharp();
 app.MapControllers();
 app.MapBlazorHub();
 app.MapFallbackToPage("/_Host");

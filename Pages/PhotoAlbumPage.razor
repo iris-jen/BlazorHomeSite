@@ -9,6 +9,12 @@
     <MudPaper Elevation="5" Outlined="true">
         <MudStack>
 
+            <CascadingAuthenticationState>
+                <AuthorizeView>
+                    <PhotoUploadControl AlbumId=@AlbumId></PhotoUploadControl>
+                </AuthorizeView>
+            </CascadingAuthenticationState>
+
             <MudPaper Elevation="10" Style="margin: 5px">
                 <MudContainer MaxWidth="MaxWidth.Large">
                     @if (allPhotos != null)

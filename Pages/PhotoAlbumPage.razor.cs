@@ -17,7 +17,7 @@ public partial class PhotoAlbumPage
     protected List<Photo>? pagePhotos;
 
     [Parameter] public string? AlbumId { get; set; }
-    [Inject] private IPhotoService? PhotoService { get; set; }
+    [Inject] private IPhotoRepository? PhotoService { get; set; }
 
     public string GetPhotoNavigaitonParams(int photoId)
     {

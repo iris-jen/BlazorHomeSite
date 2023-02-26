@@ -8,7 +8,7 @@ public partial class PhotoAlbumsPage
 {
     private const int photosPerPage = 50;
 
-    [Inject] private IPhotoService PhotoService { get; set; } = null!;
+    [Inject] private IPhotoRepository PhotoService { get; set; } = null!;
     [Inject] private ILogger<PhotoAlbumPage> Logger { get; set; } = null!;
 
     private List<PhotoAlbum>? PhotoAlbums { get; set; }

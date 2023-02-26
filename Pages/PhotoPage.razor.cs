@@ -3,6 +3,11 @@ using BlazorHomeSite.Services.Interfaces;
 using BlazorHomeSite.Shared;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
+using MudBlazor.Extensions;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats;
+using SixLabors.ImageSharp.Processing;
+using System.Drawing.Imaging;
 using System.Timers;
 using Timer = System.Timers.Timer;
 
@@ -25,7 +30,7 @@ public partial class PhotoPage
 
     private bool _slideShowOn;
     [Inject] private IDbContextFactory<HomeSiteDbContext>? DbFactory { get; set; }
-    [Inject] private IPhotoService? PhotoService { get; set; }
+    [Inject] private IPhotoRepository? PhotoService { get; set; }
     [Inject] private IWebHostEnvironment HostEnvironment { get; set; } = null!;
 
     [Parameter] public string? AlbumId { get; set; }
@@ -77,6 +82,16 @@ public partial class PhotoPage
         }
 
         _slideShowOn = false;
+    }
+
+    public string GetB64Image(string path)
+    {
+        var image = Image.Load(path);
+        image.Mutate(x => x.Resize(200, 200));
+        var fmt = Image.DetectFormat(path);
+        var b64 = image.ToBase64String(fmt);
+
+        return b64;
     }
 
     private async Task<SortedList<int, Photo?>> GetAllPhotos(int photoId, int albumId, bool getByYear = false)

@@ -36,16 +36,7 @@
         </NextButtonTemplate>
 
         <ItemTemplate>
-    
-                <MudStack Justify="Justify.Center">
-                    <MudImage ObjectPosition="ObjectPosition.Center"
-                                Elevation="20"
-                                ObjectFit="ObjectFit.ScaleDown"
-                                Height="@this.ImageHeight"
-                                Src="@context.PhotoPath">
-                    </MudImage>
-                </MudStack>
-  
+            <img src=@GetB64Image(context.PhotoPath)/>
         </ItemTemplate>
     </MudCarousel>
 

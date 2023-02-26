@@ -15,5 +15,8 @@
         public string? LinkdinUrl { get; set; }
         public Photo? ProfilePhoto { get; set; }
         public Photo? HomePageBackground { get; set; }
+        public bool EnablePhotosFeature { get; set; }
+        public bool EnableMusicFeature { get; set; }
+        public bool EnableBlogFeature { get; set; }
     }
 }

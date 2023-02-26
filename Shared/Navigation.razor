@@ -9,6 +9,7 @@
         <MudDivider/>
         
         <MudNavGroup Title="Photos" 
+                     hidden="true"
                      Icon="@Icons.Filled.Camera" 
                      Expanded="true" 
                      IconColor="Color.Success">
@@ -34,7 +35,7 @@
                         IconColor="Color.Tertiary"
                         Href="/photoAlbums" 
                         Match="NavLinkMatch.Prefix">
-                Albums
+                        Albums
             </MudNavLink>
 
         </MudNavGroup>
@@ -56,8 +57,6 @@
                             Match="NavLinkMatch.Prefix"
                             Icon="@Icons.Filled.Settings">
                     Site Config
-
-
                 </MudNavLink>
 
             </AuthorizeView>
@@ -74,7 +73,6 @@
             }
 
         </CascadingAuthenticationState>
-
 
     </MudNavMenu>
 </MudPaper>

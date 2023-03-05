@@ -1,0 +1,29 @@
+﻿<AuthorizeView>
+    <Authorized>
+        <MudNavLink Href="Identity/Account/Manage" 
+                    Icon="@Icons.Material.Filled.ManageAccounts">
+            <MudText Typo="@Typo.subtitle2">
+                Hello, @context.User.Identity?.Name!
+            </MudText>
+        </MudNavLink>
+
+        <form method="post" action="Identity/Account/Logout" style="margin-left:17px">
+            <MudIcon Icon="@Icons.Material.Filled.Logout" />
+            <button style="margin-bottom:12px; margin-left:5px" 
+                    type="submit" 
+                    class="nav-link btn btn-link">
+                    Log out
+            </button>
+        </form>
+    </Authorized>
+    <NotAuthorized>
+        <MudNavLink Icon="@Icons.Material.Filled.AppRegistration"
+                    Href="Identity/Account/Register">
+                    Register
+        </MudNavLink>
+        <MudNavLink Icon="@Icons.Material.Filled.Login"
+                    Href="Identity/Account/Login">
+                    Login
+        </MudNavLink>
+    </NotAuthorized>
+</AuthorizeView>

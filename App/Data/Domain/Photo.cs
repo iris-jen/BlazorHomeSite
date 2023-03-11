@@ -6,6 +6,8 @@ namespace BlazorHomeSite.Data.Domain;
 
 public class Photo : BaseEntity, IAggregateRoot
 {
+    #region Properties
+
     public PhotoAlbum? Album { get; private set; }
 
     [Required]
@@ -30,6 +32,8 @@ public class Photo : BaseEntity, IAggregateRoot
     [Required]
     public string ThumbnailPath { get; private set; }
 
+    #endregion Properties
+
     public Photo(string photoPath, string thumbnailPath, DateTime captureTime, int albumId)
     {
         PhotoPath = Guard.Against.NullOrEmpty(photoPath);
@@ -38,23 +42,22 @@ public class Photo : BaseEntity, IAggregateRoot
         AlbumId = Guard.Against.Negative(albumId);
     }
 
+    #region Methods
+
     public void UpdateDescription(string description)
-    {
-    }
+        => Description = Guard.Against.NullOrEmpty(description);
 
     public void UpdateIsAlbumCover(bool isAlbumCover)
-    {
-    }
+        => IsAlbumCover = isAlbumCover;
 
     public void UpdateLocation(string location)
-    {
-    }
+        => Location = Guard.Against.NullOrEmpty(location);
 
     public void UpdateLocationCoOrdinates(string coOrdinates)
-    {
-    }
+        => LocationCoOrdinates = Guard.Against.NullOrEmpty(coOrdinates);
 
     public void UpdateRotation(int rotation)
-    {
-    }
+        => Rotation = Guard.Against.OutOfRange(rotation, nameof(rotation), 0, 360);
+
+    #endregion Methods
 }

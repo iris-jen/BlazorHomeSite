@@ -1,0 +1,47 @@
+﻿@page "/"
+@using BlazorHomeSite.Shared;
+<div Style="width: 100%; top: 0; left: 0; vertical-align: center; margin-top: 0%; z-index: 1">
+    <MudImage Src="site-photos/home-background.jpg"
+              Height="900"
+              ObjectFit="ObjectFit.ScaleDown"
+              Fluid="true" />
+</div>
+
+<div Style=" z-index: 9; opacity: 0.75; margin-top: -120%; margin-left: 5%; margin-right: 5%;">
+    <MudStack>
+
+        <MudPaper Elevation="2" Class="pa-4" Outlined="true" Style="background: #ff42a4">
+            <MudAvatar Image="/site-photos/avatar.jpg" />
+            <MudText Typo="Typo.h4" Color="Color.Dark" Style="opacity: 100%;">Hi I'm @SiteOwner.FirstName</MudText>
+            <MudText Typo="Typo.body1" Color="Color.Dark">
+                @SiteOwner.Introduction
+            </MudText>
+            <MudText Typo="Typo.body1" Color="Color.Dark">
+                @SiteOwner.About
+            </MudText>
+
+        </MudPaper>
+
+        <MudCard Style="z-index: 12; margin-top:20px; width: 200px; opacity: 0.95; margin-left: 5%; margin-right: 5% ">
+            <MudCardContent>
+                <MudButton Href="https://github.com/iris-jen/BlazorHomeSite"
+                           Target="_blank"
+                           Variant="Variant.Filled"
+                           EndIcon="@Icons.Custom.Brands.GitHub"
+                           Color="Color.Primary">
+                    Website Code
+                </MudButton>
+            </MudCardContent>
+
+        </MudCard>
+    </MudStack>
+</div>
+
+@code {
+
+    protected override void OnInitialized()
+    {
+        MainLayout.ScreenTitle = "Home";
+    }
+
+}

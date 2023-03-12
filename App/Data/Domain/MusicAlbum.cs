@@ -1,11 +1,10 @@
 namespace BlazorHomeSite.Data.Domain;
 
-public class Album
+public class MusicAlbum : BaseEntity
 {
-    public int Id { get; set; }
+    public Photo? AlbumCover { get; set; }
     public string AlbumName { get; set; } = string.Empty;
-    public string Description { get; set; } = string.Empty;
-    public string AlbumCover { get; set; } = string.Empty;
     public DateTime DateRecorded { get; set; }
+    public string Description { get; set; } = string.Empty;
     public List<Song> Songs { get; set; } = new();
 }

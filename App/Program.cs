@@ -5,6 +5,7 @@ using Howler.Blazor.Components;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IO;
 using MudBlazor.Services;
 
@@ -16,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 #region Services
 
 // Db Stuff
-builder.Services.AddDbContextFactory<HomeSiteDbContext>();
+builder.Services.AddDbContextFactory<HomeSiteDbContext>(options => options.UseSqlite("Data Source=HomeSite.db;Cache=Shared"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Identity Framework

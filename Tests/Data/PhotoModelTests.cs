@@ -82,6 +82,38 @@ public class PhotoModelTests
         var photo = new Photo("ab", "ca", DateTime.Now, 1);
         photo.Invoking(x => x.UpdateLocation(string.Empty)).Should().Throw<ArgumentException>();
     }
+
+    [Fact]
+    public void GivenPhoto_WhenUpdateLocationCoordinatesUpdated_ThenSet()
+    {
+        var photo = new Photo("ab", "ca", DateTime.Now, 1);
+        var coOrds = "N40° 44.9064', W073° 59.0735'";
+        photo.UpdateLocationCoOrdinates(coOrds);
+        photo.LocationCoOrdinates.Should().Be(coOrds);
+    }
+
+    [Fact]
+    public void GivenPhoto_WhenUpdatingLocationWithNull_ThenThrows()
+    {
+        var photo = new Photo("ab", "ca", DateTime.Now, 1);
+        photo.Invoking(x => x.UpdateLocationCoOrdinates(null)).Should().Throw<ArgumentNullException>();
+    }
+
+    [Fact]
+    public void GivenPhoto_WhenUpdatingRotationWithValueInRange_ThenSets()
+    {
+        var photo = new Photo("ab", "ca", DateTime.Now, 1);
+        photo.UpdateRotation(90);
+        photo.Rotation.Should().Be(90);
+    }
+
+    [Fact]
+    public void GivenPhoto_WhenUpdatingRotationWithValueOutOfRange_ThenThrows()
+    {
+        var photo = new Photo("ab", "ca", DateTime.Now, 1);
+        photo.Invoking(x => x.UpdateRotation(-1)).Should().Throw<ArgumentOutOfRangeException>();
+        photo.Invoking(x => x.UpdateRotation(361)).Should().Throw<ArgumentOutOfRangeException>();
+    }
 }
 
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.

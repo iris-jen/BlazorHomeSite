@@ -17,16 +17,16 @@ public class Photo : BaseEntity, IAggregateRoot
     public DateTime CaptureTime { get; private set; }
 
     public string? Description { get; private set; }
-
     public bool IsAlbumCover { get; private set; }
-
     public string? Location { get; private set; }
-
     public string? LocationCoOrdinates { get; private set; }
+
+    public List<Comment>? PhotoComments { get; private set; }
 
     [Required]
     public string PhotoPath { get; private set; }
 
+    public List<Tag>? PhotoTags { get; private set; }
     public int Rotation { get; private set; }
 
     [Required]

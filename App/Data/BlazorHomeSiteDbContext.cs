@@ -1,12 +1,14 @@
 ﻿using BlazorHomeSite.Data.Domain;
+using BlazorHomeSite.Data.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorHomeSite.Data;
 
-public class HomeSiteDbContext : IdentityDbContext
+public class HomeSiteDbContext : IdentityDbContext, IDatabaseService
 {
-    public DbSet<Album> Albums => Set<Album>();
+    public DbSet<Comment> Comments => Set<Comment>();
+    public DbSet<MusicAlbum> MusicAlbums => Set<MusicAlbum>();
 
     public DbSet<PhotoAlbum> PhotoAlbums => Set<PhotoAlbum>();
 
@@ -23,13 +25,13 @@ public class HomeSiteDbContext : IdentityDbContext
     {
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        base.OnConfiguring(optionsBuilder);
+    public async Task<bool> EnsureCreatedAsync() => await Database.EnsureCreatedAsync();
 
-        var dbName = "home-site.db";
-        optionsBuilder.UseSqlite($"DataSource={dbName}; Cache=Shared");
-    }
+    public async Task<bool> EnsureDeletedAsync() => await Database.EnsureDeletedAsync();
+
+    public async Task<SiteOwner?> GetSiteOwner() => await SiteOwners.FirstOrDefaultAsync();
+
+    public async Task SaveChangesAsync() => await SaveChangesAsync();
 
     protected override void OnModelCreating(ModelBuilder mb)
     {
@@ -39,6 +41,9 @@ public class HomeSiteDbContext : IdentityDbContext
             .HasKey(x => x.Id);
 
         mb.Entity<Tag>()
+            .HasKey(x => x.Id);
+
+        mb.Entity<Comment>()
             .HasKey(x => x.Id);
 
         mb.Entity<Photo>()
@@ -51,11 +56,12 @@ public class HomeSiteDbContext : IdentityDbContext
             .HasOne(x => x.Album)
             .WithMany(x => x.Photos);
 
-        mb.Entity<Album>().HasKey(x => x.Id);
+        mb.Entity<MusicAlbum>().HasKey(x => x.Id);
         mb.Entity<Song>().HasOne(x => x.Album).WithMany(x => x.Songs);
 
         mb.Entity<SiteOwner>().HasKey(x => x.Id);
         mb.Entity<SiteOwner>().HasOne(x => x.ProfilePhoto);
         mb.Entity<SiteOwner>().HasOne(x => x.HomePageBackground);
+        mb.Entity<SiteOwner>().HasData(new SiteOwner() { Id = 1 });
     }
 }

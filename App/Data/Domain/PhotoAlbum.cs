@@ -1,22 +1,37 @@
 using BlazorHomeSite.Data.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace BlazorHomeSite.Data.Domain;
 
 public class PhotoAlbum : BaseEntity, IAggregateRoot
 {
-    public string? Description { get; set; }
+    [Required]
+    public string Description { get; private set; }
 
-    public IEnumerable<Photo> Photos => _photos.AsReadOnly();
+    [Required]
+    public string Name { get; private set; }
 
-    public IEnumerable<Tag> Tags => _tags.AsReadOnly();
+    public List<Photo>? Photos { get; private set; }
 
-    public string? UserLevel { get; set; }
+    [Required]
+    public UserLevel UserLevel { get; private set; }
 
-    private readonly List<Photo> _photos = new();
+    public PhotoAlbum(string name, string description, UserLevel userLevel)
+    {
+        Name = name;
+        Description = description;
+        UserLevel = userLevel;
+    }
+    public void UpdateName(string name)
+    {
+    }
 
-    private readonly List<Tag> _tags = new();
+    public void UpdateDescription(string description)
+    {
+    }
 
-    public PhotoAlbum(string description, string userLevel)
+    public void UpdateUserLevel(string userLevel)
     {
     }
 }

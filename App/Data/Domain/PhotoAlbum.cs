@@ -1,5 +1,4 @@
 using BlazorHomeSite.Data.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
 namespace BlazorHomeSite.Data.Domain;
@@ -23,11 +22,12 @@ public class PhotoAlbum : BaseEntity, IAggregateRoot
         Description = description;
         UserLevel = userLevel;
     }
-    public void UpdateName(string name)
+
+    public void UpdateDescription(string description)
     {
     }
 
-    public void UpdateDescription(string description)
+    public void UpdateName(string name)
     {
     }
 

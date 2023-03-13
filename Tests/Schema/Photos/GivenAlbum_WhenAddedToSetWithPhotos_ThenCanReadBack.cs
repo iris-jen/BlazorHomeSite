@@ -3,7 +3,7 @@ using BlazorHomeSite.Data.Domain;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore;
 
-namespace Tests.Schema
+namespace Tests.Schema.Photos
 {
     public class GivenAlbum_WhenAddedToSetWithPhotos_ThenCanReadBack : SqliteInMemoryDbTestBase
     {

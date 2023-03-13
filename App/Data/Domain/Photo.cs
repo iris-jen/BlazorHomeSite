@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace BlazorHomeSite.Data.Domain;
 
-public class Photo : BaseEntity, IAggregateRoot
+public class Photo : BaseEntity
 {
     #region Properties
 

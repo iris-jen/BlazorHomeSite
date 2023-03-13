@@ -1,10 +1,13 @@
+using Ardalis.GuardClauses;
 using BlazorHomeSite.Data.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace BlazorHomeSite.Data.Domain;
 
-public class PhotoAlbum : BaseEntity, IAggregateRoot
+public class PhotoAlbum : BaseEntity
 {
+    public int AlbumOrder { get; private set; }
+
     [Required]
     public string Description { get; private set; }
 
@@ -18,20 +21,20 @@ public class PhotoAlbum : BaseEntity, IAggregateRoot
 
     public PhotoAlbum(string name, string description, UserLevel userLevel)
     {
-        Name = name;
-        Description = description;
+        Name = Guard.Against.NullOrEmpty(name);
+        Description = Guard.Against.NullOrEmpty(description);
         UserLevel = userLevel;
     }
 
+    public void UpdateAlbumOrder(int order)
+        => AlbumOrder = Guard.Against.Negative(order);
+
     public void UpdateDescription(string description)
-    {
-    }
+        => Description = Guard.Against.NullOrEmpty(description);
 
     public void UpdateName(string name)
-    {
-    }
+        => Name = Guard.Against.NullOrEmpty(name);
 
-    public void UpdateUserLevel(string userLevel)
-    {
-    }
+    public void UpdateUserLevel(UserLevel userLevel)
+        => UserLevel = userLevel;
 }

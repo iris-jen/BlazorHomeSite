@@ -21,8 +21,8 @@ namespace BlazorHomeSite.Data.Domain
             UserId = userId;
         }
 
-        private bool InvalidContentPredicate(string c) => string.IsNullOrEmpty(c) || c.Length > MaxCommentLength;
+        public void UpdateContent(string content) => Content = Guard.Against.InvalidInput(content, nameof(content), InvalidContentPredicate);
 
-        private void UpdateContnet(string content) => Guard.Against.InvalidInput(content, nameof(content), InvalidContentPredicate);
+        private bool InvalidContentPredicate(string c) => !string.IsNullOrEmpty(c) && c.Length <= MaxCommentLength;
     }
 }

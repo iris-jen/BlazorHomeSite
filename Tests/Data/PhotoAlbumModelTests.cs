@@ -13,7 +13,7 @@ public class PhotoAlbumModelTests
     {
         var name = "hotdog";
         var description = "hotdogs";
-        var userLevel = UserLevel.Owner;
+        var userLevel = UserLevel.Admin;
         var photoAlbum = new PhotoAlbum(name, description, userLevel);
 
         photoAlbum.Name.Should().Be(name);
@@ -24,7 +24,7 @@ public class PhotoAlbumModelTests
     [Fact]
     public void GivenPhotoAlbum_WhenUserLevelUpdated_ThenSet()
     {
-        var album = new PhotoAlbum("a", "b", UserLevel.Max);
+        var album = new PhotoAlbum("a", "b", UserLevel.Registered);
         album.UpdateUserLevel(UserLevel.NoAccount);
         album.UserLevel.Should().Be(UserLevel.NoAccount);
     }
@@ -32,14 +32,14 @@ public class PhotoAlbumModelTests
     [Fact]
     public void GivenPhotoAlbum_WhenUpdatingOrderWithNegative_ThenThrows()
     {
-        var album = new PhotoAlbum("a", "b", UserLevel.Max);
+        var album = new PhotoAlbum("a", "b", UserLevel.Registered);
         album.Invoking(x => x.UpdateAlbumOrder(-9)).Should().Throw<ArgumentException>();
     }
 
     [Fact]
     public void GivenPhotoAlbum_WhenUpdatingOrder_ThenSet()
     {
-        var album = new PhotoAlbum("a", "b", UserLevel.Max);
+        var album = new PhotoAlbum("a", "b", UserLevel.Registered);
         album.UpdateAlbumOrder(9);
         album.AlbumOrder.Should().Be(9);
     }
@@ -47,14 +47,14 @@ public class PhotoAlbumModelTests
     [Fact]
     public void GivenPhotoAlbum_WhenDescriptionUpdatedWithEmpty_ThenThrows()
     {
-        var album = new PhotoAlbum("a", "b", UserLevel.Max);
+        var album = new PhotoAlbum("a", "b", UserLevel.Registered);
         album.Invoking(x => x.UpdateDescription(string.Empty)).Should().Throw<ArgumentException>();
     }
 
     [Fact]
     public void GivenPhotoAlbum_WhenDescriptionUpdated_ThenDescriptionUpdated()
     {
-        var album = new PhotoAlbum("a", "b", UserLevel.Max);
+        var album = new PhotoAlbum("a", "b", UserLevel.Registered);
         album.UpdateDescription("abc");
         album.Description.Should().Be("abc");
     }
@@ -62,14 +62,14 @@ public class PhotoAlbumModelTests
     [Fact]
     public void GivenPhotoAlbum_WhenNameUpdatedWithNull_ThenThrows()
     {
-        var album = new PhotoAlbum("a", "b", UserLevel.Max);
+        var album = new PhotoAlbum("a", "b", UserLevel.Registered);
         album.Invoking(x => x.UpdateName(null)).Should().Throw<ArgumentNullException>();
     }
 
     [Fact]
     public void GivenPhotoAlbum_WhenNameUpdated_ThenUpdated()
     {
-        var album = new PhotoAlbum("a", "b", UserLevel.Max);
+        var album = new PhotoAlbum("a", "b", UserLevel.Registered);
         album.UpdateName("123abc");
         album.Name.Should().Be("123abc");
     }

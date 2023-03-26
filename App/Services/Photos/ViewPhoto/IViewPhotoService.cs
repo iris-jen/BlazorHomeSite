@@ -2,5 +2,5 @@
 
 public interface IViewPhotoService
 {
-    Task<Stream?> GetImageStreamAsync();
+    Task<string> GetImageB64(int photoId, bool thumbnail);
 }

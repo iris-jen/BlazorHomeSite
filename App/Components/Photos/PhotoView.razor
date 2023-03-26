@@ -1,0 +1,26 @@
+﻿@using BlazorHomeSite.Services.Database;
+@using BlazorHomeSite.Services.Photos;
+@inject IUploadPhotoService PhotoUploadServie;
+@inject IViewPhotoService ViewPhotoService;
+@inject IDatabaseService DatabaseService;
+@inject IJSRuntime JS;
+
+<MudPaper>
+    <img src=@_b64 style="width:50%"/>
+</MudPaper>
+@code {
+    [Parameter]
+    public int PhotoId { get; set; }
+
+    [Parameter]
+    public bool Thumbnail{ get; set; }
+
+    List<IBrowserFile> _photosToUpload = new();
+    string _b64 = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _b64 = await ViewPhotoService.GetImageB64(PhotoId, Thumbnail);
+    }
+}

@@ -1,0 +1,52 @@
+﻿<MudPaper>
+    <MudFileUpload T="IReadOnlyList<IBrowserFile>" OnFilesChanged="QueueFiles">
+        <ButtonTemplate>
+            <MudButton HtmlTag="label"
+                       Variant="Variant.Filled"
+                       Color="Color.Primary"
+                       StartIcon="@Icons.Material.Filled.CloudUpload"
+                       for="@context">
+                Queue Photos
+            </MudButton>
+        </ButtonTemplate>
+    </MudFileUpload>
+    
+    <MudStack Row=true>
+        <MudButton OnClick="UploadPhotos">Upload Photos</MudButton>
+        <MudButton OnClick="ClearSelection">Clear Selection</MudButton>
+    </MudStack>
+    
+    <MudStack>
+        @foreach(var file in _photosToUpload)
+        {
+            <MudText>@file.Name</MudText>
+        }
+    </MudStack>
+</MudPaper>
+@code {
+    [Parameter]
+    public string? AlbumId { get; set; }
+
+    List<IBrowserFile> _photosToUpload = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+
+    private void UploadPhotos()
+    {
+
+    }
+
+    private void ClearSelection()
+    {
+        
+    }
+
+    private void QueueFiles(InputFileChangeEventArgs args)
+    {
+        var allFiles = args.GetMultipleFiles(100);
+        _photosToUpload.AddRange(allFiles);
+    }
+}

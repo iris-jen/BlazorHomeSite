@@ -1,6 +1,9 @@
-using BlazorHomeSite.Data;
 using BlazorHomeSite.Services;
+using BlazorHomeSite.Services.Database;
 using BlazorHomeSite.Services.Emails;
+using BlazorHomeSite.Services.Photos;
+using BlazorHomeSite.Services.Photos.PhotoAlbums;
+using BlazorHomeSite.Services.SiteSettings;
 using Howler.Blazor.Components;
 
 using Microsoft.AspNetCore.Identity;
@@ -15,13 +18,13 @@ var builder = WebApplication.CreateBuilder(args);
 #region Services
 
 // Db Stuff
-builder.Services.AddDbContextFactory<HomeSiteDbContext>(options => options.UseSqlite("Data Source=HomeSite.db;Cache=Shared"));
+builder.Services.AddDbContextFactory<DatabaseService>(options => options.UseSqlite("Data Source=HomeSite.db;Cache=Shared"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Identity Framework
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
-                .AddEntityFrameworkStores<HomeSiteDbContext>();
+                .AddEntityFrameworkStores<DatabaseService>();
 
 // Blazor stuff
 builder.Services.AddRazorPages();
@@ -67,7 +70,6 @@ builder.Services.AddScoped<IHowl, Howl>();
 builder.Services.AddScoped<IHowlGlobal, HowlGlobal>();
 
 // Images
-
 builder.Services.AddImageSharp(
     options =>
     {
@@ -100,6 +102,12 @@ builder.Services.ConfigureApplicationCookie(o =>
 builder.Services.Configure<AppAdminOptions>(builder.Configuration);
 
 builder.Services.AddLogging();
+
+builder.Services.AddTransient<ISiteSettingsService, SiteSettingsService>();
+builder.Services.AddTransient<IUploadPhotoService, UploadPhotosService>();
+builder.Services.AddTransient<IViewPhotoService, ViewPhotoService>();
+builder.Services.AddTransient<IDatabaseService, DatabaseService>();
+builder.Services.AddTransient<IPhotoAlbumService, PhotoAlbumService>();
 
 #endregion Services
 

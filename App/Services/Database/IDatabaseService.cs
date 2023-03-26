@@ -1,7 +1,7 @@
 ﻿using BlazorHomeSite.Data.Domain;
 using Microsoft.EntityFrameworkCore;
 
-namespace BlazorHomeSite.Data.Interfaces
+namespace BlazorHomeSite.Services.Database
 {
     public interface IDatabaseService
     {
@@ -9,15 +9,16 @@ namespace BlazorHomeSite.Data.Interfaces
         DbSet<MusicAlbum> MusicAlbums { get; }
         DbSet<PhotoAlbum> PhotoAlbums { get; }
         DbSet<Photo> Photos { get; }
+        DbSet<SiteOwner> SiteOwners { get; }
         DbSet<Song> Songs { get; }
         DbSet<Tag> Tags { get; }
 
-        Task<bool> EnsureCreatedAsync();
+        Task<bool> CreateDbAsync();
 
-        Task<bool> EnsureDeletedAsync();
+        Task<bool> DeleteDbAsync();
 
-        Task<SiteOwner?> GetSiteOwner();
+        public void SaveDb();
 
-        public Task SaveChangesAsync();
+        public Task SaveDbAsync();
     }
 }

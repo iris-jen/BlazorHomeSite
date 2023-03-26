@@ -14,15 +14,15 @@ namespace Tests.Schema.Photos
 
             var name = "coolest album evaaarrrr";
             var albumDescription = "Cool Album";
-            var userLevel = UserLevel.Max;
+            var userLevel = UserLevel.Registered;
             var photoAlbum = new PhotoAlbum(name, albumDescription, userLevel);
             _homeSiteDbContext.PhotoAlbums.Add(photoAlbum);
             _homeSiteDbContext.SaveChanges();
 
             var photos = new List<Photo>()
             {
-                new("a/b/c.webp", "c/g/a.webp", DateTime.Now, photoAlbum.Id),
-                new("g/z/a.webp", "c/z/z.webp", DateTime.Now.AddDays(-1), photoAlbum.Id)
+                new("a/b/c.webp", DateTime.Now, photoAlbum.Id),
+                new("g/z/a.webp", DateTime.Now.AddDays(-1), photoAlbum.Id)
             };
 
             _homeSiteDbContext.Photos.AddRange(photos);

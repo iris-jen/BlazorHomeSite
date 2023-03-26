@@ -1,11 +1,10 @@
 ﻿using BlazorHomeSite.Data.Domain;
-using BlazorHomeSite.Data.Interfaces;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace BlazorHomeSite.Data;
+namespace BlazorHomeSite.Services.Database;
 
-public class HomeSiteDbContext : IdentityDbContext, IDatabaseService
+public class DatabaseService : IdentityDbContext, IDatabaseService
 {
     public DbSet<Comment> Comments => Set<Comment>();
     public DbSet<MusicAlbum> MusicAlbums => Set<MusicAlbum>();
@@ -20,18 +19,29 @@ public class HomeSiteDbContext : IdentityDbContext, IDatabaseService
 
     public DbSet<Tag> Tags => Set<Tag>();
 
-    public HomeSiteDbContext(DbContextOptions<HomeSiteDbContext> options)
-                                : base(options)
+    public DatabaseService(DbContextOptions<DatabaseService> options) : base(options)
     {
     }
 
-    public async Task<bool> EnsureCreatedAsync() => await Database.EnsureCreatedAsync();
+    public async Task<bool> CreateDbAsync()
+    {
+        return await Database.EnsureCreatedAsync();
+    }
 
-    public async Task<bool> EnsureDeletedAsync() => await Database.EnsureDeletedAsync();
+    public async Task<bool> DeleteDbAsync()
+    {
+        return await Database.EnsureDeletedAsync();
+    }
 
-    public async Task<SiteOwner?> GetSiteOwner() => await SiteOwners.FirstOrDefaultAsync();
+    public void SaveDb()
+    {
+        SaveChanges();
+    }
 
-    public async Task SaveChangesAsync() => await SaveChangesAsync();
+    public async Task SaveDbAsync()
+    {
+        await SaveChangesAsync();
+    }
 
     protected override void OnModelCreating(ModelBuilder mb)
     {

@@ -1,50 +1,119 @@
-﻿@inherits LayoutComponentBase
+﻿@using BlazorHomeSite.Services;
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.Extensions.Options;
+@inherits LayoutComponentBase
 
-<MudThemeProvider IsDarkMode="true"/>
-<MudDialogProvider/>
-<MudSnackbarProvider/>
+<MudThemeProvider IsDarkMode="true" />
+<MudDialogProvider />
+<MudSnackbarProvider />
+
+@inject IOptions<AppAdminOptions>? AppAdminOptions;
+@inject RoleManager<IdentityRole> RoleManager;
+@inject UserManager<IdentityUser> UserManager;
+
+<PageTitle>Iris's Home Page</PageTitle>
 
 <MudLayout>
     <MudAppBar Dense="true">
-        <MudGrid>
-            <MudItem xs="8">
+        @if (AppAdminOptions != null &&
+        AppAdminOptions.Value != null &&
+        AppAdminOptions.Value.ShowInitAdminButton.HasValue &&
+        AppAdminOptions.Value.ShowInitAdminButton.Value)
+        {
+            <MudIconButton Icon="@Icons.Material.Filled.Start" OnClick=InitAdmin></MudIconButton>
+        }
 
-                <MudGrid>
-                    <MudItem xs="2">
-                        <MudIconButton Icon="@Icons.Material.Filled.Menu"
-                                       Color="Color.Inherit"
-                                       Edge="Edge.Start"
-                                       OnClick="DrawerToggle" />
-                    </MudItem>
+        <MudNavLink Href="/"
+                    IconColor="@Color.Secondary"
+                    Icon="@Icons.Material.Filled.Home"
+                    Match="NavLinkMatch.All">
+            Home
+        </MudNavLink>
 
-                    <MudItem xl="4">
-                        <MudChip>
-                            <MudText Typo="Typo.subtitle1">
-                                Iris's Site
-                            </MudText>
-                        </MudChip>
-                    </MudItem>
 
-                    <MudItem xl="4">
-                        <MudChip>
-                            <MudText Typo="Typo.subtitle2">
-                                @ScreenTitle
-                            </MudText>
-                        </MudChip>
-                    </MudItem>
+        <MudNavLink Icon="@Icons.Material.Filled.Photo"
+                    IconColor="Color.Tertiary"
+                    Href="/photoAlbumsPage"
+                    Match="NavLinkMatch.Prefix">
+            Photos
+        </MudNavLink>
 
-                </MudGrid>
-            </MudItem>
-            <MudItem xs="2">
 
-            </MudItem>
-        </MudGrid>
+        <MudNavLink Href="/musicAlbumsPage"
+                    IconColor="Color.Primary"
+                    Match="NavLinkMatch.Prefix"
+                    Icon="@Icons.Material.Filled.Note">
+            Blog
+        </MudNavLink>
 
+
+        <MudNavLink Href="/musicAlbumsPage"
+                    IconColor="Color.Primary"
+                    Match="NavLinkMatch.Prefix"
+                    Icon="@Icons.Material.Filled.MusicNote">
+            Music
+        </MudNavLink>
+
+        <MudSwitch ThumbIcon="@Icons.Material.Filled.SupervisedUserCircle" @bind-Checked="@PopoverOpen">
+
+        </MudSwitch>
+       
+        <MudPopover Open="@PopoverOpen" AnchorOrigin="Origin.TopCenter">
+  
+                <MudText>User Options</MudText>
+                <CascadingAuthenticationState>
+
+                    <AuthorizeView Roles="Admin">
+                        <MudNavLink Href="/SiteConfigPage"
+                                    IconColor="Color.Surface"
+                                    Match="NavLinkMatch.Prefix"
+                                    Icon="@Icons.Material.Filled.Settings">
+                            Site Config
+                        </MudNavLink>
+                    </AuthorizeView>
+
+                    <AuthorizeView>
+                        <Authorized>
+
+                            <MudNavLink Href="Identity/Account/Manage"
+                                        Icon="@Icons.Material.Filled.ManageAccounts">
+                                <MudText Typo="@Typo.subtitle2">
+                                    User Settings
+                                </MudText>
+                            </MudNavLink>
+
+                            <form method="post" action="Identity/Account/Logout" style="margin-left:17px">
+                                <MudIcon Icon="@Icons.Material.Filled.Logout" />
+                                <button style="margin-bottom:12px; margin-left:5px"
+                                        type="submit"
+                                        class="nav-link btn btn-link">
+                                    Log out
+                                </button>
+                            </form>
+
+
+                        </Authorized>
+
+                        <NotAuthorized>
+
+                            <MudNavLink Icon="@Icons.Material.Filled.AppRegistration"
+                                        Href="Identity/Account/Register">
+                                Register
+                            </MudNavLink>
+                            <MudNavLink Icon="@Icons.Material.Filled.Login"
+                                        Href="Identity/Account/Login">
+                                Login
+                            </MudNavLink>
+
+                        </NotAuthorized>
+
+                    </AuthorizeView>
+
+                </CascadingAuthenticationState>
+        </MudPopover>
 
     </MudAppBar>
-    <MudDrawer @bind-Open="@DrawerOpen">
-        <Navigation/>
-    </MudDrawer>
+
     <MudMainContent>
         <MudContainer>
             @Body
@@ -52,6 +121,39 @@
     </MudMainContent>
 </MudLayout>
 
-@code{
+@code {
+
     public static string ScreenTitle { get; set; } = "somewhere??";
+
+    public bool PopoverOpen { get; private set; }
+
+    public MainLayout()
+    {
+        PopoverOpen = false;
+    }
+
+    private void ToggleUserPopover()
+    {
+        PopoverOpen = !PopoverOpen;
+    }
+
+    private async Task InitAdmin()
+    {
+        const string adminRoleName = "Admin";
+        var users = await UserManager.GetUsersInRoleAsync(adminRoleName);
+    
+        if (AppAdminOptions != null)
+        {
+            await RoleManager.CreateAsync(new IdentityRole(adminRoleName));
+            var adminEmail = AppAdminOptions.Value.AdminEmailAddress;
+            if (adminEmail != null)
+            {
+                var userWithAdmin = await UserManager.FindByEmailAsync(adminEmail);
+                if (userWithAdmin != null)
+                {
+                    await UserManager.AddToRoleAsync(userWithAdmin, "Admin");
+                }
+            }
+        }
+    }
 }

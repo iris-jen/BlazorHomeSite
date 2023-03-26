@@ -1,4 +1,4 @@
-﻿using BlazorHomeSite.Data;
+﻿using BlazorHomeSite.Services.Database;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,7 +7,7 @@ namespace Tests
     public abstract class SqliteInMemoryDbTestBase : IDisposable
     {
         private readonly SqliteConnection _connection;
-        private readonly DbContextOptions<HomeSiteDbContext> _contextOptions;
+        private readonly DbContextOptions<DatabaseService> _contextOptions;
         private bool disposedValue;
 
         protected SqliteInMemoryDbTestBase()
@@ -18,11 +18,11 @@ namespace Tests
             _connection.Open();
 
             // These options will be used by the context instances in this test suite, including the connection opened above.
-            _contextOptions = new DbContextOptionsBuilder<HomeSiteDbContext>()
+            _contextOptions = new DbContextOptionsBuilder<DatabaseService>()
             .UseSqlite(_connection)
             .Options;
 
-            using var homeSiteDbContext = new HomeSiteDbContext(_contextOptions);
+            using var homeSiteDbContext = new DatabaseService(_contextOptions);
 
             if (!homeSiteDbContext.Database.EnsureCreated())
             {
@@ -54,6 +54,6 @@ namespace Tests
             }
         }
 
-        protected HomeSiteDbContext GetContext() => new(_contextOptions);
+        protected DatabaseService GetContext() => new(_contextOptions);
     }
 }

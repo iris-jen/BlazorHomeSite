@@ -1,35 +1,30 @@
 ﻿using Ardalis.Specification;
 using BlazorHomeSite.Data.Domain;
+using BlazorHomeSite.Services.Database;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
 
 namespace BlazorHomeSite.Services.Photos;
 
-public class ViewPhotoService
+public class ViewPhotoService : IViewPhotoService
 {
-    private readonly IReadRepositoryBase<Photo> _photoRepository;
+    private readonly IDatabaseService _databaseService;
 
-    public ViewPhotoService(IReadRepositoryBase<Photo> photoRepository)
+    public ViewPhotoService(IDatabaseService databaseService)
     {
-        _photoRepository = photoRepository;
+        _databaseService = databaseService;
     }
 
-    public async Task<Stream?> GetImageStreamAsync(int photoId, CancellationToken token)
+    public async Task<string> GetImageB64(int photoId, bool thumbnail)
     {
-        var photoEntity = await _photoRepository.GetByIdAsync(photoId, token);
+        var photoEntity = await _databaseService.Photos.FirstOrDefaultAsync(x => x.Id == photoId);
         if (photoEntity == null)
         {
-            return null;
+            return string.Empty;
         }
 
-        using var stream = new MemoryStream();
-        using var writer = new StreamWriter(stream);
-
-        var image = await Image.LoadAsync(photoEntity.PhotoPath, token);
-        var format = await Image.DetectFormatAsync(photoEntity.PhotoPath, token);
-
-        await writer.WriteAsync(image.ToBase64String(format));
-        writer.Flush();
-        stream.Position = 0;
-        image.Dispose();
-        return stream;
+        var document = await File.ReadAllTextAsync(photoEntity.PhotoPath);
+        var b64Model = JsonConvert.DeserializeObject<B64ImageStorage>(document);
+        return thumbnail ? b64Model.Thumbnail : b64Model.Regular;
     }
 }

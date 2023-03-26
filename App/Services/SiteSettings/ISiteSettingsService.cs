@@ -4,7 +4,11 @@ namespace BlazorHomeSite.Services.SiteSettings;
 
 public interface ISiteSettingsService
 {
+    public const int SiteOwnerAlbumId = 999999;
+
+    SiteOwner GetSiteOwner();
+
     Task<SiteOwner> GetSiteOwnerAsync();
 
-    Task UpdateOrCreateSiteOwner(SiteOwner siteOwner);
+    void UpdateOrCreateSiteOwner(SiteOwner siteOwner);
 }

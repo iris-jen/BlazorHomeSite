@@ -1,0 +1,96 @@
+﻿@page "/SiteConfigPage"
+@inject ISiteSettingsService SiteSettings;
+@using BlazorHomeSite.Data.Domain;
+@using BlazorHomeSite.Services.SiteSettings;
+
+
+<MudPaper Style="padding: 2%">
+
+
+    <MudStack>
+        <MudTextField Label="First Name"
+                      Variant="Variant.Outlined"
+                      T="string"
+                      @bind-Text="OwnerModel.FirstName" />
+
+        <MudTextField T="string"
+                      Label="Last Name"
+                      Variant="Variant.Outlined"
+                      @bind-Text="OwnerModel.LastName" />
+
+        <MudTextField T="string"
+                      Label="Introduction"
+                      Variant="Variant.Outlined"
+                      @bind-Text="OwnerModel.Introduction" />
+
+        <MudTextField T="string"
+                      Label="About"
+                      Variant="Variant.Outlined"
+                      @bind-Text="OwnerModel.About"/>
+
+        <MudTextField T="string"
+                      Label="Location"
+                      @bind-Text="OwnerModel.Location" />
+
+        <MudTextField T="string"
+                      Label="Github Url"
+                      @bind-Text="OwnerModel.GitHubUrl" />
+
+        <MudTextField T="string"
+                      Label="Linkdin Url"
+                      @bind-Text="OwnerModel.LinkdinUrl" /> 
+
+
+        <MudPaper Elevation="5" Style="margin: 2%">
+            <MudStack>
+                <MudText>
+                    Site Features
+                </MudText>
+                <MudSwitch Label="Music"
+                           T="bool"
+                           @bind-Checked=OwnerModel.EnableMusicFeature />
+
+                <MudSwitch Label="Pictures"
+                           T="bool"
+                           @bind-Checked=OwnerModel.EnablePhotosFeature />
+
+                <MudSwitch Label="Blog"
+                           T="bool"
+                           @bind-Checked=OwnerModel.EnableBlogFeature />
+            </MudStack>
+        </MudPaper>
+
+
+        <MudButton Variant="Variant.Filled"
+                   Color="Color.Primary"
+                   OnClick="Save">
+                   Save
+        </MudButton>
+
+        <MudButton Variant="Variant.Filled"
+                   OnClick="Cancel"
+                   Color="Color.Error">
+                   Reset
+        </MudButton>
+
+    </MudStack>
+</MudPaper>
+@code{
+    private SiteOwner OwnerModel = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        OwnerModel = await SiteSettings.GetSiteOwnerAsync();
+    }
+
+    private void Cancel()
+    {
+        OwnerModel = SiteSettings.GetSiteOwner();
+        StateHasChanged();
+    }
+
+    private void Save()
+    {
+        SiteSettings.UpdateOrCreateSiteOwner(OwnerModel);
+    }
+}

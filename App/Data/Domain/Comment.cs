@@ -7,7 +7,7 @@ namespace BlazorHomeSite.Data.Domain
     public class Comment : BaseEntity
     {
         [Required]
-        [MaxLength(MaxCommentLength)]
+        [StringLength(MaxCommentLength)]
         public string Content { get; private set; }
 
         public int UserId { get; private set; }

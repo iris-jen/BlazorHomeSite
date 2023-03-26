@@ -1,0 +1,48 @@
+﻿@using BlazorHomeSite.Components.Photos
+@using BlazorHomeSite.Data.Domain;
+@using BlazorHomeSite.Services.Database;
+@using BlazorHomeSite.Services.Photos.PhotoAlbums;
+@using BlazorHomeSite.Services.Photos;
+@using BlazorHomeSite.Services.SiteSettings;
+@using Microsoft.EntityFrameworkCore;
+
+@page "/photoAlbumPage/{AlbumId}"
+@inject ISiteSettingsService SiteSettings;
+@inject IPhotoAlbumService PhotoAlbumService;
+@inject IUploadPhotoService PhotoUploadService;
+@inject IViewPhotoService ViewPhotoService;
+@inject IDatabaseService DatabaseService;
+
+<PageTitle>@_pageTitle</PageTitle>
+
+<MudStack>
+    @foreach(var photo in _photosInView)
+    {
+        <PhotoView PhotoId="@photo.Id" Thumbnail=false/>
+    }
+</MudStack>
+<MultiPhotoUpload AlbumId="@AlbumId"/> 
+
+@code{
+    [Parameter]
+    public string? AlbumId { get; set; }
+
+    SiteOwner _ownerModel = new();
+    PhotoAlbum? _photoAlbum = null;
+
+    List<Photo> _photosInView = new();
+
+    string _pageTitle = "";
+    int parsedAlbumId = -1;
+
+    protected override async Task OnInitializedAsync()
+    {
+        parsedAlbumId = int.Parse(AlbumId ?? "-1");
+        _ownerModel = await SiteSettings.GetSiteOwnerAsync();
+        _photoAlbum = await PhotoAlbumService.GetPhotoAlbumByIdAsync(parsedAlbumId);
+
+        _pageTitle = $"Photo Album: {_photoAlbum.Name}";
+        _photosInView = await DatabaseService.Photos.Where(x => x.AlbumId == parsedAlbumId).ToListAsync();
+    }
+
+}

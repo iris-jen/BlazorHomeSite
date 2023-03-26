@@ -1,5 +1,4 @@
 using Ardalis.GuardClauses;
-using BlazorHomeSite.Data.Interfaces;
 using System.ComponentModel.DataAnnotations;
 
 namespace BlazorHomeSite.Data.Domain;
@@ -8,7 +7,7 @@ public class Photo : BaseEntity
 {
     #region Properties
 
-    public PhotoAlbum? Album { get; private set; }
+    public PhotoAlbum Album { get; private set; }
 
     [Required]
     public int AlbumId { get; private set; }
@@ -29,15 +28,11 @@ public class Photo : BaseEntity
     public List<Tag>? PhotoTags { get; private set; }
     public int Rotation { get; private set; }
 
-    [Required]
-    public string ThumbnailPath { get; private set; }
-
     #endregion Properties
 
-    public Photo(string photoPath, string thumbnailPath, DateTime captureTime, int albumId)
+    public Photo(string photoPath, DateTime captureTime, int albumId)
     {
         PhotoPath = Guard.Against.NullOrEmpty(photoPath);
-        ThumbnailPath = Guard.Against.NullOrEmpty(thumbnailPath);
         CaptureTime = Guard.Against.OutOfSQLDateRange(captureTime);
         AlbumId = Guard.Against.Negative(albumId);
     }

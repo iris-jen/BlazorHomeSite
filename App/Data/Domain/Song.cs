@@ -2,7 +2,7 @@ namespace BlazorHomeSite.Data.Domain;
 
 public class Song : BaseEntity
 {
-    public MusicAlbum Album { get; set; } = new();
+    public MusicAlbum Album { get; set; }
     public int AlbumId { get; set; }
     public string Format { get; set; } = string.Empty;
 

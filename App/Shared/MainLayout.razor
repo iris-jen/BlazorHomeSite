@@ -7,71 +7,43 @@
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-@inject IOptions<AppAdminOptions>? AppAdminOptions;
-@inject RoleManager<IdentityRole> RoleManager;
-@inject UserManager<IdentityUser> UserManager;
-
-<PageTitle>Iris's Home Page</PageTitle>
 
 <MudLayout>
     <MudAppBar Dense="true">
-        @if (AppAdminOptions != null &&
-        AppAdminOptions.Value != null &&
-        AppAdminOptions.Value.ShowInitAdminButton.HasValue &&
-        AppAdminOptions.Value.ShowInitAdminButton.Value)
-        {
-            <MudIconButton Icon="@Icons.Material.Filled.Start" OnClick=InitAdmin></MudIconButton>
-        }
-
         <MudNavLink Href="/"
                     IconColor="@Color.Secondary"
                     Icon="@Icons.Material.Filled.Home"
                     Match="NavLinkMatch.All">
-            Home
+                    Home
         </MudNavLink>
-
-
         <MudNavLink Icon="@Icons.Material.Filled.Photo"
                     IconColor="Color.Tertiary"
                     Href="/photoAlbumsPage"
                     Match="NavLinkMatch.Prefix">
-            Photos
+                    Photos
         </MudNavLink>
-
-
         <MudNavLink Href="/musicAlbumsPage"
                     IconColor="Color.Primary"
                     Match="NavLinkMatch.Prefix"
                     Icon="@Icons.Material.Filled.Note">
-            Blog
+                    Blog
         </MudNavLink>
-
-
         <MudNavLink Href="/musicAlbumsPage"
                     IconColor="Color.Primary"
                     Match="NavLinkMatch.Prefix"
                     Icon="@Icons.Material.Filled.MusicNote">
-            Music
+                    Music
         </MudNavLink>
 
-        <MudSwitch ThumbIcon="@Icons.Material.Filled.SupervisedUserCircle" @bind-Checked="@PopoverOpen">
+        <MudIcon Icon="@Icons.Material.Filled.SupervisedUserCircle">
 
-        </MudSwitch>
+        </MudIcon>
+        <MudSwitch ThumbIcon=
+                   @bind-Checked="@PopoverOpen"/>
        
         <MudPopover Open="@PopoverOpen" AnchorOrigin="Origin.TopCenter">
-  
                 <MudText>User Options</MudText>
                 <CascadingAuthenticationState>
-
-                    <AuthorizeView Roles="Admin">
-                        <MudNavLink Href="/SiteConfigPage"
-                                    IconColor="Color.Surface"
-                                    Match="NavLinkMatch.Prefix"
-                                    Icon="@Icons.Material.Filled.Settings">
-                            Site Config
-                        </MudNavLink>
-                    </AuthorizeView>
-
                     <AuthorizeView>
                         <Authorized>
 
@@ -87,7 +59,7 @@
                                 <button style="margin-bottom:12px; margin-left:5px"
                                         type="submit"
                                         class="nav-link btn btn-link">
-                                    Log out
+                                        Log out
                                 </button>
                             </form>
 
@@ -98,17 +70,15 @@
 
                             <MudNavLink Icon="@Icons.Material.Filled.AppRegistration"
                                         Href="Identity/Account/Register">
-                                Register
+                                        Register
                             </MudNavLink>
                             <MudNavLink Icon="@Icons.Material.Filled.Login"
                                         Href="Identity/Account/Login">
-                                Login
+                                        Login
                             </MudNavLink>
 
                         </NotAuthorized>
-
                     </AuthorizeView>
-
                 </CascadingAuthenticationState>
         </MudPopover>
 
@@ -122,9 +92,6 @@
 </MudLayout>
 
 @code {
-
-    public static string ScreenTitle { get; set; } = "somewhere??";
-
     public bool PopoverOpen { get; private set; }
 
     public MainLayout()
@@ -135,25 +102,5 @@
     private void ToggleUserPopover()
     {
         PopoverOpen = !PopoverOpen;
-    }
-
-    private async Task InitAdmin()
-    {
-        const string adminRoleName = "Admin";
-        var users = await UserManager.GetUsersInRoleAsync(adminRoleName);
-    
-        if (AppAdminOptions != null)
-        {
-            await RoleManager.CreateAsync(new IdentityRole(adminRoleName));
-            var adminEmail = AppAdminOptions.Value.AdminEmailAddress;
-            if (adminEmail != null)
-            {
-                var userWithAdmin = await UserManager.FindByEmailAsync(adminEmail);
-                if (userWithAdmin != null)
-                {
-                    await UserManager.AddToRoleAsync(userWithAdmin, "Admin");
-                }
-            }
-        }
     }
 }

@@ -1,10 +1,26 @@
 ﻿@page "/"
 @using BlazorHomeSite.Data.Domain;
 @using BlazorHomeSite.Services.SiteSettings;
+@using BlazorHomeSite.Services;
 @using BlazorHomeSite.Shared;
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.Extensions.Options;
 @inject ISiteSettingsService SiteSettingService
 
+
+@inject IOptions<AppAdminOptions>? AppAdminOptions;
+@inject RoleManager<IdentityRole> RoleManager;
+@inject UserManager<IdentityUser> UserManager;
+
 <MudStack>
+
+    @if (AppAdminOptions != null &&
+    AppAdminOptions.Value != null &&
+    AppAdminOptions.Value.ShowInitAdminButton.HasValue &&
+    AppAdminOptions.Value.ShowInitAdminButton.Value)
+    {
+        <MudIconButton Icon="@Icons.Material.Filled.Start" OnClick=InitAdmin></MudIconButton>
+    }
 
     <MudPaper Elevation="2" Class="pa-4" Outlined="true" Style="background: #ff42a4">
         <MudText Typo="Typo.h4" Color="Color.Dark" Style="opacity: 100%;">Hi I'm @SiteOwner.FirstName</MudText>
@@ -26,16 +42,35 @@
                 Website Code
             </MudButton>
         </MudCardContent>
-
     </MudCard>
+
 </MudStack>
 
 @code {
     protected override async Task OnInitializedAsync()
     {
-        MainLayout.ScreenTitle = "Home";
         SiteOwner = await SiteSettingService.GetSiteOwnerAsync();
     }
 
     private SiteOwner SiteOwner { get; set; } = null!;
+
+    private async Task InitAdmin()
+    {
+        const string adminRoleName = "Admin";
+        var users = await UserManager.GetUsersInRoleAsync(adminRoleName);
+
+        if (AppAdminOptions != null)
+        {
+            await RoleManager.CreateAsync(new IdentityRole(adminRoleName));
+            var adminEmail = AppAdminOptions.Value.AdminEmailAddress;
+            if (adminEmail != null)
+            {
+                var userWithAdmin = await UserManager.FindByEmailAsync(adminEmail);
+                if (userWithAdmin != null)
+                {
+                    await UserManager.AddToRoleAsync(userWithAdmin, "Admin");
+                }
+            }
+        }
+    }
 }

@@ -1,54 +1,46 @@
 ﻿@using BlazorHomeSite.Services.Photos;
-@inject IUploadPhotoService PhotoUploadServie;
+@inject IUploadPhotoService PhotoUploadService;
 
 <MudPaper>
-    <MudFileUpload T="IReadOnlyList<IBrowserFile>" OnFilesChanged="QueueFiles">
-        <ButtonTemplate>
-            <MudButton HtmlTag="label"
-                       Variant="Variant.Filled"
-                       Color="Color.Primary"
-                       StartIcon="@Icons.Material.Filled.CloudUpload"
-                       for="@context">
-                Queue Photos
-            </MudButton>
-        </ButtonTemplate>
-    </MudFileUpload>
-    
-    <MudStack Row=true>
-        <MudButton OnClick="UploadPhotos">Upload Photos</MudButton>
-        <MudButton OnClick="ClearSelection">Clear Selection</MudButton>
-    </MudStack>
-    
-    <MudStack>
-        @foreach(var file in _photosToUpload)
+    <MudGrid>
+        <MudItem xs=4>
+            <MudFileUpload T="IReadOnlyList<IBrowserFile>" OnFilesChanged="async (args) => await UploadPhotos(args)" MaximumFileCount="100">
+                <ButtonTemplate>
+                    <MudButton HtmlTag="label"
+                               Variant="Variant.Filled"
+                               Color="Color.Primary"
+                               StartIcon="@Icons.Material.Filled.CloudUpload"
+                               for="@context">
+                        Upload Photos (100 max)
+                    </MudButton>
+                </ButtonTemplate>
+            </MudFileUpload>
+        </MudItem>
+
+        @if (uploading)
         {
-            <MudText>@file.Name</MudText>
+            <MudItem xs="4">
+                <MudText>Uploading...</MudText>
+                <MudProgressLinear Indeterminate=true/>
+            </MudItem>
         }
-    </MudStack>
+
+    </MudGrid>
 </MudPaper>
 @code {
     [Parameter]
     public string? AlbumId { get; set; }
 
-    public bool PhotosUploading{ get; set; }
+    bool uploading = false;
 
-    List<IBrowserFile> _photosToUpload = new();
-
-    private async Task UploadPhotos()
+    private async Task UploadPhotos(InputFileChangeEventArgs args)
     {
-        PhotosUploading = true;
-        await PhotoUploadServie.UploadPhotos(_photosToUpload, int.Parse(AlbumId));
-        PhotosUploading = false;
-    }
+        uploading = true;
 
-    private void ClearSelection()
-    {
-        _photosToUpload.Clear();
-    }
-
-    private void QueueFiles(InputFileChangeEventArgs args)
-    {
         var allFiles = args.GetMultipleFiles(100);
-        _photosToUpload.AddRange(allFiles);
+        await PhotoUploadService.UploadPhotos(allFiles, int.Parse(AlbumId));
+        uploading = false;
+        StateHasChanged();
     }
+ 
 }

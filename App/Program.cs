@@ -5,7 +5,7 @@ using BlazorHomeSite.Services.Photos;
 using BlazorHomeSite.Services.Photos.PhotoAlbums;
 using BlazorHomeSite.Services.SiteSettings;
 using Howler.Blazor.Components;
-
+using LazyCache;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
@@ -98,13 +98,15 @@ builder.Services.ConfigureApplicationCookie(o =>
     o.SlidingExpiration = true;
 });
 
+builder.Services.AddTransient<IAppCache, CachingService>();
+
 // Secrets
 builder.Services.Configure<AppAdminOptions>(builder.Configuration);
 
 builder.Services.AddLogging();
 
 builder.Services.AddTransient<ISiteSettingsService, SiteSettingsService>();
-builder.Services.AddTransient<IUploadPhotoService, UploadPhotosService>();
+builder.Services.AddTransient<IUploadPhotoService, UploadPhotoService>();
 builder.Services.AddTransient<IViewPhotoService, ViewPhotoService>();
 builder.Services.AddTransient<IDatabaseService, DatabaseService>();
 builder.Services.AddTransient<IPhotoAlbumService, PhotoAlbumService>();

@@ -1,6 +1,6 @@
-﻿using Ardalis.Specification;
-using BlazorHomeSite.Data.Domain;
+﻿using BlazorHomeSite.Data.Domain;
 using BlazorHomeSite.Services.Database;
+using LazyCache;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -8,22 +8,24 @@ namespace BlazorHomeSite.Services.Photos;
 
 public class ViewPhotoService : IViewPhotoService
 {
-    private readonly IDatabaseService _databaseService;
+    private readonly IAppCache _cache;
 
-    public ViewPhotoService(IDatabaseService databaseService)
+    public ViewPhotoService(IAppCache cache)
     {
-        _databaseService = databaseService;
+        _cache = cache;
     }
 
-    public async Task<string> GetImageB64(int photoId, bool thumbnail)
+    public string GetImageB64(int photoId, bool thumbnail, string path)
     {
-        var photoEntity = await _databaseService.Photos.FirstOrDefaultAsync(x => x.Id == photoId);
-        if (photoEntity == null)
-        {
-            return string.Empty;
-        }
+        var cacheKey = $"photo-{photoId}-t{thumbnail}";
 
-        var document = await File.ReadAllTextAsync(photoEntity.PhotoPath);
+        var result = _cache.GetOrAdd<string>(cacheKey, () => ReadB64FromFile(thumbnail, path));
+        return result;
+    }
+
+    private string ReadB64FromFile(bool thumbnail, string path)
+    {
+        var document = File.ReadAllText(path);
         var b64Model = JsonConvert.DeserializeObject<B64ImageStorage>(document);
         return thumbnail ? b64Model.Thumbnail : b64Model.Regular;
     }

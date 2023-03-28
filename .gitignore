@@ -414,3 +414,7 @@ BlazorHomeSite.7z
 /photos/1
 /wwwroot/PhotoUploads/1
 /wwwroot/PhotoUploads
+/App/PhotoUploads
+*.db
+*.db-shm
+*.db-wal

@@ -1,52 +1,145 @@
-﻿<MudPaper>
-    <MudFileUpload T="IReadOnlyList<IBrowserFile>" OnFilesChanged="QueueFiles">
-        <ButtonTemplate>
-            <MudButton HtmlTag="label"
-                       Variant="Variant.Filled"
-                       Color="Color.Primary"
-                       StartIcon="@Icons.Material.Filled.CloudUpload"
-                       for="@context">
-                Queue Photos
-            </MudButton>
-        </ButtonTemplate>
-    </MudFileUpload>
-    
-    <MudStack Row=true>
-        <MudButton OnClick="UploadPhotos">Upload Photos</MudButton>
-        <MudButton OnClick="ClearSelection">Clear Selection</MudButton>
-    </MudStack>
-    
-    <MudStack>
-        @foreach(var file in _photosToUpload)
-        {
-            <MudText>@file.Name</MudText>
-        }
-    </MudStack>
+﻿@using BlazorHomeSite.Data;
+@using BlazorHomeSite.Data.Domain;
+@using BlazorHomeSite.Services.Photos.PhotoAlbums;
+
+@inject IPhotoAlbumService PhotoAlbumService;
+@inject IDialogService DialogService
+
+<MudPaper Style="padding: 2%" Square=true Elevation="10">
+    <MudGrid>
+        <MudItem xs="2">
+            <MudPaper Square="true" Elevation="20">
+                <MudText Style="margin-top: 10%" Align="Align.Center">@_componentTitle</MudText>
+            </MudPaper>
+           
+        </MudItem>
+
+        <MudItem xs="4">
+            <MudTextField Label="Name"
+                          Variant="Variant.Outlined"
+                          @bind-Value=_newAlbumName
+                          T="string" />
+        </MudItem>
+
+        <MudItem xs="2">
+            <MudNumericField Label="Album Order"
+                             Variant="Variant.Outlined"
+                             @bind-Value=_newAlbumOrder
+                             T="int">
+
+            </MudNumericField>
+        </MudItem>
+
+        <MudItem xs="2">
+            <MudSelect T="UserLevel" Label="UserLevel" AnchorOrigin="Origin.BottomCenter" @bind-Value=_newAlbumUserLevel>
+                <MudSelectItem Value="@(UserLevel.NoAccount)" />
+                <MudSelectItem Value="@(UserLevel.Registered)" />
+                <MudSelectItem Value="@(UserLevel.Trusted)" />
+                <MudSelectItem Value="@(UserLevel.Admin)" />
+            </MudSelect>
+        </MudItem>
+
+        <MudItem xs="2">
+            @if(AlbumId == null)
+            {
+                <MudFab StartIcon="@Icons.Material.Filled.Add" Color="Color.Success" OnClick="AddNewPhotoAlbumAsync"></MudFab>
+            }
+            else
+            {
+                <MudFab StartIcon="@Icons.Material.Filled.Edit" Color="Color.Success" OnClick="EditPhotoAlbumAsync"></MudFab>
+            }
+        </MudItem>
+
+        <MudItem xs="12">
+            <MudTextField Label="Description"
+                          Variant="Variant.Outlined"
+                          Lines="4"
+                          @bind-Value=_newAlbumDescription
+                          T="string" />
+
+        </MudItem>
+
+    </MudGrid>
 </MudPaper>
+
 @code {
     [Parameter]
     public string? AlbumId { get; set; }
+    PhotoAlbum? _existingAlbum = null;
+    string _componentTitle = string.Empty;
 
-    List<IBrowserFile> _photosToUpload = new();
+    string _newAlbumDescription = string.Empty;
+    string _newAlbumName = string.Empty;
+    int _newAlbumOrder = 0;
+    UserLevel _newAlbumUserLevel = UserLevel.NoAccount;
 
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
+        if(AlbumId != null)
+        {
+            var parsedId = int.Parse(AlbumId);
+            _existingAlbum = await PhotoAlbumService.GetPhotoAlbumByIdAsync(parsedId);
+            if (_existingAlbum != null)
+            {
+                _newAlbumDescription = _existingAlbum.Description;
+                _newAlbumName = _existingAlbum.Name;
+                _newAlbumOrder = _existingAlbum.AlbumOrder;
+                _newAlbumUserLevel = _existingAlbum.UserLevel;
+            }
+
+            _componentTitle = "Edit Album";
+        }
+        else
+        {
+            _componentTitle = "Create Album";
+        }
     }
 
-    private void UploadPhotos()
+    private bool Validate()
     {
+        var validationErrors = new Dictionary<string, string>();
 
+        if (string.IsNullOrEmpty(_newAlbumDescription))
+        {
+            validationErrors.Add("Album Description", "Cannot be blank");
+        }
+
+        if (string.IsNullOrEmpty(_newAlbumName))
+        {
+            validationErrors.Add("Album Name", "Cannot be blank");
+        }
+
+        if (validationErrors.Any())
+        {
+            var options = new DialogOptions { CloseOnEscapeKey = true };
+            var dialogParameters = new DialogParameters();
+            foreach (var error in validationErrors)
+            {
+                dialogParameters.Add(error.Key, error.Value);
+            }
+
+            DialogService.Show<PhotoAlbumEditor>($"Could not {(AlbumId == null ? "add new" : "edit")} Photo Album", options);
+            return false;
+        }
+
+        return true;
     }
 
-    private void ClearSelection()
+    async Task AddNewPhotoAlbumAsync()
     {
-        
+        if (!Validate())
+            return;
+
+        await PhotoAlbumService.CreateNewPhotoAlbumAsync(_newAlbumName, _newAlbumDescription, _newAlbumUserLevel);
     }
 
-    private void QueueFiles(InputFileChangeEventArgs args)
+    async Task EditPhotoAlbumAsync()
     {
-        var allFiles = args.GetMultipleFiles(100);
-        _photosToUpload.AddRange(allFiles);
+        if(_existingAlbum == null || !Validate())
+            return;
+
+        await PhotoAlbumService.EditPhotoAlbumAsync(_existingAlbum.Id, _newAlbumOrder, 
+                                                    _newAlbumDescription, _newAlbumUserLevel, _newAlbumName);
     }
 }

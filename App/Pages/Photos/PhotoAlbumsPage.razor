@@ -1,6 +1,7 @@
 ﻿@page "/photoAlbumsPage"
 @inject IPhotoAlbumService PhotoAlbumService;
 
+@using BlazorHomeSite.Components.Photos
 @using BlazorHomeSite.Data.Domain;
 @using BlazorHomeSite.Data;
 @using BlazorHomeSite.Services.Photos.PhotoAlbums;
@@ -10,74 +11,53 @@
 <MudPaper Style="padding: 2%">
     <MudStack>
 
-    <MudPaper Style="padding: 2%">
         <CascadingAuthenticationState>
             <AuthorizeView Roles="Admin">
-                <MudPaper>
-                    <MudStack Row="true">
-                        <MudText>Create New Photo Album</MudText>
-
-                        <MudTextField Label="Name"
-                                        Variant="Variant.Outlined"
-                                        @bind-Value=_newAlbumName
-                                        T="string"/>
-
-                        <MudTextField Label="Description"
-                                      Variant="Variant.Outlined"
-                                      @bind-Value=_newAlbumDescription
-                                      T="string" />
-
-                        <MudSelect T="UserLevel" Label="UserLevel" AnchorOrigin="Origin.BottomCenter" @bind-Value=_newAlbumUserLevel>
-                            <MudSelectItem Value="@(UserLevel.NoAccount)" />
-                            <MudSelectItem Value="@(UserLevel.Registered)" />
-                            <MudSelectItem Value="@(UserLevel.Trusted)" />
-                            <MudSelectItem Value="@(UserLevel.Admin)" />
-                        </MudSelect>
-
-                            <MudFab StartIcon="@Icons.Material.Filled.Add" Color="Color.Success" OnClick="AddNewPhotoAlbum"></MudFab>
-              
-                    </MudStack>
-                </MudPaper>
+                <PhotoAlbumEditor />
+                <MudDivider />
             </AuthorizeView>
         </CascadingAuthenticationState>
-    </MudPaper>
+
         <MudTable Items="@_photoAlbums" Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info">
             <HeaderContent>
                 <MudTh>Name</MudTh>
                 <MudTh>Description</MudTh>
+                <MudTh>View</MudTh>
                 <MudTh></MudTh>
             </HeaderContent>
             <RowTemplate>
                 <MudTd DataLabel="Name">@context.Name</MudTd>
                 <MudTd DataLabel="Description">@context.Description</MudTd>
 
-                <MudNavLink Href=@GetAlbumNavigationPath(context.Id)
+                <MudTd>
+                    <MudNavLink Href=@GetAlbumNavigationPath(context.Id)
                                 IconColor="Color.Surface"
                                 Match="NavLinkMatch.Prefix"
                                 Icon="@Icons.Material.Filled.NavigateNext">
-                    
                     </MudNavLink>
-               
+                </MudTd>
+
+                <MudTd>
+                    <CascadingAuthenticationState>
+                        <AuthorizeView Roles="Admin" Context="delete_album_context">
+                            <MudIconButton Icon="@Icons.Material.Filled.DeleteForever" OnClick="async ()=> await DeleteAlbum(context.Id)" />
+                        </AuthorizeView>
+                    </CascadingAuthenticationState>
+                </MudTd>
+
             </RowTemplate>
         </MudTable>
 
-
     </MudStack>
 </MudPaper>
-@code{
+@code {
     List<PhotoAlbum> _photoAlbums = new List<PhotoAlbum>();
-    string _newAlbumDescription = string.Empty;
-    string _newAlbumName = string.Empty;
-    UserLevel _newAlbumUserLevel = UserLevel.NoAccount;
-
-    
+    bool _loading = true;
 
     private string GetAlbumNavigationPath(int id)
     {
         return $"/photoAlbumPage/{id}";
     }
-
-    bool _loading = true;
 
     protected override async Task OnInitializedAsync()
     {
@@ -87,13 +67,11 @@
         _loading = false;
     }
 
-    async Task AddNewPhotoAlbum()
+    private async Task DeleteAlbum(int id)
     {
-        _loading = true;
-        await PhotoAlbumService.CreateNewPhotoAlbumAsync(_newAlbumName, _newAlbumDescription, _newAlbumUserLevel);
+        await PhotoAlbumService.DeletePhotoAlbumAsync(id);
         _photoAlbums = await PhotoAlbumService.GetAllAlbumsAsync();
         StateHasChanged();
-        _loading = false;
     }
 
 }

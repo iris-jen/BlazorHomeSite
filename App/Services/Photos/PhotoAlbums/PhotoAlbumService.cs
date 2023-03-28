@@ -2,16 +2,20 @@
 using BlazorHomeSite.Data.Domain;
 using BlazorHomeSite.Services.Database;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace BlazorHomeSite.Services.Photos.PhotoAlbums
 {
     public class PhotoAlbumService : IPhotoAlbumService
     {
         private readonly IDatabaseService _databaseService;
+        private readonly string _photoBaseDir;
 
-        public PhotoAlbumService(IDatabaseService databaseService)
+        public PhotoAlbumService(IDatabaseService databaseService, IOptions<AppAdminOptions> adminOptions)
         {
             _databaseService = databaseService;
+            _photoBaseDir = adminOptions.Value.PhotoDirectory ??
+                Path.Combine(Environment.CurrentDirectory, "PhotoUploads");
         }
 
         public async Task CreateNewPhotoAlbumAsync(string name, string description, UserLevel userLevel)
@@ -23,6 +27,13 @@ namespace BlazorHomeSite.Services.Photos.PhotoAlbums
 
         public async Task DeletePhotoAlbumAsync(int id)
         {
+            var directoryPath = Path.Combine(_photoBaseDir, $"a_{id}");
+            if (Directory.Exists(directoryPath))
+            {
+                Directory.Delete(directoryPath, true);
+            }
+
+            await _databaseService.Photos.Where(x => x.AlbumId == id).ExecuteDeleteAsync();
             await _databaseService.PhotoAlbums.Where(x => x.Id == id).ExecuteDeleteAsync();
         }
 

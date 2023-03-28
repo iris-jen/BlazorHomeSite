@@ -5,6 +5,7 @@
 @using BlazorHomeSite.Services.Photos;
 @using BlazorHomeSite.Services.SiteSettings;
 @using Microsoft.EntityFrameworkCore;
+@using System.Collections.Concurrent;
 
 @page "/photoAlbumPage/{AlbumId}"
 @inject ISiteSettingsService SiteSettings;
@@ -16,33 +17,99 @@
 <PageTitle>@_pageTitle</PageTitle>
 
 <MudStack>
-    @foreach(var photo in _photosInView)
-    {
-        <PhotoView PhotoId="@photo.Id" Thumbnail=false/>
-    }
-</MudStack>
-<MultiPhotoUpload AlbumId="@AlbumId"/> 
+    <CascadingAuthenticationState>
+        <AuthorizeView Roles="Admin">
+            <MultiPhotoUpload AlbumId="@AlbumId" />
+            <PhotoAlbumEditor AlbumId="@AlbumId" />
+        </AuthorizeView>
+    </CascadingAuthenticationState>
 
-@code{
+    <MudGrid>
+        @if (loading)
+        {
+            <MudItem xs="12">
+                <MudText>Loading.....</MudText>
+            </MudItem>
+            <MudItem xs="12">
+                <MudProgressCircular Indeterminate=true />
+            </MudItem>
+        }
+        else
+        {
+            @foreach (var photo in PhotosInView)
+            {
+                <MudItem xs="2">
+                    <PhotoView PhotoId="@photo.Key" Thumbnail=true B64="@photo.Value" />
+                </MudItem>
+            }
+        }
+    </MudGrid>
+    <MudPagination Count="@totalPages" Selected="@_page" Variant="Variant.Filled" Color="Color.Secondary"
+                   SelectedChanged="async (id)=> await OnPageChange(id)" Class="flex-fill">
+
+    </MudPagination>
+
+</MudStack>
+@code {
     [Parameter]
     public string? AlbumId { get; set; }
 
     SiteOwner _ownerModel = new();
     PhotoAlbum? _photoAlbum = null;
 
-    List<Photo> _photosInView = new();
+    ConcurrentDictionary<int, string> PhotosInView = new();
 
     string _pageTitle = "";
     int parsedAlbumId = -1;
+    int _page = 1;
+    int photosPerPage = 25;
+    int totalPages = 99;
+    bool loading = true;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            loading = true;
+            await SetPhotosInView(1);
+            loading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnPageChange(int page)
+    {
+        _page = page;
+        loading = true;
+        await SetPhotosInView(_page);
+        loading = false;
+        StateHasChanged();
+    }
 
     protected override async Task OnInitializedAsync()
     {
-        parsedAlbumId = int.Parse(AlbumId ?? "-1");
-        _ownerModel = await SiteSettings.GetSiteOwnerAsync();
-        _photoAlbum = await PhotoAlbumService.GetPhotoAlbumByIdAsync(parsedAlbumId);
 
+        parsedAlbumId = int.Parse(AlbumId ?? "-1");
+        _photoAlbum = await PhotoAlbumService.GetPhotoAlbumByIdAsync(parsedAlbumId);
         _pageTitle = $"Photo Album: {_photoAlbum.Name}";
-        _photosInView = await DatabaseService.Photos.Where(x => x.AlbumId == parsedAlbumId).ToListAsync();
+        _ownerModel = await SiteSettings.GetSiteOwnerAsync();
+        var totalPhotos = await DatabaseService.Photos.Where(x => x.AlbumId == parsedAlbumId).CountAsync();
+        totalPages = (int)(totalPages / photosPerPage);
+
     }
 
+    private async Task SetPhotosInView(int page)
+    {
+        var photos = await DatabaseService.Photos.Where(x => x.AlbumId == parsedAlbumId)
+                        .OrderBy(x => x.Id).Skip(page > 1 ? photosPerPage - 1 * page : 0).Take(photosPerPage).ToListAsync();
+
+        PhotosInView.Clear();
+        Parallel.ForEach(photos, (photo) =>
+        {
+            var b64 = ViewPhotoService.GetImageB64(photo.Id, true, photo.PhotoPath);
+            PhotosInView.TryAdd(photo.Id, b64);
+        });
+
+        PhotosInView.OrderBy(x => x.Key);
+    }
 }

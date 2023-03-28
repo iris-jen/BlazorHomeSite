@@ -2,5 +2,5 @@
 
 public interface IViewPhotoService
 {
-    Task<string> GetImageB64(int photoId, bool thumbnail);
+    string GetImageB64(int photoId, bool thumbnail, string path);
 }

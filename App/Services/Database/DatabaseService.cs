@@ -70,8 +70,5 @@ public class DatabaseService : IdentityDbContext, IDatabaseService
         mb.Entity<Song>().HasOne(x => x.Album).WithMany(x => x.Songs);
 
         mb.Entity<SiteOwner>().HasKey(x => x.Id);
-        mb.Entity<SiteOwner>().HasOne(x => x.ProfilePhoto);
-        mb.Entity<SiteOwner>().HasOne(x => x.HomePageBackground);
-        mb.Entity<SiteOwner>().HasData(new SiteOwner() { Id = 1 });
     }
 }

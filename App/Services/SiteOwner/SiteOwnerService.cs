@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BlazorHomeSite.Services.SiteSettings;
 
-public class SiteSettingsService : ISiteSettingsService
+public class SiteOwnerService : ISiteOwnerService
 {
-    private const int setSiteOwnerId = 1;
-    private const int unsetSiteOwnerId = -99;
+    public const int SetSiteOwnerId = 1;
+    public const int UnsetSiteOwnerId = -99;
 
     private readonly IDatabaseService _databaseService;
 
-    public SiteSettingsService(IDatabaseService databaseService)
+    public SiteOwnerService(IDatabaseService databaseService)
     {
         _databaseService = databaseService;
     }
@@ -19,25 +19,26 @@ public class SiteSettingsService : ISiteSettingsService
     public SiteOwner GetSiteOwner()
     {
         return _databaseService.SiteOwners.FirstOrDefault() ??
-               new SiteOwner() { Id = unsetSiteOwnerId };
+               new SiteOwner() { Id = UnsetSiteOwnerId };
     }
 
     public async Task<SiteOwner> GetSiteOwnerAsync()
     {
         return await _databaseService.SiteOwners.FirstOrDefaultAsync() ??
-               new SiteOwner() { Id = unsetSiteOwnerId };
+               new SiteOwner() { Id = UnsetSiteOwnerId };
     }
 
     public void UpdateOrCreateSiteOwner(SiteOwner siteOwner)
     {
-        if (siteOwner.Id == unsetSiteOwnerId)
+        if (siteOwner.Id == UnsetSiteOwnerId)
         {
-            siteOwner.Id = setSiteOwnerId;
+            siteOwner.Id = SetSiteOwnerId;
             _databaseService.SiteOwners.Add(siteOwner);
         }
         else
         {
             _databaseService.SiteOwners.Update(siteOwner);
         }
+        _databaseService.SaveDb();
     }
 }

@@ -105,7 +105,7 @@ builder.Services.Configure<AppAdminOptions>(builder.Configuration);
 
 builder.Services.AddLogging();
 
-builder.Services.AddTransient<ISiteSettingsService, SiteSettingsService>();
+builder.Services.AddTransient<ISiteOwnerService, SiteOwnerService>();
 builder.Services.AddTransient<IUploadPhotoService, UploadPhotoService>();
 builder.Services.AddTransient<IViewPhotoService, ViewPhotoService>();
 builder.Services.AddTransient<IDatabaseService, DatabaseService>();

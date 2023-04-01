@@ -2,7 +2,7 @@
 
 namespace BlazorHomeSite.Services.SiteSettings;
 
-public interface ISiteSettingsService
+public interface ISiteOwnerService
 {
     public const int SiteOwnerAlbumId = 999999;
 

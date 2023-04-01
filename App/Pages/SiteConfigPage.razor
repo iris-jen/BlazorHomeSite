@@ -1,5 +1,5 @@
 ﻿@page "/SiteConfigPage"
-@inject ISiteSettingsService SiteSettings;
+@inject ISiteOwnerService SiteSettings;
 @using BlazorHomeSite.Data.Domain;
 @using BlazorHomeSite.Services.SiteSettings;
 
@@ -39,26 +39,6 @@
         <MudTextField T="string"
                       Label="Linkdin Url"
                       @bind-Text="OwnerModel.LinkdinUrl" /> 
-
-
-        <MudPaper Elevation="5" Style="margin: 2%">
-            <MudStack>
-                <MudText>
-                    Site Features
-                </MudText>
-                <MudSwitch Label="Music"
-                           T="bool"
-                           @bind-Checked=OwnerModel.EnableMusicFeature />
-
-                <MudSwitch Label="Pictures"
-                           T="bool"
-                           @bind-Checked=OwnerModel.EnablePhotosFeature />
-
-                <MudSwitch Label="Blog"
-                           T="bool"
-                           @bind-Checked=OwnerModel.EnableBlogFeature />
-            </MudStack>
-        </MudPaper>
 
 
         <MudButton Variant="Variant.Filled"

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Tests.Schema.Photos
 {
-    public class GivenAlbum_WhenAddedToSetWithPhotos_ThenCanReadBack : SqliteInMemoryDbTestBase
+    public class PhotoAlbumLinkedPhotoTest : SqliteInMemoryDbTestBase
     {
         [Fact]
         public void Test()

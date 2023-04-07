@@ -1,5 +1,5 @@
-﻿using BlazorHomeSite.Data;
-using BlazorHomeSite.Data.Domain;
+﻿using BlazorHomeSite.Data.Enums;
+using BlazorHomeSite.Data.Photos;
 
 namespace BlazorHomeSite.Services.Photos.PhotoAlbums
 {

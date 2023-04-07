@@ -1,4 +1,8 @@
-﻿using BlazorHomeSite.Data.Domain;
+﻿using BlazorHomeSite.Data.Comments;
+using BlazorHomeSite.Data.Music;
+using BlazorHomeSite.Data.Photos;
+using BlazorHomeSite.Data.SiteOwners;
+using BlazorHomeSite.Data.Tags;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,18 +1,17 @@
-﻿@using BlazorHomeSite.Components.Photos
-@using BlazorHomeSite.Data.Domain;
+﻿@page "/photoAlbumPage/{AlbumId}"
+@using BlazorHomeSite.Components.Photos
+@using BlazorHomeSite.Data.Photos;
+@using BlazorHomeSite.Data.SiteOwners;
+@using System.Collections.Concurrent;
 @using BlazorHomeSite.Services.Database;
 @using BlazorHomeSite.Services.Photos.PhotoAlbums;
 @using BlazorHomeSite.Services.Photos;
-@using BlazorHomeSite.Services.SiteSettings;
+@using BlazorHomeSite.Services.SiteOwners;
 @using Microsoft.EntityFrameworkCore;
-@using System.Collections.Concurrent;
-
-@page "/photoAlbumPage/{AlbumId}"
 @inject ISiteOwnerService SiteSettings;
 @inject IPhotoAlbumService PhotoAlbumService;
 @inject IUploadPhotoService PhotoUploadService;
-@inject IViewPhotoService ViewPhotoService;
-@inject IDatabaseService DatabaseService;
+@inject IPhotosService PhotoService
 
 <PageTitle>@_pageTitle</PageTitle>
 
@@ -53,11 +52,8 @@
 @code {
     [Parameter]
     public string? AlbumId { get; set; }
-
-    SiteOwner _ownerModel = new();
     PhotoAlbum? _photoAlbum = null;
-
-    ConcurrentDictionary<int, string> PhotosInView = new();
+    Dictionary<int, string> PhotosInView = new();
 
     string _pageTitle = "";
     int parsedAlbumId = -1;
@@ -66,50 +62,33 @@
     int totalPages = 99;
     bool loading = true;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            loading = true;
-            await SetPhotosInView(1);
-            loading = false;
-            StateHasChanged();
-        }
-    }
-
     private async Task OnPageChange(int page)
     {
         _page = page;
-        loading = true;
         await SetPhotosInView(_page);
-        loading = false;
         StateHasChanged();
     }
 
     protected override async Task OnInitializedAsync()
     {
-
         parsedAlbumId = int.Parse(AlbumId ?? "-1");
         _photoAlbum = await PhotoAlbumService.GetPhotoAlbumByIdAsync(parsedAlbumId);
-        _pageTitle = $"Photo Album: {_photoAlbum.Name}";
-        _ownerModel = await SiteSettings.GetSiteOwnerAsync();
-        var totalPhotos = await DatabaseService.Photos.Where(x => x.AlbumId == parsedAlbumId).CountAsync();
-        totalPages = (int)(totalPages / photosPerPage);
 
+        if (_photoAlbum != null)
+        {
+            _pageTitle = $"Photo Album: {_photoAlbum.Name}";
+            var totalPhotos = await PhotoService.GetPagesForAlbum(parsedAlbumId);
+            totalPages = (int)(totalPages / photosPerPage);
+
+            await SetPhotosInView(1);
+        }
     }
 
     private async Task SetPhotosInView(int page)
     {
-        var photos = await DatabaseService.Photos.Where(x => x.AlbumId == parsedAlbumId)
-                        .OrderBy(x => x.Id).Skip(page > 1 ? photosPerPage - 1 * page : 0).Take(photosPerPage).ToListAsync();
-
+        loading = true;
         PhotosInView.Clear();
-        Parallel.ForEach(photos, (photo) =>
-        {
-            var b64 = ViewPhotoService.GetImageB64(photo.Id, true, photo.PhotoPath);
-            PhotosInView.TryAdd(photo.Id, b64);
-        });
-
-        PhotosInView.OrderBy(x => x.Key);
+        PhotosInView = await PhotoService.GetB64ImagesByPage(parsedAlbumId, page, photosPerPage);
+        loading = false;
     }
 }

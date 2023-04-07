@@ -26,4 +26,8 @@
     <ProjectReference Include="..\App\BlazorHomeSite.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Schema\Photos\" />
+  </ItemGroup>
+
 </Project>

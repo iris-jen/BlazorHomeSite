@@ -1,6 +1,5 @@
 ﻿using Ardalis.Result;
 using Ardalis.Specification;
-using BlazorHomeSite.Data.Domain;
 using BlazorHomeSite.Data;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.Extensions.Options;
@@ -8,6 +7,7 @@ using System.Collections.Concurrent;
 using BlazorHomeSite.Services.Database;
 using Newtonsoft.Json;
 using SixLabors.ImageSharp.Formats;
+using BlazorHomeSite.Data.Photos;
 
 namespace BlazorHomeSite.Services.Photos;
 

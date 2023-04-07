@@ -3,7 +3,7 @@ using BlazorHomeSite.Services.Database;
 using BlazorHomeSite.Services.Emails;
 using BlazorHomeSite.Services.Photos;
 using BlazorHomeSite.Services.Photos.PhotoAlbums;
-using BlazorHomeSite.Services.SiteSettings;
+using BlazorHomeSite.Services.SiteOwners;
 using Howler.Blazor.Components;
 using LazyCache;
 using Microsoft.AspNetCore.Identity;
@@ -107,7 +107,7 @@ builder.Services.AddLogging();
 
 builder.Services.AddTransient<ISiteOwnerService, SiteOwnerService>();
 builder.Services.AddTransient<IUploadPhotoService, UploadPhotoService>();
-builder.Services.AddTransient<IViewPhotoService, ViewPhotoService>();
+builder.Services.AddTransient<IPhotosService, PhotosService>();
 builder.Services.AddTransient<IDatabaseService, DatabaseService>();
 builder.Services.AddTransient<IPhotoAlbumService, PhotoAlbumService>();
 

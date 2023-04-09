@@ -22,7 +22,7 @@ public class PhotosService : IPhotosService
     {
         var photos = await _db.Photos
                               .Where(x => x.AlbumId == albumid)
-                              .OrderBy(x => x.Id).Skip(page > 1 ? photosPerPage - 1 * page : 0)
+                              .OrderBy(x => x.Id).Skip(page > 1 ? photosPerPage * (page - 1) : 0)
                               .Take(photosPerPage)
                               .ToListAsync();
 
@@ -42,7 +42,7 @@ public class PhotosService : IPhotosService
         return await _db.Photos.Where(x => x.AlbumId == albumId).CountAsync();
     }
 
-    public async Task<string> GetImageB64(int photoId, bool thumbnail, string path)
+    public virtual async Task<string> GetImageB64(int photoId, bool thumbnail, string path)
     {
         var cacheKey = $"photo-{photoId}-t{thumbnail}";
 
@@ -50,7 +50,7 @@ public class PhotosService : IPhotosService
         return result;
     }
 
-    private async Task<string> ReadB64FromFile(bool thumbnail, string path)
+    public virtual async Task<string> ReadB64FromFile(bool thumbnail, string path)
     {
         var document = await File.ReadAllTextAsync(path);
         var b64Model = JsonConvert.DeserializeObject<B64ImageStorage>(document);

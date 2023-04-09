@@ -20,26 +20,54 @@
     <PackageReference Include="Ardalis.Result" Version="7.0.0" />
     <PackageReference Include="Ardalis.Specification" Version="6.1.0" />
     <PackageReference Include="Ardalis.Specification.EntityFrameworkCore" Version="6.1.0" />
-    <PackageReference Include="FluentAssertions" Version="6.10.0" />
+
     <PackageReference Include="Howler.Blazor" Version="0.9.8" />
     <PackageReference Include="LazyCache" Version="2.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="7.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.4" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="7.0.4" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.4">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="Microsoft.JSInterop" Version="7.0.4" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.18.1" />
-    <PackageReference Include="Moq" Version="4.18.4" />
+	  
     <PackageReference Include="MudBlazor" Version="6.2.0" />
     <PackageReference Include="SendGrid" Version="9.28.1" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.0.0" />
     <PackageReference Include="SixLabors.ImageSharp.Web" Version="2.0.2" />
-    <PackageReference Include="xunit.assert" Version="2.4.2" />
-    <PackageReference Include="xunit.extensibility.core" Version="2.4.2" />
+	  
+	<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="7.0.4">
+		<PrivateAssets>all</PrivateAssets>
+		<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+	</PackageReference>
+
+	<PackageReference Include="FluentAssertions" Version="6.10.0">
+		<developmentDependency>true</developmentDependency>
+	</PackageReference>
+
+	<PackageReference Include="Microsoft.TestPlatform.TestHost" Version="17.5.0" >
+		<developmentDependency>true</developmentDependency>
+	</PackageReference>
+	<PackageReference Include="Moq" Version="4.18.4">
+		<developmentDependency>true</developmentDependency>
+	</PackageReference>
+	  
+	<PackageReference Include="xunit" Version="2.4.2">
+		<developmentDependency>true</developmentDependency>
+	</PackageReference>
+	
+	<PackageReference Include="xunit.assert" Version="2.4.2">
+		<developmentDependency>true</developmentDependency>
+	</PackageReference>
+	
+	<PackageReference Include="xunit.extensibility.core" Version="2.4.2">
+		<developmentDependency>true</developmentDependency>
+	</PackageReference>
+	  
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+	    <developmentDependency>true</developmentDependency>
+        <PrivateAssets>all</PrivateAssets>
+        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
   <ItemGroup>
